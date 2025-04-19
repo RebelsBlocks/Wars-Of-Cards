@@ -437,6 +437,18 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Add CSS variable for safe area inset
+  useEffect(() => {
+    function updateSafeAreaInsets() {
+      const safeAreaInsetBottom = window.getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0px';
+      document.documentElement.style.setProperty('--safe-area-inset-bottom', safeAreaInsetBottom);
+    }
+    
+    updateSafeAreaInsets();
+    window.addEventListener('resize', updateSafeAreaInsets);
+    return () => window.removeEventListener('resize', updateSafeAreaInsets);
+  }, []);
+
   // Fetch CRANS balance
   async function fetchCRANSBalance(accountId: string) {
     try {
@@ -476,7 +488,8 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           memo: "Blackjack entry fee"
         },
         gas: "300000000000000", // 300 TGas
-        deposit: "1" // 1 yoctoNEAR required for ft_transfer
+        deposit: "1", // 1 yoctoNEAR required for ft_transfer
+        callbackUrl: window.location.href
       });
 
       if (result) {
