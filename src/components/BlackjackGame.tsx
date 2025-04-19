@@ -4,6 +4,7 @@ import { blackjackService } from '../services/blackjack';
 import { useNearWallet } from '@/contexts/NearWalletContext';
 import { NETWORK_CONFIG } from '@/contexts/NearWalletContext';
 import BN from 'bn.js';
+import { GestureAreaBuffer } from './GestureAreaBuffer';
 
 // Constants for betting
 const ENTRY_FEE = 4; // 4 CRANS
@@ -584,6 +585,7 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         <button className={styles.backToGamesButton} onClick={onBack}>
           ← Back to Games
         </button>
+        <GestureAreaBuffer />
       </div>
     );
   }
@@ -642,6 +644,7 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           </div>
         )}
       </div>
+      <GestureAreaBuffer />
     </div>
   );
 }; 
