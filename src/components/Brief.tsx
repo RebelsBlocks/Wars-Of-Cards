@@ -8,6 +8,7 @@ import { BN } from 'bn.js';
 import { JsonRpcProvider } from 'near-api-js/lib/providers';
 import { Big } from 'big.js';
 import { TypewriterText } from '../effects/TypewriterText';
+import { GestureAreaBuffer } from './GestureAreaBuffer';
 
 interface Message {
   id: string;
@@ -1196,6 +1197,7 @@ export function Brief() {
           </button>
         </div>
       </div>
+      <GestureAreaBuffer />
     </div>
   );
 } 
