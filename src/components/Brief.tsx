@@ -249,6 +249,68 @@ export function Brief() {
   const messagesContainerId = 'messages-container';
   const inputId = 'chat-input';
 
+  // Add new state for NEAR to CRANS swap process
+  const [swapState, setSwapState] = React.useState<SwapState>({
+    currentStep: 'check storage',
+    amount: '0',
+    displayAmount: '0',
+    expectedReturn: '0',
+    minAmountOut: '0',
+    isProcessing: false,
+    hasStorageBalance: false,
+    isSwapInitiated: false,
+    isSwapConfirmed: false,
+    swapDirection: 'near_to_crans'
+  });
+
+  // Add more comprehensive error handling
+  const isWalletInteractionError = React.useCallback((error: any): boolean => {
+    if (!error?.message) return false;
+    const errorMessage = error.message.toLowerCase();
+    return (
+      errorMessage.includes('user cancelled') || 
+      errorMessage.includes('user closed') || 
+      errorMessage.includes('popup window') || 
+      errorMessage.includes('failed to initialize') ||
+      errorMessage.includes('couldn\'t open') ||
+      errorMessage.includes('canceled') ||
+      errorMessage.includes('cancelled the action')
+    );
+  }, []);
+
+  // Handle wallet interaction errors consistently
+  const handleWalletError = React.useCallback((error: any) => {
+    console.warn('Wallet interaction error:', error.message);
+    
+    // Only update UI for cancelation/popup errors
+    if (isWalletInteractionError(error)) {
+      setMessages(prev => [...prev, {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: "The wallet operation couldn't be completed. Would you like to try again or explore other topics?",
+        timestamp: new Date()
+      }]);
+      
+      // Reset swap state if applicable
+      if (swapState.isSwapInitiated) {
+        setSwapState({
+          currentStep: 'check storage',
+          amount: '0',
+          displayAmount: '0',
+          expectedReturn: '0',
+          minAmountOut: '0',
+          isProcessing: false,
+          hasStorageBalance: false,
+          isSwapInitiated: false,
+          isSwapConfirmed: false,
+          swapDirection: 'near_to_crans'
+        });
+      }
+      return true;
+    }
+    return false;
+  }, [isWalletInteractionError, swapState.isSwapInitiated]);
+
   // Add reset state function
   const resetState = React.useCallback(() => {
     setMessages([]);
@@ -307,20 +369,6 @@ export function Brief() {
     initializeChat();
   }, [wallet.accountId, resetState]); // Add resetState to dependencies
 
-  // Add new state for NEAR to CRANS swap process
-  const [swapState, setSwapState] = React.useState<SwapState>({
-    currentStep: 'check storage',
-    amount: '0',
-    displayAmount: '0',
-    expectedReturn: '0',
-    minAmountOut: '0',
-    isProcessing: false,
-    hasStorageBalance: false,
-    isSwapInitiated: false,
-    isSwapConfirmed: false,
-    swapDirection: 'near_to_crans'
-  });
-
   // Helper to update swap state
   const updateSwapState = React.useCallback((updates: Partial<SwapState>) => {
     setSwapState(currentState => ({
@@ -370,27 +418,8 @@ export function Brief() {
                 throw new Error('Storage deposit for wrap.near failed');
               }
             } catch (error: any) {
-              // Handle user cancellation or window closing
-              if (error.message?.includes('User cancelled') || error.message?.includes('User closed')) {
-                setMessages(prev => [...prev, {
-                  id: Date.now().toString(),
-                  role: 'assistant',
-                  content: "The transaction was cancelled. Would you like to try again or explore other topics?",
-                  timestamp: new Date()
-                }]);
-                // Reset state
-                setSwapState({
-                  currentStep: 'check storage',
-                  amount: '0',
-                  displayAmount: '0',
-                  expectedReturn: '0',
-                  minAmountOut: '0',
-                  isProcessing: false,
-                  hasStorageBalance: false,
-                  isSwapInitiated: false,
-                  isSwapConfirmed: false,
-                  swapDirection: 'near_to_crans'
-                });
+              // Use the new error handler
+              if (handleWalletError(error)) {
                 updateSwapState({ isProcessing: false });
                 return;
               }
@@ -445,32 +474,12 @@ export function Brief() {
                 }]);
               }
             } catch (error: any) {
-              // Handle user cancellation or window closing
-              if (error.message?.includes('User cancelled') || error.message?.includes('User closed')) {
-                setMessages(prev => [...prev, {
-                  id: Date.now().toString(),
-                  role: 'assistant',
-                  content: "The transaction was cancelled. Would you like to try again or explore other topics?",
-                  timestamp: new Date()
-                }]);
-                // Reset state
-                setSwapState({
-                  currentStep: 'check storage',
-                  amount: '0',
-                  displayAmount: '0',
-                  expectedReturn: '0',
-                  minAmountOut: '0',
-                  isProcessing: false,
-                  hasStorageBalance: false,
-                  isSwapInitiated: false,
-                  isSwapConfirmed: false,
-                  swapDirection: 'near_to_crans'
-                });
-              } else {
-                throw error;
+              // Use the new error handler
+              if (handleWalletError(error)) {
+                updateSwapState({ isProcessing: false });
+                return;
               }
-            } finally {
-              updateSwapState({ isProcessing: false });
+              throw error;
             }
           } else {
             // If both storages exist, update state and move to next step
@@ -529,30 +538,12 @@ export function Brief() {
               }, 1000);
             }
           } catch (error: any) {
-            // Handle user cancellation or window closing
-            if (error.message?.includes('User cancelled') || error.message?.includes('User closed')) {
-              setMessages(prev => [...prev, {
-                id: Date.now().toString(),
-                role: 'assistant',
-                content: "The transaction was cancelled. Would you like to try again or explore other topics?",
-                timestamp: new Date()
-              }]);
-              // Reset state
-              setSwapState({
-                currentStep: 'check storage',
-                amount: '0',
-                displayAmount: '0',
-                expectedReturn: '0',
-                minAmountOut: '0',
-                isProcessing: false,
-                hasStorageBalance: false,
-                isSwapInitiated: false,
-                isSwapConfirmed: false,
-                swapDirection: 'near_to_crans'
-              });
-            } else {
-              throw error;
+            // Use the new error handler
+            if (handleWalletError(error)) {
+              updateSwapState({ isProcessing: false });
+              return;
             }
+            throw error;
           } finally {
             updateSwapState({ isProcessing: false });
           }
@@ -593,30 +584,12 @@ export function Brief() {
               }]);
             }
           } catch (error: any) {
-            // Handle user cancellation or window closing
-            if (error.message?.includes('User cancelled') || error.message?.includes('User closed')) {
-              setMessages(prev => [...prev, {
-                id: Date.now().toString(),
-                role: 'assistant',
-                content: "The transaction was cancelled. Would you like to try again or explore other topics?",
-                timestamp: new Date()
-              }]);
-              // Reset state
-              setSwapState({
-                currentStep: 'check storage',
-                amount: '0',
-                displayAmount: '0',
-                expectedReturn: '0',
-                minAmountOut: '0',
-                isProcessing: false,
-                hasStorageBalance: false,
-                isSwapInitiated: false,
-                isSwapConfirmed: false,
-                swapDirection: 'near_to_crans'
-              });
-            } else {
-              throw error;
+            // Use the new error handler
+            if (handleWalletError(error)) {
+              updateSwapState({ isProcessing: false });
+              return;
             }
+            throw error;
           } finally {
             updateSwapState({ isProcessing: false });
           }
@@ -642,28 +615,9 @@ export function Brief() {
       }
     } catch (error) {
       console.error('Error in NEAR to CRANS swap step:', error);
-      // Add error message
-      setMessages(prev => [...prev, {
-        id: Date.now().toString(),
-        role: 'assistant',
-        content: "I encountered an error processing your swap. Would you like to try again or explore other topics?",
-        timestamp: new Date()
-      }]);
-      // Reset state on error
-      setSwapState({
-        currentStep: 'check storage',
-        amount: '0',
-        displayAmount: '0',
-        expectedReturn: '0',
-        minAmountOut: '0',
-        isProcessing: false,
-        hasStorageBalance: false,
-        isSwapInitiated: false,
-        isSwapConfirmed: false,
-        swapDirection: 'near_to_crans'
-      });
+      handleWalletError(error);
     }
-  }, [swapState, wallet, setMessages]);
+  }, [swapState, wallet, handleWalletError, updateSwapState, setMessages]);
 
   // Add new handler for CRANS to NEAR swap
   const handleCransNearStep = React.useCallback(async () => {
@@ -701,11 +655,11 @@ export function Brief() {
               }]);
             }
           } catch (error: any) {
-            if (error.message?.includes('User cancelled') || error.message?.includes('User closed')) {
-              handleSwapCancellation();
-            } else {
-              throw error;
+            if (handleWalletError(error)) {
+              updateSwapState({ isProcessing: false });
+              return;
             }
+            throw error;
           } finally {
             updateSwapState({ isProcessing: false });
           }
@@ -741,11 +695,11 @@ export function Brief() {
               }]);
             }
           } catch (error: any) {
-            if (error.message?.includes('User cancelled') || error.message?.includes('User closed')) {
-              handleSwapCancellation();
-            } else {
-              throw error;
+            if (handleWalletError(error)) {
+              updateSwapState({ isProcessing: false });
+              return;
             }
+            throw error;
           } finally {
             updateSwapState({ isProcessing: false });
           }
@@ -770,55 +724,9 @@ export function Brief() {
       }
     } catch (error) {
       console.error('Error in CRANS to NEAR swap step:', error);
-      handleSwapError();
+      handleWalletError(error);
     }
-  }, [swapState, wallet, setMessages]);
-
-  // Helper function for handling swap cancellation
-  const handleSwapCancellation = () => {
-    setMessages(prev => [...prev, {
-      id: Date.now().toString(),
-      role: 'assistant',
-      content: "The transaction was cancelled. Would you like to try again or explore other topics?",
-      timestamp: new Date()
-    }]);
-    
-    setSwapState({
-      currentStep: 'check storage',
-      amount: '0',
-      displayAmount: '0',
-      expectedReturn: '0',
-      minAmountOut: '0',
-      isProcessing: false,
-      hasStorageBalance: false,
-      isSwapInitiated: false,
-      isSwapConfirmed: false,
-      swapDirection: 'near_to_crans'
-    });
-  };
-
-  // Helper function for handling swap errors
-  const handleSwapError = () => {
-    setMessages(prev => [...prev, {
-      id: Date.now().toString(),
-      role: 'assistant',
-      content: "I encountered an error processing your swap. Would you like to try again or explore other topics?",
-      timestamp: new Date()
-    }]);
-    
-    setSwapState({
-      currentStep: 'check storage',
-      amount: '0',
-      displayAmount: '0',
-      expectedReturn: '0',
-      minAmountOut: '0',
-      isProcessing: false,
-      hasStorageBalance: false,
-      isSwapInitiated: false,
-      isSwapConfirmed: false,
-      swapDirection: 'near_to_crans'
-    });
-  };
+  }, [swapState, wallet, setMessages, handleWalletError, updateSwapState]);
 
   // Effect to monitor and execute swap steps
   React.useEffect(() => {
