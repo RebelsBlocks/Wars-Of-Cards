@@ -1,0 +1,992 @@
+.gameContainer {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  touch-action: pan-y;
+  overflow: hidden;
+  max-height: 100vh;
+}
+
+.gameTable {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  min-height: auto;
+  height: 100%;
+  background: url('/Profile_back.png') center center/cover;
+  border-radius: 25px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0 auto;
+  overflow: hidden;
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  box-shadow: 
+    0 0 10px rgba(var(--gold-accent), 0.2),
+    0 0 20px rgba(var(--gold-accent), 0.1),
+    inset 0 0 10px rgba(var(--gold-accent), 0.1);
+}
+
+.gameTableNormal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: transparent;
+  z-index: 5;
+  border-radius: 25px;
+}
+
+.gameTableDimmed {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(2px);
+  z-index: 5;
+  border-radius: 25px;
+}
+
+.gameTable::before {
+  display: none;
+}
+
+.balanceDisplay {
+  width: calc(100% + 2px);
+  margin: -1px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  align-items: center;
+}
+
+.balanceDisplay span {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.refreshButton {
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
+  border: none;
+  color: rgb(var(--felt-green-dark));
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 0 8px rgba(var(--gold-accent), 0.2);
+}
+
+.refreshButton:hover {
+  transform: translateY(-2px) rotate(180deg);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 0 12px rgba(var(--gold-accent), 0.3);
+  background: linear-gradient(135deg,
+    rgba(var(--secondary-accent), 0.9),
+    rgba(var(--gold-accent), 0.9)
+  );
+}
+
+.refreshButton:active {
+  transform: translateY(0) rotate(180deg);
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.15),
+    0 0 6px rgba(var(--gold-accent), 0.2);
+}
+
+.refreshIcon {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.refreshIcon.spinning {
+  animation: spin 1s linear infinite;
+}
+
+.dealerArea, .playerSection {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.gameInfo {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60px;
+  position: relative;
+}
+
+.messageDisplay {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin: 1rem 0;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scoreDisplay {
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-top: 0.3rem;
+  min-width: 180px;
+  text-align: center;
+}
+
+.cardsContainer {
+  display: flex;
+  gap: min(1rem, 2vw);
+  padding: min(1rem, 2vw);
+  min-height: auto;
+  height: auto;
+  margin: 0.25rem 0;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: min(1200px, 95vw);
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
+.cardWrapper {
+  width: min(80px, calc(10vw + 30px));
+  height: min(120px, calc(15vw + 45px));
+  perspective: 1000px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  margin: 0 -0.25rem;
+}
+
+.cardWrapper:hover {
+  transform: translateY(-5px);
+  z-index: 2; /* Ensure hovered card is above others */
+}
+
+.cardFace {
+  width: 100%;
+  height: 100%;
+  background: url('/card_front.png') center center/cover;
+  border-radius: min(8px, 1.5vw);
+  padding: min(0.5rem, 1vw);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+@media (max-width: 768px) {
+  .gameContainer {
+    padding: 12px;
+    padding-top: calc(56px + env(safe-area-inset-top));
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .gameTable {
+    min-height: calc(100vh - 40px);
+    padding: 0.5rem;
+    border-radius: 12px;
+  }
+
+  .dealerArea,
+  .playerSection {
+    padding: 0.25rem;
+  }
+
+  .cardWrapper {
+    width: min(70px, calc(8vw + 25px));
+    height: min(105px, calc(12vw + 37.5px));
+  }
+
+  .cardsContainer:has(.cardWrapper:nth-child(3)) .cardWrapper {
+    width: min(60px, calc(7vw + 20px));
+    height: min(90px, calc(10.5vw + 30px));
+  }
+
+  .cardsContainer:has(.cardWrapper:nth-child(5)) .cardWrapper {
+    width: min(50px, calc(6vw + 15px));
+    height: min(75px, calc(9vw + 22.5px));
+  }
+
+  .cardFace {
+    background: url('/card_front_mobile.png') center center/cover;
+  }
+}
+
+/* Adjust padding for smaller cards */
+.cardsContainer:has(.cardWrapper:nth-child(3)) .cardFace {
+  padding: 0.4rem 0.3rem;
+}
+
+.cardsContainer:has(.cardWrapper:nth-child(5)) .cardFace {
+  padding: 0.3rem 0.25rem;
+}
+
+.cardValue {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
+  display: inline-block;
+  font-family: 'Arial', sans-serif;
+  line-height: 1;
+}
+
+.cardSuit {
+  font-size: 2rem;
+  align-self: center;
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
+  line-height: 1;
+  margin: -0.2rem 0;
+}
+
+.red { 
+  color: #e60000; 
+  text-shadow: 
+    -1px -1px 0 rgba(255, 255, 255, 0.5),
+    1px -1px 0 rgba(255, 255, 255, 0.5),
+    -1px 1px 0 rgba(255, 255, 255, 0.5),
+    1px 1px 0 rgba(255, 255, 255, 0.5),
+    2px 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+.black { 
+  color: #000000; 
+  text-shadow: 
+    -1px -1px 0 rgba(255, 255, 255, 0.5),
+    1px -1px 0 rgba(255, 255, 255, 0.5),
+    -1px 1px 0 rgba(255, 255, 255, 0.5),
+    1px 1px 0 rgba(255, 255, 255, 0.5),
+    2px 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+.centerMessage {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.7);
+  padding: 10px 20px;
+  border-radius: 5px;
+  z-index: 10;
+}
+
+.playerScore {
+  font-size: 1.2rem;
+  color: white;
+  text-align: center;
+  margin: 10px 0;
+  padding: 5px 10px;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 5px;
+  position: absolute;
+  bottom: 180px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 1rem;
+  margin: 0.5rem auto;
+  width: fit-content;
+  min-height: 60px;
+}
+
+.actionButton, .playAgainButton {
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
+  color: rgb(var(--felt-green-dark));
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 120px;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    0 0 15px rgba(var(--gold-accent), 0.2);
+}
+
+.playAgainButton {
+  padding: 0.6rem 1.5rem;
+  font-size: 1rem;
+  min-width: 100px;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    0 0 15px rgba(var(--gold-accent), 0.2);
+}
+
+.playAgainButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(var(--gold-accent), 0.3);
+}
+
+.playAgainButton:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.15),
+    0 0 10px rgba(var(--gold-accent), 0.2);
+}
+
+.actionButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(var(--gold-accent), 0.3);
+}
+
+.actionButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.15),
+    0 0 10px rgba(var(--gold-accent), 0.2);
+}
+
+.actionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: linear-gradient(135deg,
+    rgba(var(--felt-green-light), 0.3),
+    rgba(var(--felt-green-dark), 0.3)
+  );
+  box-shadow: none;
+}
+
+.chip100 { 
+  background: linear-gradient(135deg, 
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--gold-accent), 0.7)
+  );
+  font-size: 1.2rem;
+}
+
+.chip300 { 
+  background: linear-gradient(135deg,
+    rgba(var(--card-orange), 0.9),
+    rgba(var(--card-orange), 0.7)
+  );
+  font-size: 1.2rem;
+}
+
+.chip500 { 
+  background: linear-gradient(135deg,
+    rgba(var(--card-red), 0.9),
+    rgba(var(--card-red), 0.7)
+  );
+  font-size: 1.2rem;
+}
+
+.betContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  background: rgba(var(--felt-green-dark), 0.95);
+  padding: 1rem 1.5rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  z-index: 10;
+  min-width: 300px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.backToGamesButton {
+  background: rgba(0, 0, 0, 0.5);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 100%;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.backToGamesButton:hover {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 215, 0, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.backToGamesButton:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.betInput {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.8rem;
+  color: white;
+  text-align: center;
+  width: 120px;
+  font-size: 1.2rem;
+  margin: 1rem 0;
+}
+
+.betInput:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+.chipContainer {
+  display: flex;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.chipContainer button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid rgba(var(--gold-accent), 0.3);
+  color: rgb(var(--felt-green-dark));
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.chipContainer button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.chipContainer button:hover:not(:disabled) {
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  border-color: rgba(var(--gold-accent), 0.5);
+}
+
+.placeBetButton {
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
+  color: rgb(var(--felt-green-dark));
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 1rem;
+  width: 100%;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.placeBetButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg,
+    rgba(var(--secondary-accent), 0.9),
+    rgba(var(--gold-accent), 0.9)
+  );
+}
+
+.placeBetButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.betDisplay {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.8rem 1.6rem;
+  color: white;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  min-width: 140px;
+  margin: 0.8rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.gameEndOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0);
+  z-index: 1000;
+  border-radius: inherit;
+  animation: fadeInOverlay 0.3s ease-out forwards;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  to {
+    background-color: rgb(0, 0, 0);
+  }
+}
+
+.gameEndContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
+  max-width: 500px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeInContent 0.4s ease-out 0.2s forwards;
+}
+
+@keyframes fadeInContent {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.warResultImage {
+  width: 100%;
+  max-width: 400px;
+  height: auto;
+  margin-bottom: 20px;
+  opacity: 0;
+  transform: scale(0.95);
+  animation: fadeInImage 0.4s ease-out 0.3s forwards;
+}
+
+@keyframes fadeInImage {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.playAgainButton {
+  padding: 12px 24px;
+  font-size: 1.2em;
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
+  color: rgb(var(--felt-green-dark));
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  min-width: 200px;
+}
+
+.playAgainButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(var(--gold-accent), 0.3);
+}
+
+.playAgainButton:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.15),
+    0 0 10px rgba(var(--gold-accent), 0.2);
+}
+
+.playAgainContainer {
+  text-align: center;
+}
+
+.backButton {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: transparent;
+  border: none;
+  color: #ffd700;
+  font-size: 1rem;
+  cursor: pointer;
+  z-index: 100;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.backButton:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 480px) {
+  .gameContainer {
+    padding: 8px;
+    padding-top: calc(56px + env(safe-area-inset-top));
+    height: 100vh;
+    max-height: -webkit-fill-available;
+  }
+
+  .gameTable {
+    padding: 0.35rem;
+    border-radius: 8px;
+    height: calc(100vh - 16px);
+    min-height: auto;
+  }
+
+  .dealerArea, .playerSection {
+    padding: 0.25rem;
+    gap: 0.25rem;
+  }
+
+  .cardsContainer {
+    min-height: auto;
+    height: auto;
+    margin: 0.25rem 0;
+  }
+
+  .buttonContainer {
+    padding: 0.5rem;
+    margin: 0.25rem auto;
+  }
+
+  .cardWrapper {
+    width: min(60px, calc(7vw + 20px));
+    height: min(90px, calc(10.5vw + 30px));
+    min-width: 45px;
+    min-height: 67.5px;
+  }
+
+  .cardsContainer:has(.cardWrapper:nth-child(3)) .cardWrapper {
+    width: min(50px, calc(6vw + 15px));
+    height: min(75px, calc(9vw + 22.5px));
+    min-width: 40px;
+    min-height: 60px;
+  }
+
+  .cardsContainer:has(.cardWrapper:nth-child(5)) .cardWrapper {
+    width: min(40px, calc(5vw + 10px));
+    height: min(60px, calc(7.5vw + 15px));
+    min-width: 35px;
+    min-height: 52.5px;
+  }
+
+  .actionButton, .playAgainButton {
+    padding: calc(0.8vw + 4px) calc(1.5vw + 8px);
+    font-size: calc(0.8vw + 0.7rem);
+    min-width: calc(20vw + 40px);
+  }
+
+  .scoreDisplay {
+    font-size: calc(0.7vw + 0.7rem);
+    padding: calc(0.5vw + 2px) calc(1vw + 4px);
+    min-width: calc(25vw + 60px);
+  }
+
+  .messageDisplay {
+    font-size: calc(0.8vw + 0.8rem);
+    padding: calc(0.6vw + 3px) calc(1.2vw + 6px);
+  }
+
+  .betDisplay {
+    font-size: calc(1vw + 1rem);
+    padding: calc(0.6vw + 3px) calc(1.2vw + 6px);
+    min-width: calc(25vw + 60px);
+  }
+
+  .chipContainer button {
+    width: calc(10vw + 25px);
+    height: calc(10vw + 25px);
+    font-size: calc(0.7vw + 0.7rem);
+    min-width: 45px;
+    min-height: 45px;
+  }
+
+  .cardFace {
+    padding: calc(0.3vw + 1px) calc(0.25vw + 1px);
+  }
+
+  .cardValue {
+    font-size: calc(0.8vw + 0.6rem);
+  }
+
+  .cardSuit {
+    font-size: calc(1.2vw + 0.8rem);
+    margin: calc(-0.1vw) 0;
+  }
+
+  .cardsContainer:has(.cardWrapper:nth-child(3)) .cardValue {
+    font-size: calc(0.7vw + 0.5rem);
+  }
+
+  .cardsContainer:has(.cardWrapper:nth-child(3)) .cardSuit {
+    font-size: calc(1vw + 0.7rem);
+    margin: calc(-0.05vw) 0;
+  }
+
+  .cardsContainer:has(.cardWrapper:nth-child(5)) .cardValue {
+    font-size: calc(0.6vw + 0.4rem);
+  }
+
+  .cardsContainer:has(.cardWrapper:nth-child(5)) .cardSuit {
+    font-size: calc(0.8vw + 0.6rem);
+    margin: 0;
+  }
+
+  .warResultImage {
+    width: 80vw;
+    max-width: 250px;
+  }
+
+  .cardsContainer {
+    gap: calc(0.3vw + 2px);
+    padding: calc(0.3vw + 2px);
+  }
+
+  .gameEndOverlay {
+    border-radius: 8px;
+  }
+}
+
+/* Dodanie breakpointu dla tabletów */
+@media (min-width: 481px) and (max-width: 768px) {
+  .gameContainer {
+    height: 100vh;
+    max-height: -webkit-fill-available;
+    padding: 12px;
+  }
+
+  .gameTable {
+    height: calc(100vh - 24px);
+    min-height: auto;
+  }
+
+  .cardWrapper {
+    width: calc(10vw + 30px);
+    height: calc(15vw + 45px);
+    min-width: 60px;
+    min-height: 90px;
+  }
+
+  .actionButton, .playAgainButton {
+    padding: calc(0.6vw + 6px) calc(1.2vw + 12px);
+    font-size: calc(0.6vw + 0.8rem);
+    min-width: calc(15vw + 60px);
+  }
+
+  .scoreDisplay {
+    font-size: calc(0.6vw + 0.8rem);
+    min-width: calc(20vw + 80px);
+  }
+
+  .chipContainer button {
+    width: calc(8vw + 30px);
+    height: calc(8vw + 30px);
+    min-width: 50px;
+    min-height: 50px;
+    font-size: calc(0.6vw + 0.8rem);
+  }
+}
+
+@media (min-width: 769px) {
+  .cardWrapper {
+    width: 80px;
+    height: 120px;
+  }
+
+  /* 3-4 cards desktop */
+  .cardsContainer:has(.cardWrapper:nth-child(3)) .cardWrapper {
+    width: 70px;
+    height: 105px;
+  }
+
+  /* 5-6 cards desktop */
+  .cardsContainer:has(.cardWrapper:nth-child(5)) .cardWrapper {
+    width: 60px;
+    height: 90px;
+  }
+
+  .cardFace {
+    padding: 0.6rem;
+  }
+
+  .cardValue {
+    font-size: 1.4rem;
+  }
+
+  .cardSuit {
+    font-size: 2.4rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gameWrapper {
+    max-width: 1400px;
+    margin: 0 auto;
+    position: relative;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .gameTable {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 1rem;
+    box-shadow: none;
+    min-height: auto;
+    height: calc(100vh - 40px);
+  }
+}
+
+.gameEndActions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeInActions 0.3s ease-out 0.5s forwards;
+}
+
+@keyframes fadeInActions {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.rewardMessage {
+  color: #ffd700;
+  font-size: 1rem;
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  animation: fadeIn 0.5s ease-out 0.5s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+} 

@@ -1,0 +1,205 @@
+.betContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  gap: 1.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 1rem;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  min-width: 300px;
+}
+
+.balanceDisplay {
+  font-size: 1.5rem;
+  color: #fff;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.betDisplay {
+  font-size: 1.25rem;
+  color: #ffd700;
+  text-align: center;
+  padding: 1rem;
+  border: 2px solid #ffd700;
+  border-radius: 0.5rem;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.placeBetButton {
+  padding: 1rem 2rem;
+  font-size: 1.25rem;
+  color: #fff;
+  background: linear-gradient(135deg, #2ecc71, #27ae60);
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 200px;
+}
+
+.placeBetButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+}
+
+.placeBetButton:disabled {
+  background: #666;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.backToGamesButton {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  color: #fff;
+  background: transparent;
+  border: 2px solid #fff;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.backToGamesButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.errorMessage {
+  color: #ff6b6b;
+  text-align: center;
+  font-size: 0.9rem;
+  margin-top: -0.5rem;
+}
+
+.connectWalletMessage {
+  color: #fff;
+  font-size: 1.25rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.7; }
+  100% { opacity: 1; }
+}
+
+.placeBetButton:disabled {
+  animation: pulse 1.5s infinite;
+}
+
+.chipContainer {
+  display: flex;
+  gap: 0.8rem;
+  padding: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.chipContainer button {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 2px solid rgba(var(--gold-accent), 0.3);
+  color: rgb(var(--felt-green-dark));
+  font-weight: bold;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+.chipContainer button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.chipContainer button:hover:not(:disabled) {
+  transform: scale(1.1) translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  border-color: rgba(var(--gold-accent), 0.5);
+}
+
+.chip100 { 
+  background: linear-gradient(135deg, 
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--gold-accent), 0.7)
+  );
+}
+
+.chip300 { 
+  background: linear-gradient(135deg,
+    rgba(var(--card-orange), 0.9),
+    rgba(var(--card-orange), 0.7)
+  );
+}
+
+.chip500 { 
+  background: linear-gradient(135deg,
+    rgba(var(--card-red), 0.9),
+    rgba(var(--card-red), 0.7)
+  );
+}
+
+@media (max-width: 768px) {
+  .betContainer {
+    width: 90%;
+    min-width: auto;
+    padding: 1rem 1.5rem 1.5rem;
+  }
+
+  .chipContainer button {
+    width: 50px;
+    height: 50px;
+    font-size: 0.9rem;
+  }
+
+  .balanceDisplay {
+    padding: 0.4rem 0.8rem;
+  }
+
+  .balanceDisplay span {
+    font-size: 0.9rem;
+  }
+
+  .betDisplay {
+    font-size: 1.4rem;
+    padding: 0.6rem 1.2rem;
+  }
+
+  .placeBetButton,
+  .backToGamesButton {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.5rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .betContainer {
+    padding: 0.75rem 1rem;
+  }
+
+  .chipContainer button {
+    width: 45px;
+    height: 45px;
+    font-size: 0.8rem;
+  }
+
+  .balanceDisplay {
+    padding: 0.3rem 0.6rem;
+  }
+
+  .balanceDisplay span {
+    font-size: 0.8rem;
+  }
+
+  .betDisplay {
+    font-size: 1.2rem;
+    padding: 0.5rem 1rem;
+  }
+} 

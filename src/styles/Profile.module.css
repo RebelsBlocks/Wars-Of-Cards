@@ -1,0 +1,441 @@
+.container {
+  width: 100%;
+  height: 100%;
+  padding: clamp(8px, 2vw, 16px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 56px; /* Stały margin dla header MainLayout */
+}
+
+.cardGrid {
+  width: 100%;
+  max-width: min(95vw, 1200px);
+  margin: 0 auto;
+}
+
+.card {
+  background: linear-gradient(
+    135deg,
+    rgba(var(--felt-green-dark), 0.92),
+    rgba(0, 32, 0, 0.95)
+  );
+  border-radius: 8px;
+  padding: clamp(12px, 2vw, 20px);
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    0 0 24px rgba(var(--gold-accent), 0.1);
+  color: white;
+  backdrop-filter: blur(10px);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 2vh, 20px);
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: clamp(8px, 1.5vw, 12px);
+  border-bottom: 1px solid rgba(var(--gold-accent), 0.15);
+}
+
+.cardHeader h2 {
+  margin: 0;
+  font-size: clamp(0.9rem, 2vw, 1.2rem);
+  color: rgb(var(--gold-accent));
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.headerActions > * {
+  width: 32px;
+  height: 32px;
+}
+
+.balances {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(8px, 2vw, 16px);
+  align-items: stretch;
+}
+
+.balanceItem {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.3),
+    rgba(0, 32, 0, 0.3)
+  );
+  border: 1px solid rgba(var(--gold-accent), 0.25);
+  border-radius: 6px;
+  padding: clamp(10px, 1.5vw, 16px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(4px, 1vh, 8px);
+  min-height: 120px;
+  position: relative;
+}
+
+.balanceItem:not(.pointsItem):not(:last-child) {
+  justify-content: center;
+}
+
+.label {
+  font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+  color: rgba(var(--gold-accent), 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  margin-bottom: auto;
+}
+
+.value {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  font-weight: 600;
+  text-align: center;
+  margin: auto 0;
+  color: rgb(var(--gold-accent));
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.pointsRatio {
+  font-size: clamp(0.8rem, 1.3vw, 0.9rem);
+  color: rgba(var(--gold-accent), 0.8);
+  margin-bottom: auto;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.claimButton, .buyButton {
+  width: 100%;
+  padding: clamp(6px, 1vw, 10px);
+  font-size: clamp(0.75rem, 1.5vw, 0.9rem);
+  background: rgba(var(--gold-accent), 0.15);
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  border-radius: 6px;
+  color: rgb(var(--gold-accent));
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.claimButton:hover, .buyButton:hover {
+  background: rgba(var(--gold-accent), 0.25);
+}
+
+.claimButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Small screens and mobile */
+@media screen and (max-width: 480px) {
+  .container {
+    padding: 8px;
+    align-items: flex-start;
+    margin-top: 48px; /* Mniejszy margin na mobile */
+  }
+
+  .card {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .balances {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .balanceItem {
+    padding: 10px;
+    min-height: 100px;
+  }
+}
+
+/* Medium screens - tablets */
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  .balances {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .balanceItem:last-child {
+    grid-column: span 2;
+  }
+}
+
+.refreshButton {
+  background: rgba(0, 32, 0, 0.4);
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  border-radius: 6px;
+  color: rgb(var(--gold-accent));
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.refreshButton:hover {
+  background: rgba(0, 32, 0, 0.6);
+  border-color: rgba(var(--gold-accent), 0.5);
+}
+
+.refreshButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+.card:hover {
+  border-color: rgba(var(--gold-accent), 0.2);
+  box-shadow: 
+    0 4px 16px rgba(0, 0, 0, 0.2),
+    0 0 32px rgba(var(--gold-accent), 0.05);
+  transform: none;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 32, 0, 0.7);
+  z-index: 1;
+}
+
+.card > * {
+  position: relative;
+  z-index: 2;
+}
+
+.card h2 {
+  color: rgb(var(--gold-accent));
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  margin-bottom: clamp(16px, 4vw, 24px);
+  border-bottom: 1px solid rgba(var(--gold-accent), 0.15);
+  padding-bottom: clamp(8px, 2vw, 12px);
+  letter-spacing: 0.03em;
+  font-weight: 600;
+  text-align: center;
+}
+
+.statsList, .collectionStats {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.statItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(var(--gold-accent), 0.1);
+}
+
+.statItem:last-child {
+  border-bottom: none;
+}
+
+.statLabel {
+  color: rgba(var(--cream-text), 0.7);
+}
+
+.statValue {
+  color: rgb(var(--cream-text));
+  font-weight: 600;
+}
+
+.emptyState {
+  text-align: center;
+  color: rgba(var(--cream-text), 0.5);
+  padding: 20px;
+}
+
+/* Account section styles */
+.accountInfo {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(12px, 2vw, 20px);
+  text-align: center;
+}
+
+.accountId {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(4px, 1vw, 8px);
+  padding: clamp(8px, 2vw, 16px);
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: clamp(6px, 1.5vw, 12px);
+  border: 1px solid rgba(var(--gold-accent), 0.15);
+  width: 100%;
+  text-align: center;
+}
+
+.accountActions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  width: 100%;
+}
+
+.accountLink {
+  color: rgb(var(--gold-accent));
+  text-decoration: none;
+  border-bottom: 2px solid rgba(var(--gold-accent), 0.3);
+  transition: all 0.3s ease;
+  padding: clamp(4px, 1vw, 8px);
+  word-break: break-all;
+  text-align: center;
+  max-width: 100%;
+  font-size: clamp(0.9rem, 2vw, 1.1rem);
+  position: relative;
+  display: inline-block;
+  margin: 0 auto;
+}
+
+.accountLink::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(
+    to right,
+    rgba(var(--gold-accent), 0.3),
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--gold-accent), 0.3)
+  );
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.accountLink:hover::after {
+  transform: scaleX(1);
+}
+
+.accountLink:hover {
+  color: rgb(var(--gold-accent));
+  text-shadow: 0 0 10px rgba(var(--gold-accent), 0.3);
+}
+
+.notConnected {
+  text-align: center;
+  padding: 2rem;
+}
+
+/* TV and ultra-wide screens */
+@media screen and (min-width: 1600px) {
+  .card {
+    padding: 32px;
+  }
+
+  .value {
+    font-size: 1.6rem;
+  }
+}
+
+/* Container queries for modern browsers */
+@container (min-width: 768px) {
+  .accountInfo {
+    gap: 24px;
+  }
+
+  .balances {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+  }
+}
+
+/* Usuwamy wszystkie efekty hover */
+.balanceItem:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.buyButton img {
+  width: clamp(20px, 4vw, 24px);
+  height: clamp(20px, 4vw, 24px);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.profilePicture {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(var(--gold-accent), 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+.profilePicture:hover {
+  border-color: rgba(var(--gold-accent), 0.6);
+  transform: scale(1.05);
+}
+
+.externalIcon {
+  margin-left: 6px;
+  font-size: 16px;
+}
+
+.refreshIcon {
+  transition: transform 0.5s ease;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+} 

@@ -1,0 +1,1406 @@
+/* Style dla gry karcianej "Wojna" */
+
+.gameContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  touch-action: manipulation;
+  min-height: calc(100vh - 60px);
+}
+
+.gameTable {
+  position: relative;
+  width: 95%;
+  max-width: 900px;
+  height: 90vh;
+  min-height: calc(100vh - 40px);
+  background: url('/Profile_back.png') center center/cover;
+  border-radius: 25px;
+  padding: clamp(0.5rem, 2vw, 1.5rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+.betContainer {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  height: calc(100vh - 60px);
+  background: transparent;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.balanceDisplay {
+  background: rgba(0, 0, 0, 0.8);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.gameStats {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  color: rgb(var(--cream-text));
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.pointsStats {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: rgb(var(--cream-text));
+  border-top: 1px solid rgba(var(--gold-accent), 0.2);
+  padding-top: 0.5rem;
+  text-align: center;
+  position: relative;
+}
+
+.pointsStats span:first-child {
+  color: #ffd700;
+}
+
+.pointsStats span:last-child {
+  color: #ff4444;
+}
+
+.pointsToAdd {
+  position: absolute;
+  font-size: 1.2rem;
+  font-weight: bold;
+  opacity: 0;
+  animation: pointsAnimation 2s ease-out forwards;
+}
+
+.pointsToAdd.player {
+  color: #ff4444;
+  right: 25%;
+  transform: translateX(50%);
+}
+
+.pointsToAdd.computer {
+  color: #ffd700;
+  left: 25%;
+  transform: translateX(-50%);
+}
+
+@keyframes pointsAnimation {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.5);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1.2);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(1);
+  }
+}
+
+.betDisplay {
+  background: rgba(0, 0, 0, 0.8);
+  color: #ffd700;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 2rem;
+  font-weight: bold;
+  min-width: 200px;
+  text-align: center;
+  border: 2px solid #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.chipContainer {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.chip100,
+.chip300,
+.chip500 {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: none;
+  color: #000;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.chip100 {
+  background: linear-gradient(135deg, #ff9900, #ff6600);
+}
+
+.chip300 {
+  background: linear-gradient(135deg, #00ff00, #00cc00);
+}
+
+.chip500 {
+  background: linear-gradient(135deg, #ff0066, #cc0052);
+}
+
+.chip100:hover:not(:disabled),
+.chip300:hover:not(:disabled),
+.chip500:hover:not(:disabled) {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.chip100:disabled,
+.chip300:disabled,
+.chip500:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.placeBetButton,
+.backToGamesButton {
+  background: linear-gradient(135deg, #ffd700, #ffa500);
+  border: none;
+  color: #000;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 200px;
+  margin-top: 1rem;
+}
+
+.backToGamesButton {
+  background: linear-gradient(135deg, #666, #444);
+  color: white;
+  margin-top: 0.5rem;
+}
+
+.placeBetButton:hover,
+.backToGamesButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.gameInfo {
+  width: 100%;
+  padding: clamp(0.3rem, 1vw, 0.5rem);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.timerDisplay {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: clamp(0.3rem, 1vw, 0.5rem) clamp(0.5rem, 1.5vw, 1rem);
+  border-radius: 8px;
+  font-size: clamp(0.8rem, 2vw, 1.1rem);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: clamp(80px, 10vw, 100px);
+}
+
+.timerWarning {
+  color: #ff4444;
+  animation: pulse 1s infinite;
+}
+
+.scoreBoard {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: clamp(0.3rem, 1vw, 0.5rem) clamp(0.75rem, 2vw, 1.5rem);
+  border-radius: 8px;
+  font-size: clamp(0.8rem, 2vw, 1.2rem);
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  gap: clamp(0.5rem, 1.5vw, 1.5rem);
+}
+
+.playerScore,
+.computerScore {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.scoreValue {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ffd700;
+}
+
+.scoreSeparator {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.gameStatus {
+  display: none;
+}
+
+.deckInfo {
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.playArea {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  gap: clamp(0.5rem, 1.5vw, 1rem);
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  margin-bottom: clamp(0.25rem, 1vw, 1rem);
+}
+
+.computerArea {
+  display: none;
+}
+
+.playerArea {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.selectedCardArea {
+  flex: 1;
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 0;
+  gap: 0;
+}
+
+.selectedCards {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: min(0.5rem, 1.5vw);
+  width: 100%;
+  max-width: min(300px, 90vw);
+  margin: 0 auto;
+  position: absolute;
+  top: 25px;
+  min-height: 120px;
+  z-index: 2;
+  padding-top: 0;
+}
+
+.computerCards,
+.playerCards {
+  position: relative;
+  width: min(65px, calc(7vw + 23px));
+  height: min(97.5px, calc(10.5vw + 34.5px));
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.computerCards .cardWrapper,
+.playerCards .cardWrapper {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  transition: all 0.3s ease;
+  z-index: 2;
+}
+
+/* Style dla kart wojennych */
+.computerCards .cardWrapper[style*="top:"],
+.playerCards .cardWrapper[style*="top:"] {
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.4);
+  border: 1px solid rgba(139, 0, 0, 0.3);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* Style dla aktualnej karty wojennej (ostatniej w kolejności) */
+.computerCards .cardWrapper:last-child[style*="top:"],
+.playerCards .cardWrapper:last-child[style*="top:"] {
+  box-shadow: 
+    0 0 20px rgba(139, 0, 0, 0.6),
+    0 0 40px rgba(139, 0, 0, 0.3);
+  border: 2px solid rgba(139, 0, 0, 0.5);
+  transform: translateX(-50%) scale(1.05);
+  z-index: 10;
+}
+
+.computerCards .cardWrapper:last-child[style*="top:"] .cardFace,
+.playerCards .cardWrapper:last-child[style*="top:"] .cardFace {
+  filter: brightness(1.1) contrast(1.1);
+}
+
+/* Efekty hover dla kart */
+.selectedCards .cardWrapper:hover {
+  transform: translateY(0) scale(1.01);
+  transition: all 0.2s ease;
+}
+
+/* Hover efekt dla kart w pierwszej rundzie */
+.bonusCardContainer + .selectedCards .cardWrapper[style*="zIndex: 1"]:hover {
+  transform: translateX(-50%) translateY(-2px) scale(1.01);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.15),
+    0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover efekt dla aktualnej karty wojennej */
+.computerCards .cardWrapper:last-child[style*="top:"]:hover,
+.playerCards .cardWrapper:last-child[style*="top:"]:hover {
+  transform: translateX(-50%) scale(1.01);
+  box-shadow: 
+    0 0 5px rgba(139, 0, 0, 0.3),
+    0 0 10px rgba(139, 0, 0, 0.15);
+}
+
+/* Zachowaj poprzednie style */
+.computerCards .cardWrapper:hover,
+.playerCards .cardWrapper:hover {
+  transform: translateX(-50%) translateY(-1px);
+}
+
+.cardsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(65px, calc(7vw + 23px)), 1fr));
+  gap: min(0.5rem, 1.5vw);
+  padding: min(0.5rem, 1.5vw);
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: min(800px, 95vw);
+  margin: 0 auto;
+  min-height: min(240px, 60vw);
+}
+
+.cardWrapper {
+  width: min(65px, calc(7vw + 23px));
+  height: min(97.5px, calc(10.5vw + 34.5px));
+  aspect-ratio: 2/3;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  transition: all 0.2s ease-in-out;
+  will-change: transform;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.cardFace {
+  width: 100%;
+  height: 100%;
+  background: url('/card_front.png') center center/cover;
+  background-size: 100% 100%;
+  border-radius: min(8px, 1.5vw);
+  padding: min(0.4rem, 1vw);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.cardFaceJoker {
+  background: url('/card_joker_front.png') center center/cover;
+  background-size: 100% 100%;
+}
+
+.cardBack {
+  width: 100%;
+  height: 100%;
+  background: url('/card_back.png') center center/cover;
+  background-size: 100% 100%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.bonusCardContainer {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  width: min(65px, calc(7vw + 23px));
+  height: min(97.5px, calc(10.5vw + 34.5px));
+}
+
+.bonusCard {
+  width: 100%;
+  height: 100%;
+  transform-origin: center;
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  border: 2px solid gold;
+}
+
+.bonusCardLabel {
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  text-align: center;
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.warStatus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  font-weight: bold;
+  color: #ff4444;
+  text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+  animation: warAnimation 2s ease-in-out;
+  z-index: 100;
+}
+
+.twistStatus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 3rem;
+  font-weight: bold;
+  color: #4CAF50;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.5);
+  animation: twistAnimation 1.5s ease-in-out;
+  z-index: 100;
+}
+
+@keyframes warAnimation {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes twistAnimation {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(360deg) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(720deg) scale(1);
+  }
+}
+
+.emptyCardSlot {
+  width: 70px;
+  height: 105px;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  margin: 0 auto;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: clamp(0.3rem, 1vw, 1rem);
+  padding: clamp(0.25rem, 1vw, 0.5rem);
+  margin: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  position: relative;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+}
+
+.actionButton {
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
+  color: rgb(var(--felt-green-dark));
+  border: none;
+  padding: clamp(0.5rem, 1.2vw, 0.8rem) clamp(1rem, 2.5vw, 2rem);
+  border-radius: 8px;
+  font-size: clamp(0.8rem, 2vw, 1.1rem);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: clamp(90px, 15vw, 120px);
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    0 0 15px rgba(var(--gold-accent), 0.2);
+}
+
+.actionButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(var(--gold-accent), 0.3);
+}
+
+.actionButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.15),
+    0 0 10px rgba(var(--gold-accent), 0.2);
+}
+
+.actionButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.giveUpButton {
+  background: linear-gradient(135deg, #666, #444);
+  color: white;
+}
+
+.gameEndOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 100;
+  border-radius: 25px;
+  backdrop-filter: blur(5px);
+  padding: 1rem;
+}
+
+.warResultImage {
+  max-width: 80%;
+  height: auto;
+  margin-bottom: 2rem;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.playAgainButton {
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
+  color: rgb(var(--felt-green-dark));
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-width: 100px;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.2),
+    0 0 15px rgba(var(--gold-accent), 0.2);
+  margin-top: 1rem;
+}
+
+.playAgainButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.25),
+    0 0 20px rgba(var(--gold-accent), 0.3);
+}
+
+.playAgainButton:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.15),
+    0 0 10px rgba(var(--gold-accent), 0.2);
+}
+
+@keyframes pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cardsInfo {
+  text-align: center;
+  color: rgb(var(--cream-text));
+  font-size: 1rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  margin: 0;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .gameTable {
+    width: 100%;
+    height: calc(100vh - 40px);
+    min-height: calc(100vh - 40px);
+    padding: 1rem;
+    border-radius: 12px;
+  }
+
+  .bonusCardContainer {
+    width: min(60px, calc(7vw + 25px));
+    height: min(90px, calc(10.5vw + 37.5px));
+  }
+
+  .bonusCard {
+    width: 100%;
+    height: 100%;
+  }
+
+  .bonusCardLabel {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.75rem;
+    top: -25px;
+  }
+
+  .buttonContainer {
+    padding: 0.5rem;
+    margin-top: auto;
+  }
+
+  .playArea {
+    flex: 1;
+    min-height: 0;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .cardWrapper {
+    width: min(60px, calc(7vw + 25px));
+    height: min(90px, calc(10.5vw + 37.5px));
+  }
+
+  .computerCards,
+  .playerCards {
+    width: min(60px, calc(7vw + 25px));
+    height: min(90px, calc(10.5vw + 37.5px));
+  }
+
+  .cardColumn {
+    width: min(60px, calc(7vw + 25px));
+    height: min(90px, calc(10.5vw + 37.5px));
+  }
+  
+  .gameInfo {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+  
+  .timerDisplay,
+  .scoreBoard,
+  .deckInfo {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  .actionButton {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    min-width: 90px;
+  }
+  
+  .scoreValue {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .gameTable {
+    width: 95%;
+    height: 70vh;
+    min-height: 450px;
+    padding: 0.5rem;
+  }
+
+  .bonusCardContainer {
+    width: min(50px, calc(6vw + 20px));
+    height: min(75px, calc(9vw + 30px));
+  }
+
+  .bonusCard {
+    width: 100%;
+    height: 100%;
+  }
+
+  .bonusCardLabel {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    top: -22px;
+  }
+
+  .buttonContainer {
+    padding: 0.25rem;
+    gap: 0.5rem;
+  }
+
+  .playArea {
+    gap: 0.5rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .cardWrapper {
+    width: min(50px, calc(6vw + 20px));
+    height: min(75px, calc(9vw + 30px));
+  }
+
+  .computerCards,
+  .playerCards {
+    width: min(50px, calc(6vw + 20px));
+    height: min(75px, calc(9vw + 30px));
+  }
+
+  .cardColumn {
+    width: min(50px, calc(6vw + 20px));
+    height: min(75px, calc(9vw + 30px));
+  }
+
+  .cardValue {
+    font-size: min(0.9rem, calc(0.7vw + 0.6rem));
+  }
+
+  .cardSuit {
+    font-size: min(1.4rem, calc(1vw + 0.8rem));
+  }
+  
+  .actionButton {
+    padding: 0.4rem 1rem;
+    font-size: 0.8rem;
+    min-width: 80px;
+  }
+  
+  .gameInfo {
+    padding: 0.25rem;
+  }
+  
+  .timerDisplay,
+  .scoreBoard,
+  .deckInfo {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+  }
+  
+  .warDeckContainer {
+    left: 0.5rem;
+  }
+  
+  .warDeck {
+    width: 45px;
+    height: 67.5px;
+  }
+  
+  .warDeckCounter {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.3rem;
+  }
+}
+
+.playerCardsArea {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+  margin-top: 20px;
+}
+
+.cardColumn {
+  position: relative;
+  width: min(70px, calc(8vw + 30px));
+  margin: 0 min(5px, 1vw);
+  height: min(105px, calc(12vw + 45px));
+}
+
+.cardColumn .cardWrapper {
+  position: absolute;
+  left: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(0);
+  will-change: transform, box-shadow;
+}
+
+.cardColumn .cardWrapper:not(.disabled):hover {
+  transform: translateY(min(-7px, -1.5vw));
+  box-shadow: 
+    0 6px 12px rgba(0, 0, 0, 0.2),
+    0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  cursor: pointer;
+}
+
+.cardColumn .cardWrapper.disabled {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Dostosuj wysokości kolumn w zależności od liczby kart */
+.cardColumn[data-cards="5"] {
+  height: min(225px, calc(25vw + 90px)); /* wysokość karty + (4 * przesunięcie) */
+}
+
+.cardColumn[data-cards="4"] {
+  height: min(195px, calc(22vw + 75px)); /* wysokość karty + (3 * przesunięcie) */
+}
+
+.cardColumn[data-cards="3"] {
+  height: min(165px, calc(19vw + 60px)); /* wysokość karty + (2 * przesunięcie) */
+}
+
+.cardColumn[data-cards="2"] {
+  height: min(135px, calc(16vw + 45px)); /* wysokość karty + (1 * przesunięcie) */
+}
+
+.cardColumn[data-cards="1"] {
+  height: min(105px, calc(12vw + 45px)); /* tylko wysokość karty */
+}
+
+.playerCardColumn {
+  position: relative;
+  width: 112px;
+  margin: 0 10px;
+}
+
+.playerCardColumn:nth-child(1),
+.playerCardColumn:nth-child(2) {
+  height: 160px; /* First card 112px + 4 cards * 12px */
+}
+
+.playerCardColumn:nth-child(3) {
+  height: 148px; /* First card 112px + 3 cards * 12px */
+}
+
+.playerCardColumn:nth-child(4) {
+  height: 136px; /* First card 112px + 2 cards * 12px */
+}
+
+.playerCardColumn:nth-child(5) {
+  height: 124px; /* First card 112px + 1 card * 12px */
+}
+
+.playerCardColumn:nth-child(6) {
+  height: 112px; /* Just one card */
+}
+
+.bonusCard .cardWrapper {
+  width: 70px !important;
+  height: 105px !important;
+}
+
+.cardLabel {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.computerCards .cardLabel {
+  color: #ffd700 !important;
+}
+
+.playerCards .cardLabel {
+  color: #ff4444 !important;
+}
+
+.scoreContainer {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pointsAnimationContainer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 200px;
+  pointer-events: none;
+  z-index: 100;
+}
+
+.pointsAnimation {
+  position: absolute;
+  font-weight: bold;
+  font-size: 2em;
+  animation: pointsFadeUp 1s ease-out;
+}
+
+.computerPoints {
+  left: 30%;
+  top: 100px;
+  color: #ffd700; /* złoty kolor dla dealera */
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.playerPoints {
+  right: 30%;
+  top: 100px;
+  color: #ff4444; /* czerwony kolor dla gracza */
+  text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
+}
+
+@keyframes pointsFadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  20% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  80% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+@media (max-width: 768px) {
+  .pointsAnimation {
+    font-size: 1.5em;
+  }
+  
+  .computerPoints {
+    left: 25%;
+  }
+  
+  .playerPoints {
+    right: 25%;
+  }
+}
+
+.extraCardStatus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2em;
+  font-weight: bold;
+  color: gold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: fadeInOut 2s ease-in-out;
+  z-index: 1000;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Style dla talii kart wojennych */
+.warDeckContainer {
+  position: absolute;
+  left: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.warDeck {
+  position: relative;
+  width: 70px;
+  height: 100px;
+}
+
+.warDeckCounter {
+  color: rgb(var(--cream-text));
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 0.3rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+}
+
+@media (max-width: 768px) {
+  .warDeckContainer {
+    left: 1rem;
+  }
+  
+  .warDeck {
+    width: 60px;
+    height: 85px;
+  }
+  
+  .warDeckCounter {
+    font-size: 0.8rem;
+  }
+}
+
+.emptyDeck {
+  opacity: 0.5;
+}
+
+.emptyDeckPlaceholder {
+  width: 100%;
+  height: 100%;
+  border: 2px dashed rgba(var(--cream-text), 0.3);
+  border-radius: 8px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.emptyDeckPlaceholder::after {
+  content: '';
+  width: 40%;
+  height: 40%;
+  border: 2px solid rgba(var(--cream-text), 0.3);
+  border-radius: 4px;
+}
+
+/* Style dla kart w pierwszej rundzie */
+.selectedCards .cardWrapper[style*="zIndex: 1"] {
+  transition: all 0.3s ease;
+}
+
+/* Efekt głębi dla kart w pierwszej rundzie */
+.bonusCardContainer + .selectedCards .cardWrapper[style*="zIndex: 1"] {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 
+    0 12px 20px rgba(0, 0, 0, 0.4),
+    0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 3 !important;
+}
+
+/* Style dla karty bonusowej */
+.bonusCardContainer {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1;
+  width: 70px;
+  height: 105px;
+}
+
+.bonusCardContainer .cardWrapper {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+}
+
+/* Style dla wartości kart */
+.cardValue {
+  font-size: min(1.1rem, calc(0.9vw + 0.7rem));
+  font-weight: 700;
+  text-shadow: 
+    -1px -1px 0 rgba(0, 0, 0, 0.3),
+    1px -1px 0 rgba(0, 0, 0, 0.3),
+    -1px 1px 0 rgba(0, 0, 0, 0.3),
+    1px 1px 0 rgba(0, 0, 0, 0.3),
+    2px 2px 3px rgba(0, 0, 0, 0.5);
+  display: inline-block;
+  font-family: 'Arial', sans-serif;
+  line-height: 1;
+}
+
+.cardSuit {
+  font-size: min(1.8rem, calc(1.3vw + 1rem));
+  align-self: center;
+  text-shadow: 
+    -1px -1px 0 rgba(0, 0, 0, 0.3),
+    1px -1px 0 rgba(0, 0, 0, 0.3),
+    -1px 1px 0 rgba(0, 0, 0, 0.3),
+    1px 1px 0 rgba(0, 0, 0, 0.3),
+    2px 2px 3px rgba(0, 0, 0, 0.5);
+  line-height: 1;
+  margin-top: min(-0.2rem, -0.5vw);
+  margin-bottom: min(-0.2rem, -0.5vw);
+}
+
+.red { 
+  color: #e60000; 
+  text-shadow: 
+    -1px -1px 0 rgba(255, 255, 255, 0.6),
+    1px -1px 0 rgba(255, 255, 255, 0.6),
+    -1px 1px 0 rgba(255, 255, 255, 0.6),
+    1px 1px 0 rgba(255, 255, 255, 0.6),
+    2px 2px 3px rgba(0, 0, 0, 0.4);
+}
+
+.black { 
+  color: #000000; 
+  text-shadow: 
+    -1px -1px 0 rgba(255, 255, 255, 0.6),
+    1px -1px 0 rgba(255, 255, 255, 0.6),
+    -1px 1px 0 rgba(255, 255, 255, 0.6),
+    1px 1px 0 rgba(255, 255, 255, 0.6),
+    2px 2px 3px rgba(0, 0, 0, 0.4);
+}
+
+/* Style dla pustych slotów */
+.emptyCardSlot {
+  width: 70px;
+  height: 105px;
+  border: 2px dashed rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  margin: 0 auto;
+}
+
+/* Podstawowe style dla interfejsu gry */
+.gameInfo {
+  width: 100%;
+  padding: 0.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 8px;
+}
+
+.buttonContainer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  margin: 0;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 8px;
+}
+
+@media (min-width: 1024px) {
+  .gameContainer {
+    height: calc(100vh - 60px);
+    margin: 0 auto;
+    padding: 2rem 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .gameTable {
+    width: 95%;
+    max-width: 900px;
+    height: 90vh;
+    min-height: calc(100vh - 40px);
+    padding: 1.5rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .playArea {
+    flex: 1;
+    margin-bottom: 1rem;
+  }
+
+  .buttonContainer {
+    margin-top: auto;
+    position: relative;
+  }
+}
+
+.parentContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - 60px);
+  width: 100%;
+}
+
+/* Dodajemy breakpoint dla rozdzielczości pomiędzy 769px a 900px */
+@media (min-width: 769px) and (max-width: 900px) {
+  .gameTable {
+    width: 100%;
+    padding: 1rem;
+  }
+  
+  .cardWrapper,
+  .computerCards,
+  .playerCards,
+  .bonusCardContainer,
+  .cardColumn {
+    width: min(60px, calc(6vw + 20px));
+    height: min(90px, calc(9vw + 30px));
+  }
+  
+  .bonusCardContainer .cardWrapper {
+    width: 100% !important;
+    height: 100% !important;
+  }
+  
+  .selectedCards {
+    gap: 0.5rem;
+  }
+  
+  .cardsContainer {
+    grid-template-columns: repeat(auto-fit, minmax(min(60px, calc(6vw + 20px)), 1fr));
+    gap: 0.5rem;
+  }
+  
+  .gameInfo,
+  .buttonContainer {
+    padding: 0.4rem;
+  }
+  
+  .actionButton {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+    min-width: 100px;
+  }
+  
+  .timerDisplay,
+  .scoreBoard {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.9rem;
+  }
+  
+  .warDeckContainer {
+    left: 0.75rem;
+  }
+  
+  .warDeck {
+    width: 55px;
+    height: 82.5px;
+  }
+}
+
+/* Niestandardowy breakpoint dla granicznych wartości, takich jak 771px */
+@media (min-width: 760px) and (max-width: 780px) {
+  .gameTable {
+    width: 100%;
+    padding: 0.8rem;
+  }
+  
+  .cardWrapper,
+  .computerCards,
+  .playerCards,
+  .bonusCardContainer,
+  .cardColumn {
+    width: min(55px, calc(5.5vw + 18px));
+    height: min(82.5px, calc(8.25vw + 27px));
+  }
+
+  .cardsContainer {
+    grid-template-columns: repeat(auto-fit, minmax(min(55px, calc(5.5vw + 18px)), 1fr));
+    gap: 0.4rem;
+  }
+  
+  .selectedCards {
+    gap: 0.4rem;
+  }
+  
+  .actionButton {
+    padding: 0.5rem 1.2rem;
+    font-size: 0.85rem;
+    min-width: 90px;
+  }
+  
+  .warDeckContainer {
+    left: 0.5rem;
+  }
+  
+  .warDeck {
+    width: 50px;
+    height: 75px;
+  }
+  
+  .warDeckCounter {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.4rem;
+  }
+}
+
