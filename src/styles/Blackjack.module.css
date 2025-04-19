@@ -9,7 +9,7 @@
   touch-action: pan-y;
   overflow: hidden;
   max-height: 100vh;
-  padding-bottom: var(--safe-area-padding-bottom);
+  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.33);
 }
 
 .gameTable {
@@ -266,7 +266,7 @@
   }
 
   .cardFace {
-    background: url('/card_front_mobile.png') center center/cover;
+    background: url('/card_front.png') center center/cover;
   }
 }
 
@@ -350,7 +350,7 @@
   margin: 0.5rem auto;
   width: fit-content;
   min-height: 60px;
-  padding-bottom: calc(1rem + var(--safe-area-padding-bottom));
+  padding-bottom: calc(1rem + var(--safe-area-padding-bottom) * 1.33);
 }
 
 .actionButton, .playAgainButton {
@@ -464,7 +464,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding-bottom: calc(20px + var(--safe-area-padding-bottom));
+  padding-bottom: calc(20px + var(--safe-area-padding-bottom) * 1.33);
 }
 
 .backToGamesButton {
@@ -482,7 +482,7 @@
   width: 100%;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin-bottom: var(--safe-area-padding-bottom);
+  margin-bottom: calc(var(--safe-area-padding-bottom) * 1.33);
 }
 
 .backToGamesButton:hover {
@@ -610,7 +610,7 @@
   align-items: center;
   background-color: rgba(0, 0, 0, 0.75);
   z-index: 100;
-  padding-bottom: var(--safe-area-padding-bottom);
+  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.33);
   border-radius: inherit;
   animation: fadeInOverlay 0.3s ease-out forwards;
 }
@@ -636,7 +636,7 @@
   opacity: 0;
   transform: translateY(20px);
   animation: fadeInContent 0.4s ease-out 0.2s forwards;
-  padding-bottom: var(--safe-area-padding-bottom);
+  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.33);
 }
 
 @keyframes fadeInContent {
@@ -736,7 +736,7 @@
     padding-top: calc(56px + env(safe-area-inset-top));
     height: 100vh;
     max-height: -webkit-fill-available;
-    padding-bottom: calc(8px + var(--safe-area-padding-bottom));
+    padding-bottom: calc(8px + var(--safe-area-padding-bottom) * 1.33);
   }
 
   .gameTable {
@@ -760,7 +760,7 @@
   .buttonContainer {
     padding: 0.5rem;
     margin: 0.25rem auto;
-    padding-bottom: calc(0.5rem + var(--safe-area-padding-bottom));
+    padding-bottom: calc(0.5rem + var(--safe-area-padding-bottom) * 1.33);
   }
 
   .cardWrapper {
@@ -875,7 +875,7 @@
     height: 100vh;
     max-height: -webkit-fill-available;
     padding: 12px;
-    padding-bottom: calc(16px + var(--safe-area-padding-bottom));
+    padding-bottom: calc(16px + var(--safe-area-padding-bottom) * 1.33);
   }
 
   .gameTable {
