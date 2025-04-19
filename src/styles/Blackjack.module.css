@@ -21,6 +21,7 @@
   background: url('/Profile_back.png') center center/cover;
   border-radius: 25px;
   padding: 1rem;
+  padding-bottom: calc(1rem + var(--safe-area-padding-bottom) * 1.33);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -464,7 +465,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding-bottom: calc(20px + var(--safe-area-padding-bottom) * 1.33);
+  padding-bottom: calc(1.5rem + var(--safe-area-padding-bottom) * 1.33);
 }
 
 .backToGamesButton {
@@ -636,7 +637,7 @@
   opacity: 0;
   transform: translateY(20px);
   animation: fadeInContent 0.4s ease-out 0.2s forwards;
-  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.33);
+  padding-bottom: calc(20px + var(--safe-area-padding-bottom) * 1.33);
 }
 
 @keyframes fadeInContent {
@@ -741,6 +742,7 @@
 
   .gameTable {
     padding: 0.35rem;
+    padding-bottom: calc(0.35rem + var(--safe-area-padding-bottom) * 1.33);
     border-radius: 8px;
     height: calc(100vh - 16px);
     min-height: auto;
@@ -858,10 +860,15 @@
 
   .gameEndOverlay {
     border-radius: 8px;
+    padding-bottom: calc(var(--safe-area-padding-bottom) * 1.33);
   }
 
   .gameEndContent {
-    padding-bottom: var(--safe-area-padding-bottom);
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom) * 1.33);
+  }
+
+  .betContainer {
+    padding-bottom: calc(1.2rem + var(--safe-area-padding-bottom) * 1.33);
   }
 
   .backToGamesButton {
@@ -881,6 +888,7 @@
   .gameTable {
     height: calc(100vh - 24px);
     min-height: auto;
+    padding-bottom: calc(1rem + var(--safe-area-padding-bottom) * 1.33);
   }
 
   .cardWrapper {
@@ -907,6 +915,18 @@
     min-width: 50px;
     min-height: 50px;
     font-size: calc(0.6vw + 0.8rem);
+  }
+
+  .buttonContainer {
+    padding-bottom: calc(0.75rem + var(--safe-area-padding-bottom) * 1.33);
+  }
+
+  .gameEndContent {
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom));
+  }
+
+  .betContainer {
+    padding-bottom: calc(1.5rem + var(--safe-area-padding-bottom));
   }
 }
 
