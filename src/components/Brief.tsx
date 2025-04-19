@@ -249,6 +249,18 @@ export function Brief() {
   const messagesContainerId = 'messages-container';
   const inputId = 'chat-input';
 
+  // Add CSS variable for safe area inset
+  React.useEffect(() => {
+    function updateSafeAreaInsets() {
+      const safeAreaInsetBottom = window.getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0px';
+      document.documentElement.style.setProperty('--safe-area-inset-bottom', safeAreaInsetBottom);
+    }
+    
+    updateSafeAreaInsets();
+    window.addEventListener('resize', updateSafeAreaInsets);
+    return () => window.removeEventListener('resize', updateSafeAreaInsets);
+  }, []);
+
   // Add new state for NEAR to CRANS swap process
   const [swapState, setSwapState] = React.useState<SwapState>({
     currentStep: 'check storage',
@@ -411,7 +423,8 @@ export function Brief() {
                 methodName: 'storage_deposit',
                 args: {},
                 gas: '30000000000000',
-                deposit: '1250000000000000000000'
+                deposit: '1250000000000000000000',
+                callbackUrl: window.location.href
               });
 
               if (!result?.transaction_outcome?.id) {
@@ -453,7 +466,8 @@ export function Brief() {
                 methodName: 'storage_deposit',
                 args: {},
                 gas: '30000000000000',
-                deposit: '1250000000000000000000'
+                deposit: '1250000000000000000000',
+                callbackUrl: window.location.href
               });
 
               // Check if transaction was successful
@@ -509,7 +523,8 @@ export function Brief() {
               methodName: 'near_deposit',
               args: {},
               gas: '50000000000000',
-              deposit: swapState.amount
+              deposit: swapState.amount,
+              callbackUrl: window.location.href
             });
 
             // Check if transaction was successful by verifying the transaction outcome
@@ -564,7 +579,8 @@ export function Brief() {
                 msg: prepareSwapMsg(swapState.amount, true, swapState.minAmountOut)
               },
               gas: '180000000000000',
-              deposit: '1'
+              deposit: '1',
+              callbackUrl: window.location.href
             });
 
             // Check if transaction was successful
@@ -638,7 +654,8 @@ export function Brief() {
                 msg: prepareSwapMsg(swapState.amount, false, swapState.minAmountOut)
               },
               gas: '180000000000000',
-              deposit: '1'
+              deposit: '1',
+              callbackUrl: window.location.href
             });
 
             if (result?.transaction_outcome?.id) {
@@ -677,7 +694,8 @@ export function Brief() {
                 amount: swapState.expectedReturn
               },
               gas: '50000000000000',
-              deposit: '1'
+              deposit: '1',
+              callbackUrl: window.location.href
             });
 
             if (result?.transaction_outcome?.id) {
