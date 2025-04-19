@@ -265,7 +265,7 @@
   }
 
   .cardFace {
-    background: url('/card_front_mobile.png') center center/cover;
+    background: url('/card_front.png') center center/cover;
   }
 }
 
