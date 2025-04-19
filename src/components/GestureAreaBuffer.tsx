@@ -27,7 +27,7 @@ export const GestureAreaBuffer: React.FC = () => {
   return (
     <div 
       style={{
-        height: 'var(--safe-area-padding-bottom)',
+        height: 'calc(var(--safe-area-padding-bottom) * 1.33)',
         width: '100%',
         position: 'fixed',
         bottom: 0,
