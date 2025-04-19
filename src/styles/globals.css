@@ -49,9 +49,9 @@
   --vh: 1vh;
   --safe-area-inset-top: env(safe-area-inset-top, 0px);
   --safe-area-inset-right: env(safe-area-inset-right, 0px);
-  --safe-area-inset-bottom: env(safe-area-inset-bottom, 20px);
+  --safe-area-inset-bottom: env(safe-area-inset-bottom, 27px);
   --safe-area-inset-left: env(safe-area-inset-left, 0px);
-  --safe-area-padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+  --safe-area-padding-bottom: max(27px, env(safe-area-inset-bottom, 27px));
 
   /* Gradients */
   --primary-glow: conic-gradient(
@@ -539,6 +539,30 @@ main {
 /* Dodajmy paddingową strefę buforową na dole ekranu */
 .gesture-area-buffer {
   height: var(--safe-area-padding-bottom);
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* Zwiększony padding bottom dla dolnych elementów interfejsu */
+.extra-bottom-padding {
+  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.33) !important;
+}
+
+/* Zapewnijmy, że komponenty aplikacji również uwzględniają ten padding */
+#__next, 
+.app-container,
+main {
+  padding-bottom: var(--safe-area-padding-bottom);
+}
+
+/* Zmodyfikujmy strefę buforową na dole ekranu */
+.gesture-area-buffer {
+  height: calc(var(--safe-area-padding-bottom) * 1.33);
   width: 100%;
   position: fixed;
   bottom: 0;
