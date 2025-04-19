@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import styles from '../styles/WarGame.module.css';
+import BettingScreen from './BettingScreen';
 
 // Typy dla komponentu Card
 type Suit = 'hearts' | 'diamonds' | 'clubs' | 'spades' | 'joker';
@@ -648,39 +649,15 @@ const Card: React.FC<CardProps> = ({
   );
 };
 
-// Dodaj tymczasowy komponent SimpleBettingScreen
-const SimpleBettingScreen: React.FC<{
-  balance: number;
-  currentBet: number;
-  onChipClick: (amount: number) => void;
-  onPlaceBet: () => void;
-  onBack: () => void;
-}> = ({
-  balance,
-  currentBet,
-  onChipClick,
-  onPlaceBet,
-  onBack
-}) => {
-  return (
-    <div className={styles.betContainer}>
-      <div>Balance: {balance}</div>
-      <div>Current Bet: {currentBet}</div>
-      <button onClick={() => onChipClick(100)}>Bet 100</button>
-      <button onClick={onPlaceBet}>Place Bet</button>
-      <button onClick={onBack}>Back</button>
-    </div>
-  );
-};
-
 // Komponent główny gry
 export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
-  const {
-    playerCards,
-    computerCards,
+  const warContext = useWar();
+  const { 
+    playerCards, 
+    computerCards, 
     deckCards,
     selectedPlayerCard,
-    selectedComputerCard,
+    selectedComputerCard, 
     warPlayerCards,
     warComputerCards,
     warRound,
@@ -688,6 +665,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
     isFirstRound,
     playerScore,
     computerScore,
+    gameStatus,
     isGameStarted,
     isRoundActive,
     isWarActive,
@@ -696,6 +674,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
     roundWinner,
     timeLeft,
     isGameComplete,
+    roundsPlayed,
     balance,
     currentBet,
     showBetUI,
@@ -710,8 +689,26 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
     setIsGameComplete,
     setIsGameStarted,
     pointsAnimation,
-    showExtraCardAnimation,
-  } = useWar();
+    showExtraCardAnimation
+  } = warContext;
+
+  // Efekt dla dostosowania wysokości viewportu na urządzeniach mobilnych
+  useEffect(() => {
+    const handleResize = () => {
+      // Dostosowanie wysokości do rzeczywistej wysokości viewportu
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
+  }, []);
 
   const remainingPlayerCards = playerCards.filter(card => card !== null).length;
   const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
@@ -736,7 +733,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
   return (
     <div className={styles.gameContainer}>
       {showBetUI ? (
-        <SimpleBettingScreen
+        <BettingScreen
           balance={balance}
           currentBet={currentBet}
           onChipClick={handleChipClick}
@@ -786,8 +783,8 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                           className={styles.cardWrapper}
                           style={{
                             position: 'absolute',
-                            top: `${index * 2}px`,
-                            left: `${index * 2}px`,
+                            top: `min(${index * 2}px, ${index * 0.5}vw)`,
+                            left: `min(${index * 2}px, ${index * 0.5}vw)`,
                             zIndex: index
                           }}
                         />
@@ -808,7 +805,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                   </>
                 )}
               </div>
-              {bonusCard && isFirstRound && !isMobile && (
+              {bonusCard && isFirstRound && (
                 <div className={styles.bonusCardContainer}>
                   <Card 
                     suit={bonusCard.suit}
@@ -856,7 +853,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                       className={styles.cardWrapper}
                       style={{ 
                         position: 'absolute',
-                        top: `${(index + 1) * 30}px`,
+                        top: `min(${(index + 1) * 30}px, ${(index + 1) * 5}vw)`,
                         zIndex: 2
                       }}
                     />
@@ -892,7 +889,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                       className={styles.cardWrapper}
                       style={{ 
                         position: 'absolute',
-                        top: `${(index + 1) * 30}px`,
+                        top: `min(${(index + 1) * 30}px, ${(index + 1) * 5}vw)`,
                         zIndex: 2
                       }}
                     />
@@ -937,7 +934,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                         className={`${styles.playerCard} ${isRoundActive ? styles.disabled : ''}`}
                         style={{ 
                           position: 'absolute',
-                          top: `${cardIndex * 30}px`
+                          top: `min(${cardIndex * 30}px, ${cardIndex * 5}vw)`
                         }}
                       />
                     );
