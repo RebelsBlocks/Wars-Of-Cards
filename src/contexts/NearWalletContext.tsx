@@ -84,7 +84,9 @@ const isUserCancellation = (error: any): boolean => {
     errorMessage.includes('user closed') ||
     errorMessage.includes('failed to initialize') ||
     errorMessage.includes('canceled') ||
-    errorMessage.includes('cancelled the action')
+    errorMessage.includes('cancelled the action') ||
+    errorMessage.includes('couldn\'t open popup window') ||
+    errorMessage.includes('popup window failed')
   );
 };
 
