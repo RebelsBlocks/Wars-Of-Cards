@@ -146,7 +146,7 @@
   .briefContainer {
     padding: 20px;
     padding-top: calc(56px + 20px);
-    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom));
     min-height: calc(100vh - 56px);
     max-height: none;
     overflow-y: visible;
@@ -155,7 +155,7 @@
   .briefList {
     grid-template-columns: 1fr;
     gap: 20px;
-    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(60px + var(--safe-area-padding-bottom));
   }
 
   .section {
@@ -163,7 +163,7 @@
   }
 
   .section:last-child {
-    margin-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
+    margin-bottom: calc(60px + var(--safe-area-padding-bottom));
   }
 
   .section h1 {
@@ -181,11 +181,12 @@
   .briefContainer {
     padding: 16px;
     padding-top: calc(56px + 16px);
+    padding-bottom: calc(16px + var(--safe-area-padding-bottom));
   }
 
   .briefList {
     gap: 16px;
-    padding-bottom: calc(env(safe-area-inset-bottom) + 50px);
+    padding-bottom: calc(50px + var(--safe-area-padding-bottom));
   }
 
   .section {
@@ -193,7 +194,7 @@
   }
 
   .section:last-child {
-    margin-bottom: 50px;
+    margin-bottom: calc(50px + var(--safe-area-padding-bottom));
   }
 
   .section h1 {
@@ -362,7 +363,7 @@
   position: relative;
   transform-style: preserve-3d;
   perspective: 1000px;
-  padding-bottom: calc(clamp(8px, 1.5vw, 12px) + env(safe-area-inset-bottom, 0px));
+  padding-bottom: calc(clamp(8px, 1.5vw, 12px) + var(--safe-area-padding-bottom));
 }
 
 .inputContainer::before {
@@ -438,7 +439,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(100vh - 56px - env(safe-area-inset-bottom, 0px));
+    height: calc(100vh - 56px - var(--safe-area-padding-bottom));
   }
 
   .messagesContainer,
@@ -479,12 +480,12 @@
   }
 
   .messagesContainer {
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-bottom: var(--safe-area-padding-bottom);
   }
 
   .inputContainer {
     max-width: 100%; /* Full width on mobile */
-    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(8px + var(--safe-area-padding-bottom));
   }
 }
 
@@ -495,7 +496,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(100vh - 64px - env(safe-area-inset-bottom, 0px));
+    height: calc(100vh - 64px - var(--safe-area-padding-bottom));
   }
 
   .messagesContainer,
@@ -509,7 +510,7 @@
   }
 
   .inputContainer {
-    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(12px + var(--safe-area-padding-bottom));
   }
 }
 
