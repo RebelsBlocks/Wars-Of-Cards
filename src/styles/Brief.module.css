@@ -146,7 +146,7 @@
   .briefContainer {
     padding: 20px;
     padding-top: calc(56px + 20px);
-    padding-bottom: calc(20px + var(--safe-area-padding-bottom));
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom) * 1.33);
     min-height: calc(100vh - 56px);
     max-height: none;
     overflow-y: visible;
@@ -155,7 +155,7 @@
   .briefList {
     grid-template-columns: 1fr;
     gap: 20px;
-    padding-bottom: calc(60px + var(--safe-area-padding-bottom));
+    padding-bottom: calc(60px + var(--safe-area-padding-bottom) * 1.33);
   }
 
   .section {
@@ -163,7 +163,7 @@
   }
 
   .section:last-child {
-    margin-bottom: calc(60px + var(--safe-area-padding-bottom));
+    margin-bottom: calc(60px + var(--safe-area-padding-bottom) * 1.33);
   }
 
   .section h1 {
@@ -181,12 +181,12 @@
   .briefContainer {
     padding: 16px;
     padding-top: calc(56px + 16px);
-    padding-bottom: calc(16px + var(--safe-area-padding-bottom));
+    padding-bottom: calc(16px + var(--safe-area-padding-bottom) * 1.33);
   }
 
   .briefList {
     gap: 16px;
-    padding-bottom: calc(50px + var(--safe-area-padding-bottom));
+    padding-bottom: calc(50px + var(--safe-area-padding-bottom) * 1.33);
   }
 
   .section {
@@ -194,7 +194,7 @@
   }
 
   .section:last-child {
-    margin-bottom: calc(50px + var(--safe-area-padding-bottom));
+    margin-bottom: calc(50px + var(--safe-area-padding-bottom) * 1.33);
   }
 
   .section h1 {
@@ -214,6 +214,11 @@
   .section ul li {
     padding-left: 20px;
     margin: 10px 0;
+  }
+
+  .inputContainer {
+    max-width: 100%; /* Full width on mobile */
+    padding-bottom: calc(8px + var(--safe-area-padding-bottom) * 1.33);
   }
 }
 
@@ -363,7 +368,7 @@
   position: relative;
   transform-style: preserve-3d;
   perspective: 1000px;
-  padding-bottom: calc(clamp(8px, 1.5vw, 12px) + var(--safe-area-padding-bottom));
+  padding-bottom: calc(clamp(8px, 1.5vw, 12px) + var(--safe-area-padding-bottom) * 1.33);
 }
 
 .inputContainer::before {
@@ -510,7 +515,7 @@
   }
 
   .inputContainer {
-    padding-bottom: calc(12px + var(--safe-area-padding-bottom));
+    padding-bottom: calc(12px + var(--safe-area-padding-bottom) * 1.33);
   }
 }
 
