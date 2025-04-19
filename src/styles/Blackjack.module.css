@@ -9,6 +9,7 @@
   touch-action: pan-y;
   overflow: hidden;
   max-height: 100vh;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .gameTable {
@@ -265,7 +266,7 @@
   }
 
   .cardFace {
-    background: url('/card_front.png') center center/cover;
+    background: url('/card_front_mobile.png') center center/cover;
   }
 }
 
@@ -462,6 +463,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
+  padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
 }
 
 .backToGamesButton {
@@ -479,6 +481,7 @@
   width: 100%;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .backToGamesButton:hover {
@@ -604,8 +607,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0);
-  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.75);
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
   border-radius: inherit;
   animation: fadeInOverlay 0.3s ease-out forwards;
 }
@@ -631,6 +635,7 @@
   opacity: 0;
   transform: translateY(20px);
   animation: fadeInContent 0.4s ease-out 0.2s forwards;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 @keyframes fadeInContent {
@@ -730,6 +735,7 @@
     padding-top: calc(56px + env(safe-area-inset-top));
     height: 100vh;
     max-height: -webkit-fill-available;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
   }
 
   .gameTable {
@@ -753,6 +759,7 @@
   .buttonContainer {
     padding: 0.5rem;
     margin: 0.25rem auto;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .cardWrapper {
@@ -851,6 +858,14 @@
   .gameEndOverlay {
     border-radius: 8px;
   }
+
+  .gameEndContent {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .backToGamesButton {
+    margin-bottom: env(safe-area-inset-bottom, 0px);
+  }
 }
 
 /* Dodanie breakpointu dla tabletów */
@@ -859,6 +874,7 @@
     height: 100vh;
     max-height: -webkit-fill-available;
     padding: 12px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   }
 
   .gameTable {
