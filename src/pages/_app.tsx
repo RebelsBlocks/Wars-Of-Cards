@@ -13,6 +13,11 @@ const NearWalletProvider = dynamic(
   { ssr: false }
 );
 
+const GestureAreaBuffer = dynamic(
+  () => import('@/components/GestureAreaBuffer').then(mod => mod.GestureAreaBuffer),
+  { ssr: false }
+);
+
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: React.ReactElement) => React.ReactNode;
 };
@@ -35,7 +40,8 @@ function App({ Component, pageProps }: AppPropsWithLayout): React.ReactElement {
           content: 'width=device-width, initial-scale=1, viewport-fit=cover'
         })
       ),
-      React.createElement(Component, pageProps)
+      React.createElement(Component, pageProps),
+      React.createElement(GestureAreaBuffer, null)
     )
   );
 }
