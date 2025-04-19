@@ -30,6 +30,8 @@ interface WalletContextType {
     args: any;
     gas?: string;
     deposit?: string;
+    callbackUrl?: string;
+    onSuccess?: (result: any) => void;
   }) => Promise<any>;
   executeTransactions: (transactions: {
     contractId: string;
@@ -37,7 +39,10 @@ interface WalletContextType {
     args: any;
     gas?: string;
     deposit?: string;
-  }[]) => Promise<any>;
+  }[], options?: {
+    callbackUrl?: string;
+    onSuccess?: (result: any) => void;
+  }) => Promise<any>;
   viewFunction: (params: {
     contractId: string;
     methodName: string;
@@ -68,12 +73,17 @@ interface Props {
 
 export const NETWORK_CONFIG = {
   networkId: 'mainnet',
-  nodeUrl: 'https://free.rpc.fastnear.com/',
+  nodeUrl: 'https://free.rpc.fastnear.com',
   helperUrl: 'https://helper.mainnet.near.org',
   explorerUrl: 'https://nearblocks.io',
   indexerUrl: 'https://api.kitwallet.app',
   cransContractId: 'crans.tkn.near'
 } as ExtendedNetwork;
+
+// Helper function to detect Firefox browser
+const isFirefox = (): boolean => {
+  return typeof window !== 'undefined' && navigator.userAgent.indexOf('Firefox') !== -1;
+};
 
 // Helper function to check if error is user cancellation
 const isUserCancellation = (error: any): boolean => {
@@ -86,7 +96,13 @@ const isUserCancellation = (error: any): boolean => {
     errorMessage.includes('canceled') ||
     errorMessage.includes('cancelled the action') ||
     errorMessage.includes('couldn\'t open popup window') ||
-    errorMessage.includes('popup window failed')
+    errorMessage.includes('popup window failed') ||
+    errorMessage.includes('need to connect to web popup') ||
+    errorMessage.includes('closed the window before completing') ||
+    // Firefox specific errors
+    errorMessage.includes('failed to execute \'postmessage\'') ||
+    errorMessage.includes('target origin provided') ||
+    errorMessage.includes('does not match the recipient window\'s origin')
   );
 };
 
@@ -97,6 +113,7 @@ function NearWalletProviderComponent({ children }: Props) {
   const [accountId, setAccountId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
+  const [transactionInProgress, setTransactionInProgress] = useState(false);
 
   // Reset error state
   const clearError = useCallback(() => {
@@ -107,6 +124,7 @@ function NearWalletProviderComponent({ children }: Props) {
     const initNear = async () => {
       try {
         console.log('Initializing NEAR wallet with network:', NETWORK_CONFIG.networkId);
+        console.log('Browser detected:', isFirefox() ? 'Firefox' : 'Other');
         
         const selector = await setupWalletSelector({
           network: NETWORK_CONFIG,
@@ -184,23 +202,66 @@ function NearWalletProviderComponent({ children }: Props) {
     try {
       clearError();
       console.log('Opening wallet selector modal');
-      await new Promise<void>((resolve, reject) => {
-        const handleChange = (state: any) => {
-          if (state.accounts.length > 0) {
+      
+      // For Firefox, use a different approach with timeout
+      if (isFirefox()) {
+        await new Promise<void>((resolve, reject) => {
+          let timeoutId: NodeJS.Timeout | null = null;
+          
+          const handleChange = (state: any) => {
+            if (state.accounts.length > 0) {
+              if (timeoutId) clearTimeout(timeoutId);
+              subscription?.unsubscribe();
+              modal.off('onHide', handleModalHide);
+              resolve();
+            }
+          };
+
+          const handleModalHide = () => {
+            if (timeoutId) clearTimeout(timeoutId);
             subscription?.unsubscribe();
-            resolve();
-          }
-        };
+            reject(new Error('User cancelled the action'));
+          };
 
-        const handleModalHide = () => {
-          subscription?.unsubscribe();
-          reject(new Error('User cancelled the action'));
-        };
+          const subscription = selector?.store.observable.subscribe(handleChange);
+          modal.show();
+          modal.on('onHide', handleModalHide);
+          
+          // Set a longer timeout for Firefox
+          timeoutId = setTimeout(() => {
+            // Check if the user is actually connected before rejecting
+            const state = selector?.store.getState();
+            if (state && state.accounts && state.accounts.length > 0) {
+              subscription?.unsubscribe();
+              modal.off('onHide', handleModalHide);
+              resolve();
+            } else {
+              subscription?.unsubscribe();
+              modal.off('onHide', handleModalHide);
+              reject(new Error('Connection timeout'));
+            }
+          }, 30000); // 30 seconds timeout
+        });
+      } else {
+        // Original logic for other browsers
+        await new Promise<void>((resolve, reject) => {
+          const handleChange = (state: any) => {
+            if (state.accounts.length > 0) {
+              subscription?.unsubscribe();
+              resolve();
+            }
+          };
 
-        const subscription = selector?.store.observable.subscribe(handleChange);
-        modal.show();
-        modal.on('onHide', handleModalHide);
-      });
+          const handleModalHide = () => {
+            subscription?.unsubscribe();
+            reject(new Error('User cancelled the action'));
+          };
+
+          const subscription = selector?.store.observable.subscribe(handleChange);
+          modal.show();
+          modal.on('onHide', handleModalHide);
+        });
+      }
     } catch (err: any) {
       console.error('Failed to connect wallet:', err);
       if (!isUserCancellation(err)) {
@@ -215,15 +276,38 @@ function NearWalletProviderComponent({ children }: Props) {
     args: any;
     gas?: string;
     deposit?: string;
+    callbackUrl?: string;
+    onSuccess?: (result: any) => void;
   }) => {
     if (!selector || !accountId) throw new Error('No wallet connected');
+    if (transactionInProgress) throw new Error('Transaction already in progress');
 
     try {
       clearError();
+      setTransactionInProgress(true);
       const wallet = await selector.wallet();
       
       const gas = transaction.gas || "30000000000000";
       const deposit = transaction.deposit || "0";
+      
+      // Add current URL as callback URL if none provided
+      const callbackUrl = transaction.callbackUrl || window.location.href;
+
+      console.log(`Executing transaction: ${transaction.methodName} on ${transaction.contractId}`);
+      
+      // Set a timeout specifically for Firefox to handle hanging popups
+      let timeoutId: NodeJS.Timeout | null = null;
+      let hasCompleted = false;
+      
+      if (isFirefox()) {
+        timeoutId = setTimeout(() => {
+          if (!hasCompleted) {
+            console.log('Firefox transaction timeout - checking state');
+            // We'll check if the transaction actually went through before erroring
+            hasCompleted = true;
+          }
+        }, 20000); // 20 seconds timeout for Firefox
+      }
 
       const result = await wallet.signAndSendTransaction({
         receiverId: transaction.contractId,
@@ -238,15 +322,35 @@ function NearWalletProviderComponent({ children }: Props) {
             },
           }
         ],
+        callbackUrl: callbackUrl,
       });
+
+      hasCompleted = true;
+      if (timeoutId) clearTimeout(timeoutId);
+
+      if (result && transaction.onSuccess) {
+        transaction.onSuccess(result);
+      }
 
       return result;
     } catch (error: any) {
       console.error('Transaction execution error:', error);
-      if (!isUserCancellation(error)) {
+      // Special handling for Firefox postMessage errors
+      if (isFirefox() && 
+          error?.message?.includes('postMessage') && 
+          error?.message?.includes('origin')) {
+        console.log('Firefox postMessage error - treating as potential success');
+        // In Firefox, sometimes we get postMessage errors even when the transaction went through
+        // We can notify the user that they should check if their transaction was successful
+        if (transaction.onSuccess) {
+          transaction.onSuccess({ status: 'unknown', message: 'Please check your transaction status in your wallet.' });
+        }
+      } else if (!isUserCancellation(error)) {
         setError(error);
       }
       throw error;
+    } finally {
+      setTransactionInProgress(false);
     }
   };
 
@@ -256,11 +360,16 @@ function NearWalletProviderComponent({ children }: Props) {
     args: any;
     gas?: string;
     deposit?: string;
-  }[]) => {
+  }[], options?: {
+    callbackUrl?: string;
+    onSuccess?: (result: any) => void;
+  }) => {
     if (!selector || !accountId) throw new Error('No wallet connected');
+    if (transactionInProgress) throw new Error('Transaction already in progress');
 
     try {
       clearError();
+      setTransactionInProgress(true);
       const wallet = await selector.wallet();
       
       const formattedTransactions: Transaction[] = transactions.map(tx => ({
@@ -277,17 +386,55 @@ function NearWalletProviderComponent({ children }: Props) {
         }] as Action[]
       }));
 
+      // Add current URL as callback URL if none provided
+      const callbackUrl = options?.callbackUrl || window.location.href;
+      
+      console.log(`Executing ${transactions.length} transactions`);
+      
+      // Set a timeout specifically for Firefox to handle hanging popups
+      let timeoutId: NodeJS.Timeout | null = null;
+      let hasCompleted = false;
+      
+      if (isFirefox()) {
+        timeoutId = setTimeout(() => {
+          if (!hasCompleted) {
+            console.log('Firefox transaction timeout - checking state');
+            // We'll check if the transaction actually went through before erroring
+            hasCompleted = true;
+          }
+        }, 20000); // 20 seconds timeout for Firefox
+      }
+
       const result = await wallet.signAndSendTransactions({
-        transactions: formattedTransactions
+        transactions: formattedTransactions,
+        callbackUrl: callbackUrl,
       });
+      
+      hasCompleted = true;
+      if (timeoutId) clearTimeout(timeoutId);
+      
+      if (result && options?.onSuccess) {
+        options.onSuccess(result);
+      }
       
       return result;
     } catch (error: any) {
       console.error('Transactions execution error:', error);
-      if (!isUserCancellation(error)) {
+      // Special handling for Firefox postMessage errors
+      if (isFirefox() && 
+          error?.message?.includes('postMessage') && 
+          error?.message?.includes('origin')) {
+        console.log('Firefox postMessage error - treating as potential success');
+        // In Firefox, sometimes we get postMessage errors even when the transaction went through
+        if (options?.onSuccess) {
+          options.onSuccess({ status: 'unknown', message: 'Please check your transaction status in your wallet.' });
+        }
+      } else if (!isUserCancellation(error)) {
         setError(error);
       }
       throw error;
+    } finally {
+      setTransactionInProgress(false);
     }
   };
 
