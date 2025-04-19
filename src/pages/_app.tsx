@@ -29,7 +29,11 @@ function App({ Component, pageProps }: AppPropsWithLayout): React.ReactElement {
       'div',
       null,
       React.createElement(Head, null,
-        React.createElement('link', { rel: 'icon', href: '/logo_transparent.png' })
+        React.createElement('link', { rel: 'icon', href: '/logo_transparent.png' }),
+        React.createElement('meta', { 
+          name: 'viewport', 
+          content: 'width=device-width, initial-scale=1, viewport-fit=cover'
+        })
       ),
       React.createElement(Component, pageProps)
     )
