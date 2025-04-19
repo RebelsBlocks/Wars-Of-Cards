@@ -98,6 +98,36 @@ const HomePage: NextPage = () => {
   }
 
   if (wallet.error) {
+    // Check if it's a popup window error - if so, try to render the app anyway
+    if (wallet.error.message?.toLowerCase().includes('popup window') || 
+        wallet.error.message?.toLowerCase().includes('failed to initialize')) {
+      console.warn('Non-critical wallet error encountered:', wallet.error.message);
+      return (
+        <div style={{ 
+          backgroundColor: 'rgb(var(--felt-green))',
+          backgroundImage: `
+            var(--table-texture),
+            linear-gradient(
+              to bottom,
+              rgb(var(--background-start-rgb)),
+              rgb(var(--background-end-rgb))
+            )
+          `,
+          minHeight: '100vh',
+          width: '100vw',
+          margin: 0,
+          padding: 0,
+          color: 'rgb(var(--cream-text))',
+          border: 'none',
+          boxSizing: 'border-box',
+          overflow: 'hidden'
+        }}>
+          <AppController />
+        </div>
+      );
+    }
+    
+    // For other critical errors, show the error page
     return (
       <div style={{ 
         backgroundColor: 'rgb(var(--felt-green))',
