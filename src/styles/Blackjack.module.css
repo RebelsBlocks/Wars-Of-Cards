@@ -9,7 +9,7 @@
   touch-action: pan-y;
   overflow: hidden;
   max-height: 100vh;
-  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.33);
+  padding-bottom: calc(var(--safe-area-padding-bottom) * 2);
 }
 
 .gameTable {
@@ -21,7 +21,7 @@
   background: url('/Profile_back.png') center center/cover;
   border-radius: 25px;
   padding: 1rem;
-  padding-bottom: calc(1rem + var(--safe-area-padding-bottom) * 1.33);
+  padding-bottom: calc(1rem + var(--safe-area-padding-bottom) * 2);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -351,7 +351,7 @@
   margin: 0.5rem auto;
   width: fit-content;
   min-height: 60px;
-  padding-bottom: calc(1rem + var(--safe-area-padding-bottom) * 1.33);
+  padding-bottom: calc(1rem + var(--safe-area-padding-bottom) * 2);
 }
 
 .actionButton, .playAgainButton {
@@ -465,7 +465,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding-bottom: calc(1.5rem + var(--safe-area-padding-bottom) * 1.33);
+  padding-bottom: calc(1.5rem + var(--safe-area-padding-bottom) * 2);
 }
 
 .backToGamesButton {
@@ -483,7 +483,7 @@
   width: 100%;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin-bottom: calc(var(--safe-area-padding-bottom) * 1.33);
+  margin-bottom: calc(var(--safe-area-padding-bottom) * 2);
 }
 
 .backToGamesButton:hover {
@@ -611,7 +611,7 @@
   align-items: center;
   background-color: rgba(0, 0, 0, 0.75);
   z-index: 100;
-  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.33);
+  padding-bottom: calc(var(--safe-area-padding-bottom) * 2);
   border-radius: inherit;
   animation: fadeInOverlay 0.3s ease-out forwards;
 }
@@ -637,7 +637,7 @@
   opacity: 0;
   transform: translateY(20px);
   animation: fadeInContent 0.4s ease-out 0.2s forwards;
-  padding-bottom: calc(20px + var(--safe-area-padding-bottom) * 1.33);
+  padding-bottom: calc(20px + var(--safe-area-padding-bottom) * 2);
 }
 
 @keyframes fadeInContent {
@@ -737,12 +737,12 @@
     padding-top: calc(56px + env(safe-area-inset-top));
     height: 100vh;
     max-height: -webkit-fill-available;
-    padding-bottom: calc(8px + var(--safe-area-padding-bottom) * 1.33);
+    padding-bottom: calc(8px + var(--safe-area-padding-bottom) * 2);
   }
 
   .gameTable {
     padding: 0.35rem;
-    padding-bottom: calc(0.35rem + var(--safe-area-padding-bottom) * 1.33);
+    padding-bottom: calc(0.35rem + var(--safe-area-padding-bottom) * 2);
     border-radius: 8px;
     height: calc(100vh - 16px);
     min-height: auto;
@@ -762,7 +762,7 @@
   .buttonContainer {
     padding: 0.5rem;
     margin: 0.25rem auto;
-    padding-bottom: calc(0.5rem + var(--safe-area-padding-bottom) * 1.33);
+    padding-bottom: calc(0.5rem + var(--safe-area-padding-bottom) * 2);
   }
 
   .cardWrapper {
@@ -860,19 +860,19 @@
 
   .gameEndOverlay {
     border-radius: 8px;
-    padding-bottom: calc(var(--safe-area-padding-bottom) * 1.33);
+    padding-bottom: calc(var(--safe-area-padding-bottom) * 2);
   }
 
   .gameEndContent {
-    padding-bottom: calc(20px + var(--safe-area-padding-bottom) * 1.33);
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom) * 2);
   }
 
   .betContainer {
-    padding-bottom: calc(1.2rem + var(--safe-area-padding-bottom) * 1.33);
+    padding-bottom: calc(1.2rem + var(--safe-area-padding-bottom) * 2);
   }
 
   .backToGamesButton {
-    margin-bottom: var(--safe-area-padding-bottom);
+    margin-bottom: calc(var(--safe-area-padding-bottom) * 1.5);
   }
 }
 
@@ -882,13 +882,13 @@
     height: 100vh;
     max-height: -webkit-fill-available;
     padding: 12px;
-    padding-bottom: calc(16px + var(--safe-area-padding-bottom) * 1.33);
+    padding-bottom: calc(16px + var(--safe-area-padding-bottom) * 2);
   }
 
   .gameTable {
     height: calc(100vh - 24px);
     min-height: auto;
-    padding-bottom: calc(1rem + var(--safe-area-padding-bottom) * 1.33);
+    padding-bottom: calc(1rem + var(--safe-area-padding-bottom) * 2);
   }
 
   .cardWrapper {
@@ -918,15 +918,15 @@
   }
 
   .buttonContainer {
-    padding-bottom: calc(0.75rem + var(--safe-area-padding-bottom) * 1.33);
+    padding-bottom: calc(0.75rem + var(--safe-area-padding-bottom) * 2);
   }
 
   .gameEndContent {
-    padding-bottom: calc(20px + var(--safe-area-padding-bottom));
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom) * 1.5);
   }
 
   .betContainer {
-    padding-bottom: calc(1.5rem + var(--safe-area-padding-bottom));
+    padding-bottom: calc(1.5rem + var(--safe-area-padding-bottom) * 1.5);
   }
 }
 
