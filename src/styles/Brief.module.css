@@ -146,6 +146,7 @@
   .briefContainer {
     padding: 20px;
     padding-top: calc(56px + 20px);
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
     min-height: calc(100vh - 56px);
     max-height: none;
     overflow-y: visible;
@@ -154,7 +155,7 @@
   .briefList {
     grid-template-columns: 1fr;
     gap: 20px;
-    padding-bottom: calc(env(safe-area-inset-bottom) + 60px);
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
   }
 
   .section {
@@ -162,7 +163,7 @@
   }
 
   .section:last-child {
-    margin-bottom: 60px;
+    margin-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
   }
 
   .section h1 {
@@ -361,6 +362,7 @@
   position: relative;
   transform-style: preserve-3d;
   perspective: 1000px;
+  padding-bottom: calc(clamp(8px, 1.5vw, 12px) + env(safe-area-inset-bottom, 0px));
 }
 
 .inputContainer::before {
@@ -436,7 +438,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(100vh - 56px);
+    height: calc(100vh - 56px - env(safe-area-inset-bottom, 0px));
   }
 
   .messagesContainer,
@@ -475,6 +477,15 @@
     padding: 6px 10px;
     font-size: 0.8rem;
   }
+
+  .messagesContainer {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .inputContainer {
+    max-width: 100%; /* Full width on mobile */
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 /* Medium screens - tablets */
@@ -484,7 +495,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(100vh - 64px);
+    height: calc(100vh - 64px - env(safe-area-inset-bottom, 0px));
   }
 
   .messagesContainer,
@@ -495,6 +506,10 @@
   .topicsContainer {
     margin-top: 14px;
     gap: 8px;
+  }
+
+  .inputContainer {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   }
 }
 
