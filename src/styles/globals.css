@@ -45,7 +45,7 @@
   --mobile-card-gap: 0.5rem;
   --mobile-side-padding: 0.5rem;
   
-  /* New mobile viewport variables */
+  /* Mobile viewport variables */
   --vh: 1vh;
   --real-viewport-height: 100vh;
   --safe-area-inset-top: env(safe-area-inset-top, 0px);
@@ -53,6 +53,18 @@
   --safe-area-inset-bottom: env(safe-area-inset-bottom, 27px);
   --safe-area-inset-left: env(safe-area-inset-left, 0px);
   --safe-area-padding-bottom: max(27px, env(safe-area-inset-bottom, 27px));
+  
+  /* New browser-specific variables */
+  --viewport-offset: 0px;
+  --keyboard-height: 0px;
+  --android-keyboard-padding: 0px;
+  --address-bar-height: 0px;
+  
+  /* Component-specific safe area variables */
+  --brief-safe-area-bottom: max(27px, env(safe-area-inset-bottom, 27px));
+  --profile-safe-area-bottom: max(27px, env(safe-area-inset-bottom, 27px));
+  --messages-safe-area-bottom: max(27px, env(safe-area-inset-bottom, 27px));
+  --play-safe-area-bottom: max(27px, env(safe-area-inset-bottom, 27px));
 
   /* Gradients */
   --primary-glow: conic-gradient(
@@ -596,3 +608,115 @@ main {
 }
 
 /* End of Brave-specific styles */
+
+/* Browser-specific adaptations */
+/* Brave browser-specific fixes */
+.brave-browser body {
+  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.1) !important;
+}
+
+.brave-browser .bottom-nav {
+  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.2) !important;
+  height: auto !important;
+}
+
+.brave-browser .main-content {
+  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.1) !important;
+}
+
+/* Safari browser-specific fixes */
+.safari-browser body {
+  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.05) !important;
+}
+
+.safari-browser .inputContainer {
+  bottom: calc(var(--safe-area-padding-bottom) + 3px) !important;
+}
+
+/* Chrome browser-specific fixes */
+.chrome-browser .inputContainer {
+  bottom: var(--safe-area-padding-bottom) !important;
+}
+
+/* Keyboard visibility fixes */
+body.keyboard-visible {
+  height: calc(100vh - var(--keyboard-height)) !important;
+  position: fixed;
+  width: 100%;
+  overflow: hidden;
+}
+
+body.keyboard-visible .inputContainer {
+  position: fixed;
+  bottom: 0 !important;
+  padding-bottom: 10px !important;
+  background-color: rgba(var(--felt-green-dark), 0.95);
+}
+
+body.keyboard-visible .messagesContainer {
+  max-height: calc(100vh - 120px - var(--keyboard-height)) !important;
+  padding-bottom: 20px !important;
+}
+
+/* iOS-specific keyboard fixes */
+@supports (-webkit-touch-callout: none) {
+  body.keyboard-visible .inputContainer {
+    bottom: 0 !important;
+  }
+  
+  body.keyboard-visible .messagesContainer {
+    max-height: calc(100vh - 140px - var(--keyboard-height)) !important;
+  }
+}
+
+/* Android-specific keyboard fixes */
+@supports not (-webkit-touch-callout: none) {
+  body.keyboard-visible {
+    padding-bottom: var(--android-keyboard-padding) !important;
+  }
+  
+  body.keyboard-visible .inputContainer {
+    padding-bottom: calc(8px + var(--android-keyboard-padding)) !important;
+  }
+}
+
+/* Media queries for different devices */
+@media screen and (max-width: 480px) {
+  /* Extra small devices */
+  body.keyboard-visible .inputContainer {
+    padding: 8px 10px !important;
+  }
+  
+  body.keyboard-visible .messagesContainer {
+    max-height: calc(100vh - 110px - var(--keyboard-height)) !important;
+  }
+  
+  .brave-browser .inputContainer {
+    padding-bottom: 15px !important;
+  }
+}
+
+@media screen and (min-width: 481px) and (max-width: 768px) {
+  /* Small devices */
+  body.keyboard-visible .inputContainer {
+    padding: 10px 15px !important;
+  }
+  
+  body.keyboard-visible .messagesContainer {
+    max-height: calc(100vh - 130px - var(--keyboard-height)) !important;
+  }
+}
+
+/* Fix height-related issues on rotate */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  .inputContainer {
+    position: fixed;
+    bottom: 0 !important;
+    padding: 8px 10px !important;
+    z-index: 1000;
+  }
+  
+  .messagesContainer {
+    max-height: calc(100vh - 80px) !important;
+  }
+}
