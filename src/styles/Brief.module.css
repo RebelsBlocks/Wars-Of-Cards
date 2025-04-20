@@ -444,7 +444,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(100vh - 56px - var(--safe-area-padding-bottom));
+    height: calc(100vh - 56px - var(--safe-area-padding-bottom) * 4);
   }
 
   .messagesContainer,
@@ -485,12 +485,13 @@
   }
 
   .messagesContainer {
-    padding-bottom: var(--safe-area-padding-bottom);
+    padding-bottom: calc(var(--safe-area-padding-bottom) * 4);
   }
 
   .inputContainer {
     max-width: 100%; /* Full width on mobile */
-    padding-bottom: calc(8px + var(--safe-area-padding-bottom));
+    padding-bottom: calc(16px + var(--safe-area-padding-bottom) * 4);
+    margin-bottom: calc(var(--safe-area-padding-bottom) * 2);
   }
 }
 
@@ -501,7 +502,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(100vh - 64px - var(--safe-area-padding-bottom));
+    height: calc(100vh - 64px - var(--safe-area-padding-bottom) * 4);
   }
 
   .messagesContainer,
@@ -515,7 +516,8 @@
   }
 
   .inputContainer {
-    padding-bottom: calc(12px + var(--safe-area-padding-bottom) * 1.33);
+    padding-bottom: calc(12px + var(--safe-area-padding-bottom) * 4);
+    margin-bottom: calc(var(--safe-area-padding-bottom) * 2);
   }
 }
 
