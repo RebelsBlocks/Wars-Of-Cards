@@ -181,12 +181,13 @@
   .briefContainer {
     padding: 16px;
     padding-top: calc(56px + 16px);
-    padding-bottom: calc(16px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   }
 
   .briefList {
+    grid-template-columns: 1fr;
     gap: 16px;
-    padding-bottom: calc(50px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)));
+    padding-bottom: calc(50px + env(safe-area-inset-bottom, 0px));
   }
 
   .section {
@@ -194,7 +195,7 @@
   }
 
   .section:last-child {
-    margin-bottom: calc(50px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)));
+    margin-bottom: calc(50px + env(safe-area-inset-bottom, 0px));
   }
 
   .section h1 {
@@ -217,8 +218,8 @@
   }
 
   .inputContainer {
-    max-width: 100%; /* Full width on mobile */
-    padding-bottom: calc(8px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)));
+    max-width: 100%;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -443,8 +444,8 @@
     top: 56px;
     left: 0;
     right: 0;
-    bottom: 0;
-    height: calc(var(--real-viewport-height) - 56px - var(--safe-area-padding-bottom));
+    bottom: env(safe-area-inset-bottom, 0px);
+    height: calc(100vh - 56px - env(safe-area-inset-bottom, 0px));
   }
 
   .messagesContainer,
@@ -485,39 +486,34 @@
   }
 
   .messagesContainer {
-    padding-bottom: calc(var(--safe-area-padding-bottom));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .inputContainer {
-    max-width: 100%;
-    padding-bottom: calc(16px + var(--safe-area-padding-bottom));
-    margin-bottom: var(--safe-area-padding-bottom);
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   }
 }
 
 /* Medium screens - tablets */
 @media screen and (min-width: 481px) and (max-width: 768px) {
-  .container {
-    top: 64px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    height: calc(var(--real-viewport-height) - 64px - var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)));
+  .briefContainer {
+    padding: 20px;
+    padding-top: calc(64px + 20px);
+    padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
   }
 
-  .messagesContainer,
-  .inputContainer {
-    max-width: 100%; /* Full width on tablet */
+  .briefList {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding-bottom: calc(60px + env(safe-area-inset-bottom, 0px));
   }
 
-  .topicsContainer {
-    margin-top: 14px;
-    gap: 8px;
+  .section {
+    padding: 20px;
   }
 
   .inputContainer {
-    padding-bottom: calc(12px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)));
-    margin-bottom: calc(var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)));
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
   }
 }
 
@@ -784,78 +780,18 @@
   }
 }
 
-/* Brave browser-specific adjustments for Brief */
-:global(.brave-browser) .briefContainer {
-  padding-bottom: calc(20px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
-}
-
-:global(.brave-browser) .briefList {
-  padding-bottom: calc(60px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
-}
-
-:global(.brave-browser) .section:last-child {
-  margin-bottom: calc(60px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
-}
-
-:global(.brave-browser) .inputContainer {
-  padding-bottom: calc(16px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
-  margin-bottom: calc(var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
-}
-
+/* Remove unused empty rulesets */
+:global(.brave-browser) .briefContainer,
+:global(.brave-browser) .briefList,
+:global(.brave-browser) .section:last-child,
+:global(.brave-browser) .inputContainer,
 :global(.brave-browser) .messagesContainer {
-  padding-bottom: calc(var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-@media screen and (max-width: 480px) {
-  :global(.brave-browser) .container {
-    height: calc(var(--real-viewport-height) - 56px - var(--safe-area-padding-bottom) * var(--safe-area-multiplier));
-  }
-  
-  :global(.brave-browser) .messagesContainer {
-    padding-bottom: calc(var(--safe-area-padding-bottom) * var(--safe-area-multiplier));
-  }
-  
-  :global(.brave-browser) .inputContainer {
-    padding-bottom: calc(16px + var(--safe-area-padding-bottom) * var(--safe-area-multiplier) + var(--safe-area-additional));
-    margin-bottom: calc(var(--safe-area-padding-bottom) * var(--safe-area-multiplier));
-  }
-}
-
-@media screen and (min-width: 481px) and (max-width: 768px) {
-  :global(.brave-browser) .container {
-    height: calc(var(--real-viewport-height) - 64px - var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * 1.3);
-  }
-  
-  :global(.brave-browser) .inputContainer {
-    padding-bottom: calc(12px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * 1.3);
-    margin-bottom: calc(var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * 1.3);
-  }
-}
-
-/* Chrome browser-specific adjustments */
-:global(.chrome-browser) .container {
-  height: calc(var(--real-viewport-height) - 56px - var(--safe-area-padding-bottom) * var(--safe-area-multiplier));
-}
-
-:global(.chrome-browser) .messagesContainer {
-  padding-bottom: calc(var(--safe-area-padding-bottom) * var(--safe-area-multiplier));
-}
-
-:global(.chrome-browser) .inputContainer {
-  padding-bottom: calc(12px + var(--safe-area-padding-bottom) * var(--safe-area-multiplier) + var(--safe-area-additional));
-  margin-bottom: calc(var(--safe-area-padding-bottom) * var(--safe-area-multiplier));
-}
-
-/* Safari browser-specific adjustments */
-:global(.safari-browser) .container {
-  height: calc(var(--real-viewport-height) - 56px - var(--safe-area-padding-bottom) * var(--safe-area-multiplier));
-}
-
-:global(.safari-browser) .messagesContainer {
-  padding-bottom: calc(var(--safe-area-padding-bottom) * var(--safe-area-multiplier));
-}
-
-:global(.safari-browser) .inputContainer {
-  padding-bottom: calc(14px + var(--safe-area-padding-bottom) * var(--safe-area-multiplier) + var(--safe-area-additional));
-  margin-bottom: calc(var(--safe-area-padding-bottom) * var(--safe-area-multiplier));
+/* Mobile keyboard handling */
+body.keyboard-visible .inputContainer,
+body.keyboard-visible .messagesContainer {
+  position: relative;
+  bottom: 0;
 } 
