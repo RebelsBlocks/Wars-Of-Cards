@@ -47,6 +47,7 @@
   
   /* New mobile viewport variables */
   --vh: 1vh;
+  --real-viewport-height: 100vh;
   --safe-area-inset-top: env(safe-area-inset-top, 0px);
   --safe-area-inset-right: env(safe-area-inset-right, 0px);
   --safe-area-inset-bottom: env(safe-area-inset-bottom, 27px);
@@ -571,3 +572,27 @@ main {
   pointer-events: none;
   background: transparent;
 }
+
+/* Brave browser detection-specific styles */
+.brave-browser body {
+  padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-padding-bottom) * 1.5);
+}
+
+.brave-browser .bottom-nav {
+  height: calc(var(--bottom-nav-height) + var(--safe-area-padding-bottom) * 1.5);
+  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.5);
+}
+
+.brave-browser .main-content {
+  padding-bottom: calc(var(--mobile-side-padding) + var(--safe-area-padding-bottom) * 1.5);
+  min-height: calc(100vh - var(--bottom-nav-height) - var(--safe-area-inset-top) - var(--safe-area-padding-bottom) * 1.5);
+}
+
+@media (max-width: 768px) {
+  .brave-browser body {
+    padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-padding-bottom) * 2);
+    height: calc(100dvh - var(--safe-area-padding-bottom));
+  }
+}
+
+/* End of Brave-specific styles */
