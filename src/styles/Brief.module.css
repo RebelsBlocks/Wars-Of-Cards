@@ -444,7 +444,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(100vh - 56px - var(--safe-area-padding-bottom) * 2);
+    height: calc(100vh - 56px - var(--safe-area-padding-bottom) * 1.33);
   }
 
   .messagesContainer,
@@ -502,7 +502,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(100vh - 64px - var(--safe-area-padding-bottom) * 2);
+    height: calc(100vh - 64px - var(--safe-area-padding-bottom) * 1);
   }
 
   .messagesContainer,
@@ -516,8 +516,8 @@
   }
 
   .inputContainer {
-    padding-bottom: calc(12px + var(--safe-area-padding-bottom) * 1);
-    margin-bottom: calc(var(--safe-area-padding-bottom) * 1);
+    padding-bottom: calc(12px + var(--safe-area-padding-bottom));
+    margin-bottom: calc(var(--safe-area-padding-bottom));
   }
 }
 
