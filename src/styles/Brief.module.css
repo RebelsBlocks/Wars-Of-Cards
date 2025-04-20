@@ -2,8 +2,10 @@
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 40px;
-  min-height: calc(100vh - 80px);
+  padding: 20px;
+  padding-top: calc(56px + 20px);
+  padding-bottom: calc(20px + var(--safe-area-padding-bottom));
+  min-height: calc(100vh - 56px);
   display: flex;
   flex-direction: column;
   overflow-y: auto;
@@ -21,12 +23,11 @@
 
 .briefList {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  grid-auto-rows: min-content;
-  gap: 40px;
+  grid-template-columns: 1fr;
+  gap: 20px;
   align-items: stretch;
   flex: 1;
-  padding-bottom: 40px;
+  padding-bottom: calc(20px + var(--safe-area-padding-bottom));
 }
 
 .section {
@@ -146,16 +147,14 @@
   .briefContainer {
     padding: 20px;
     padding-top: calc(56px + 20px);
-    padding-bottom: calc(20px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1));
-    min-height: calc(var(--real-viewport-height) - 56px);
-    max-height: none;
-    overflow-y: visible;
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom));
+    min-height: calc(100vh - 56px);
   }
 
   .briefList {
     grid-template-columns: 1fr;
     gap: 20px;
-    padding-bottom: calc(60px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom));
   }
 
   .section {
@@ -163,7 +162,7 @@
   }
 
   .section:last-child {
-    margin-bottom: calc(60px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
+    margin-bottom: calc(20px + var(--safe-area-padding-bottom));
   }
 
   .section h1 {
@@ -181,13 +180,12 @@
   .briefContainer {
     padding: 16px;
     padding-top: calc(56px + 16px);
-    padding-bottom: calc(16px + var(--safe-area-padding-bottom, 0px) * 3);
+    padding-bottom: calc(16px + var(--safe-area-padding-bottom));
   }
 
   .briefList {
-    grid-template-columns: 1fr;
     gap: 16px;
-    padding-bottom: calc(80px + var(--safe-area-padding-bottom, 0px) * 3);
+    padding-bottom: calc(16px + var(--safe-area-padding-bottom));
   }
 
   .section {
@@ -195,7 +193,7 @@
   }
 
   .section:last-child {
-    margin-bottom: calc(80px + var(--safe-area-padding-bottom, 0px) * 3);
+    margin-bottom: calc(16px + var(--safe-area-padding-bottom));
   }
 
   .section h1 {
@@ -218,20 +216,8 @@
   }
 
   .inputContainer {
-    max-width: 100%;
     padding: 16px;
-    padding-bottom: calc(16px + var(--safe-area-padding-bottom, 0px) * 4);
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 32, 0, 0.98);
-    z-index: 1000;
-    border-top: 1px solid rgba(var(--gold-accent), 0.2);
-    backdrop-filter: blur(10px);
-    display: flex;
-    gap: 12px;
-    align-items: center;
+    padding-bottom: calc(16px + var(--safe-area-padding-bottom));
   }
 
   .chatInput {
@@ -278,13 +264,12 @@
   .briefContainer {
     padding: 20px;
     padding-top: calc(64px + 20px);
-    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px) * 4);
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom));
   }
 
   .briefList {
-    grid-template-columns: 1fr;
     gap: 20px;
-    padding-bottom: calc(120px + var(--safe-area-padding-bottom, 0px) * 4);
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom));
   }
 
   .section {
@@ -292,20 +277,12 @@
   }
 
   .section:last-child {
-    margin-bottom: calc(120px + var(--safe-area-padding-bottom, 0px) * 4);
+    margin-bottom: calc(20px + var(--safe-area-padding-bottom));
   }
 
   .inputContainer {
     padding: 20px;
-    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px) * 4);
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 32, 0, 0.98);
-    z-index: 1000;
-    border-top: 1px solid rgba(var(--gold-accent), 0.2);
-    backdrop-filter: blur(10px);
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom));
   }
 
   .chatInput {
@@ -602,13 +579,13 @@
   .briefContainer {
     padding: 20px;
     padding-top: calc(64px + 20px);
-    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px));
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom));
   }
 
   .briefList {
     grid-template-columns: 1fr;
     gap: 20px;
-    padding-bottom: calc(80px + var(--safe-area-padding-bottom, 0px));
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom));
   }
 
   .section {
@@ -616,18 +593,12 @@
   }
 
   .section:last-child {
-    margin-bottom: calc(80px + var(--safe-area-padding-bottom, 0px));
+    margin-bottom: calc(20px + var(--safe-area-padding-bottom));
   }
 
   .inputContainer {
     padding: 20px;
-    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px));
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: var(--background-dark);
-    z-index: 100;
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom));
   }
 }
 
