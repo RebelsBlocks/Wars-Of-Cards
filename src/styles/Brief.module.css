@@ -147,7 +147,7 @@
     padding: 20px;
     padding-top: calc(56px + 20px);
     padding-bottom: calc(20px + var(--safe-area-padding-bottom) * 1.33);
-    min-height: calc(100vh - 56px);
+    min-height: calc(var(--real-viewport-height) - 56px);
     max-height: none;
     overflow-y: visible;
   }
@@ -225,7 +225,7 @@
 /* Chat Interface Styles */
 .container {
   width: 100%;
-  height: 100vh;
+  height: var(--real-viewport-height);
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -444,7 +444,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(100vh - 56px - var(--safe-area-padding-bottom) * 1);
+    height: calc(var(--real-viewport-height) - 56px - var(--safe-area-padding-bottom));
   }
 
   .messagesContainer,
@@ -502,7 +502,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: calc(100vh - 64px - var(--safe-area-padding-bottom) * 1);
+    height: calc(var(--real-viewport-height) - 64px - var(--safe-area-padding-bottom));
   }
 
   .messagesContainer,
@@ -781,5 +781,42 @@
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Brave browser-specific adjustments */
+:global(.brave-browser) .briefContainer {
+  padding-bottom: calc(20px + var(--safe-area-padding-bottom) * 2);
+}
+
+:global(.brave-browser) .briefList {
+  padding-bottom: calc(50px + var(--safe-area-padding-bottom) * 2);
+}
+
+:global(.brave-browser) .section:last-child {
+  margin-bottom: calc(50px + var(--safe-area-padding-bottom) * 2);
+}
+
+:global(.brave-browser) .inputContainer {
+  padding-bottom: calc(16px + var(--safe-area-padding-bottom) * 2);
+  margin-bottom: calc(var(--safe-area-padding-bottom));
+}
+
+:global(.brave-browser) .messagesContainer {
+  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.5);
+}
+
+@media screen and (max-width: 480px) {
+  :global(.brave-browser) .container {
+    height: calc(100vh - 56px - var(--safe-area-padding-bottom) * 3);
+  }
+  
+  :global(.brave-browser) .messagesContainer {
+    padding-bottom: calc(var(--safe-area-padding-bottom) * 2);
+  }
+  
+  :global(.brave-browser) .inputContainer {
+    padding-bottom: calc(16px + var(--safe-area-padding-bottom) * 2.5);
+    margin-bottom: calc(var(--safe-area-padding-bottom) * 2);
   }
 } 
