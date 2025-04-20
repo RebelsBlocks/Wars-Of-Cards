@@ -13,11 +13,6 @@ const NearWalletProvider = dynamic(
   { ssr: false }
 );
 
-const MobileCompatibility = dynamic(
-  () => import('@/components/MobileCompatibility').then(mod => mod.MobileCompatibility),
-  { ssr: false }
-);
-
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: React.ReactElement) => React.ReactNode;
 };
@@ -40,7 +35,6 @@ function App({ Component, pageProps }: AppPropsWithLayout): React.ReactElement {
           content: 'width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no'
         })
       ),
-      React.createElement(MobileCompatibility, null),
       React.createElement(Component, pageProps)
     )
   );
