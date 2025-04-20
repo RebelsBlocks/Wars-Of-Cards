@@ -18,21 +18,21 @@ interface Message {
 
 // Add predefined topics and responses
 const predefinedResponses: Record<string, string> = {
-  'hello': '👋 Hello! I\'m Vanessa, your Wars of Cards assistant.\n\nI can help you navigate the platform and even initiate blockchain transactions.\n\nWhat would you like to know about our games?',
+  'hello': 'I\'m Vanessa, your Wars of Cards guide. I can help with platform navigation and blockchain transactions. What aspect of our games interests you?',
   
-  'what_to_do': '🎮 Welcome to an exclusive world of blockchain-based card games built on NEAR, where traditional entertainment meets modern cryptocurrency technology.\n\nIn our digital casino, you\'ll find:\n• Classic Blackjack\n• Our signature game - New War Order\n\n💎 Gameplay revolves around CRANS tokens, while our community communicates through the Messages. Your Profile provides clear insight into your token values and balance, with seamless withdrawal options.\n\n✨ I\'d be delighted to assist you with purchasing or selling CRANS tokens.\n\nTo begin, you\'ll need:\n• Log In – connect using your NEAR account\n  (you can create one directly through our platform using Meteor Wallet)\n• NEAR tokens – available on exchanges like Binance or Coinbase\n• CRANS tokens – which you can acquire by exchanging NEAR with me\n\nWhat would you like to explore first? Perhaps play a game or would you prefer to go through messages?',
+  'what_to_do': 'Welcome to the NEAR blockchain gaming experience.\n\nOur premium casino features:\n- Classic Blackjack - Simple rules, strategic play\n- New War Order - Our exclusive signature game\n\nCRANS tokens power all gameplay. Your Profile shows your real-time balances with instant withdrawal options. Need tokens? I provide direct assistance with all CRANS transactions.\n\nReady to begin? Select your next move:',
   
-  'games': 'Which game would you like to try first? Both offer exciting gameplay and generous rewards!\n\n🃏 Blackjack\n• Traditional casino-style Blackjack where you compete against the dealer\n• Goal: Get as close to 21 as possible without going over\n• You always start the game\n• When you hit exactly 21, you instantly win\n• Otherwise, you need to have a higher number than the dealer\n• During a tie, the dealer wins\n• Cards are shuffled using the Fisher-Yates algorithm\n• Uses multiple decks to prevent card counting\n• Automatically adjusts Ace values (1 or 11) to optimize your hand\n• Entry fee: 210 CRANS\n• Potential reward: 378 CRANS (180% of your bet)\n\nGameplay:\n1. Place your bet in CRANS tokens\n2. Receive two cards, dealer gets one face up and one face down\n3. Choose to \'Hit\' for another card or \'Stand\' to keep your hand\n4. Dealer reveals their cards and follows house rules for drawing\n5. Closest to 21 without going over wins\n\n💣 New War Order\n• Strategic card game of wits and luck\n• Goal: Win more card battles within 5-minute time limit\n• Uses 55-card deck (52 cards + 3 Jokers)\n• Cards are shuffled using RNG to ensure randomness\n• Special "TWIST" rule with number 7 (if you have 7, dealer needs lower card)\n• "WAR" triggers when matching cards appear or with Jokers\n• Entry fee: 420 CRANS\n• Potential reward: 756 CRANS (180% of your bet)\n\nGameplay:\n1. Place your bet in CRANS tokens\n2. Receive 20 cards arranged in pyramid-like formation\n3. Select one face-down card to play each round\n4. Dealer plays their card, higher card wins the point\n5. Special cards like Jokers trigger "WAR" with war deck cards\n6. Number 7 activates "TWIST" rule where lower cards can win\n7. Win most points from 20 battles within 5 minutes',
+  'games': 'BLACKJACK\n- Classic casino competition against the dealer\n- Aim for 21 without busting\n- Hit 21? Instant win\n- Beat dealer\'s hand to win, ties go to house\n- Advanced shuffle system prevents card counting\n- Entry: 210 CRANS\n- Win: 378 CRANS (180% return)\n\nPlay Steps:\n1. Place your bet\n2. Receive initial cards\n3. Hit or Stand strategically\n4. Dealer follows house rules\n5. Closest to 21 without going over wins\n\nNEW WAR ORDER\n- Strategic card battles with time pressure\n- Win the most battles within 5 minutes\n- Features 55-card deck including 3 Jokers\n- Special "TWIST" rule with number 7\n- "WAR" triggers with matching cards or Jokers\n- Entry: 420 CRANS\n- Win: 756 CRANS (180% return)\n\nPlay Steps:\n1. Place your bet\n2. Receive 20 cards in pyramid formation\n3. Select one card per round\n4. Higher card wins each point\n5. Special cards activate bonus features\n6. Win the majority of 20 battles to succeed\n\nWhich game interests you today?',
   
-  'messages': '💬 Messages are hub of our Wars of Cards community.\n\nYou can:\n• Engage with fellow players through comments\n• Like posts using your NEAR account\n• Earn Points for interactions\n• Redeem Points for NEAR tokens\n\n👥 Community Management:\n• Regular exclusive airdrops\n• Special perks for active members\n• Recognition for dedicated participants\n\n✨ The connections and opportunities within our community are quite valuable. I encourage you to participate and discover the benefits of being an active member of our Wars of Cards family.',
+  'messages': 'Our Messages hub is the central network of the Wars of Cards community.\n\nKey features:\n- Connect directly with other players through comments\n- Support content with your NEAR account\n- Accumulate Points through active participation\n- Convert Points to NEAR tokens\n\nCommunity benefits:\n- Access exclusive token airdrops\n- Unlock special perks as an active member\n- Gain recognition for your contributions\n\nThe connections you make here have real value. Join in, engage regularly, and experience the advantages of being part of our Wars of Cards network.',
   
-  'near': '🔗 NEAR is the sophisticated blockchain that powers Wars of Cards.\n\nKey Features:\n• High-performance processing\n• Low transaction fees\n• Near-instant confirmations\n• Simple and user-friendly design\n\n💡 For Blockchain Newcomers:\n• Think of NEAR as a digital payment and application platform\n• Outperforms traditional systems in speed and cost-efficiency\n\n🔐 Your NEAR Account:\n• Functions as both username and wallet\n• Allows secure interaction with our games\n• Maintains full ownership of your tokens and assets\n\n✨ The system\'s design reflects our commitment to providing you with a premium gaming experience.',
+  'near': 'NEAR: The Premium Blockchain Behind Wars of Cards\n\nKey Advantages:\n- High-speed transaction processing\n- Minimal fees for all operations\n- Confirmation times in seconds\n- Intuitive interface design\n\nFor First-time Blockchain Users:\n- Think of NEAR as your digital wallet and identity in one\n- Significantly faster and cheaper than traditional systems\n\nYour NEAR Account:\n- Single login serves as both username and secure wallet\n- Seamless, protected gameplay integration\n- Full control and ownership of your digital assets\n\nOur platform leverages NEAR\'s capabilities to deliver an exceptional gaming experience with maximum security and efficiency.',
   
-  'crans': '💎 CRANS Token Overview\n\nOfficial Website: https://money.crans.xyz/\n\n💫 How to Acquire CRANS:\n• Type "swap" to exchange NEAR tokens with me\n• Win games on Wars of Cards\n• Participate in community events and airdrops\n\n🎮 Gaming Usage:\n• Blackjack: 210 CRANS entry fee\n• New War Order: 420 CRANS entry fee\n• Win rewards: 180% of your original bet\n\n✨ Ready to acquire some CRANS? Just type "swap" and I\'ll guide you!',
+  'crans': 'Official Site: https://money.crans.xyz/\n\nAcquiring CRANS:\n- Use "swap" to convert your NEAR tokens instantly\n- Win additional tokens through gameplay\n- Earn through community participation and events\n\nToken Usage:\n- Blackjack: 210 CRANS entry with 378 CRANS potential win\n- New War Order: 420 CRANS entry with 756 CRANS potential win\n- All wins pay 180% of your original stake\n\nReady for tokens? Select "SWAP" and I\'ll walk you through the process.',
   
-  'help': '💁‍♀️ I can help you with:\n• Game information\n• Getting started\n• NEAR blockchain\n• CRANS tokens\n• Community features\n\nWhat would you like to know about?',
+  'help': 'Essential Requirements:\n- NEAR account - Connect or create instantly through Meteor Wallet\n- NEAR tokens - Available on Binance, Coinbase, and major exchanges\n- CRANS tokens - Exchange your NEAR tokens with me directly\n\nFor optimal performance, use Google Chrome for the smoothest gameplay experience.\n\nHow can I assist you today?\n\nI can provide:\n- Game strategies and rules\n- Setup assistance\n- NEAR blockchain information\n- CRANS token acquisition\n- Community benefits and features\n\nWhat specific information do you need?',
   
-  'swap': '💱 I can help you swap between NEAR and CRANS tokens.\n\nYour current balances:\nNEAR Balance: {near_balance} Ⓝ\nCRANS Balance: {crans_balance} CRANS\n\nTo swap tokens, use one of these formats:\n• "5 near to crans" - to buy CRANS with 5 NEAR\n• "500 crans to near" - to sell 500 CRANS to NEAR',
+  'swap': 'Your current holdings:\nNEAR: {near_balance} Ⓝ\nCRANS: {crans_balance} CRANS\n\nSwap commands:\n- "5 near to crans" - Purchase CRANS using 5 NEAR\n- "500 crans to near" - Convert 500 CRANS back to NEAR\n\nIMPORTANT: You must allow popups for successful transactions.\nFirst-time transactions may fail if popups are blocked.\nEnable popups when prompted for seamless exchanges.',
   
   'balance': '💰 Here are your current balances:\n\nNEAR Balance: {near_balance} Ⓝ\nCRANS Balance: {crans_balance} CRANS'
 };
@@ -344,9 +344,9 @@ export function Brief() {
         
         const userName = truncateWalletName(wallet.accountId);
         const personalizedMessages = [
-          ` I was missing you, ${userName}! 💫 Wars Of Cards awaits you, and I'm here to help with anything you need.`,
-          ` ${userName}! I was just thinking about you. 💫 What would you like to explore together?`,
-          ` Hey there, ${userName}! 💫 I'm so glad you're here. What shall we talk about?`
+          `${userName}, welcome back. Wars Of Cards is ready for you. How can I assist today?`,
+          `${userName}, perfect timing. What area of the platform would you like to explore?`,
+          `${userName}, good to see you. What would you like to focus on first?` 
         ];
         
         const welcomeMessage = personalizedMessages[Math.floor(Math.random() * personalizedMessages.length)];
@@ -363,7 +363,7 @@ export function Brief() {
         setMessages([{
           id: '1',
           role: 'assistant',
-          content: "Hi! I'm Vanessa, your personal assistant. I'm here to help you discover our platform. \n\nWould you like to log in so we can get to know each other better?",
+          content: "I'm Vanessa, your dedicated platform guide. I'm here to help you navigate our services and maximize your experience. \n\nFor optimal performance, use Google Chrome for the smoothest gameplay experience. \n\nReady to log in and get started?",
           timestamp: new Date()
         }]);
       }
@@ -404,7 +404,7 @@ export function Brief() {
             setMessages(prev => [...prev, {
               id: Date.now().toString(),
               role: 'assistant',
-              content: "Wow this is your first time interacting with wrapped tokens, you are new in the eco! We need to initialize your token storage first. Please confirm the transaction to proceed.",
+              content: "This is your first time interacting with wrapped tokens, you are new in the ecosystem! We need to initialize your token storage first. Please confirm the transaction to proceed.",
               timestamp: new Date()
             }]);
             
@@ -447,7 +447,7 @@ export function Brief() {
             setMessages(prev => [...prev, {
               id: Date.now().toString(),
               role: 'assistant',
-              content: "I see this is your first interaction with CRANS! We need to initialize your token storage for it as well. Please confirm the transaction to proceed.",
+              content: "I see this is your first interaction with CRANS! We need to initialize your token storage for it. Please confirm the transaction to proceed.",
               timestamp: new Date()
             }]);
             
@@ -586,7 +586,7 @@ export function Brief() {
               setMessages(prev => [...prev, {
                 id: Date.now().toString(),
                 role: 'assistant',
-                content: "Awesome! Now you can play Wars of Cards!\n\nIs there anything else you'd like to know?",
+                content: "Transaction complete. Now you can play Wars of Cards!\n\nIs there anything else you'd like to know?",
                 timestamp: new Date()
               }]);
             }
@@ -658,7 +658,7 @@ export function Brief() {
               setMessages(prev => [...prev, {
                 id: Date.now().toString(),
                 role: 'assistant',
-                content: "Perfect! Now let's unwrap your NEAR...",
+                content: "Good! Now let's unwrap your NEAR...",
                 timestamp: new Date()
               }]);
             }
@@ -699,7 +699,7 @@ export function Brief() {
               setMessages(prev => [...prev, {
                 id: Date.now().toString(),
                 role: 'assistant',
-                content: "All done! Your CRANS have been successfully swapped to NEAR.\n\nIs there anything else you'd like to know?",
+                content: "Sold!\n\nIs there anything else you'd like to know?",
                 timestamp: new Date()
               }]);
             }
@@ -897,6 +897,12 @@ export function Brief() {
   async function findBestResponse(input: string, accountId: string | null, wallet: any): Promise<string> {
     input = input.toLowerCase();
     
+    // Handle greetings
+    const greetings = ['hey', 'hi', 'hello', 'sup', 'howdy'];
+    if (greetings.includes(input)) {
+      return predefinedResponses['hello'];
+    }
+    
     // Handle login command
     if (input === 'login' || input === 'log in') {
       try {
@@ -939,7 +945,17 @@ export function Brief() {
           fetchCransBalance(accountId, wallet)
         ]);
         
-        return `💱 I can help you swap between NEAR and CRANS tokens.\n\nYour current balances:\nNEAR Balance: ${nearBalance} Ⓝ\nCRANS Balance: ${cransBalance} CRANS\n\nTo swap tokens, use one of these formats:\n• "5 near to crans" - to buy CRANS with 5 NEAR\n• "500 crans to near" - to sell 500 CRANS to NEAR`;
+        return `Your current holdings:
+NEAR: ${nearBalance} Ⓝ
+CRANS: ${cransBalance} CRANS
+
+Swap commands:
+- "5 near to crans" - Purchase CRANS using 5 NEAR
+- "500 crans to near" - Convert 500 CRANS back to NEAR
+
+IMPORTANT: You must allow popups for successful transactions. 
+First-time transactions may fail if popups are blocked. 
+Enable popups when prompted for seamless exchanges.`;
       } catch (error) {
         console.error('Error fetching balances:', error);
         return "⚠️ I encountered an error fetching your balances.\n\nPlease try again in a moment or check your connection.";
@@ -1058,9 +1074,9 @@ export function Brief() {
       
       // Array of flirty Vanessa messages
       const flirtyMessages = [
-        "Ohh, it's hot in here, if you only knew.... Let's start!",
-        "I love when you're so decisive! Let me help you with that swap...",
-        "Your confidence is charming! Let's make this swap happen..."
+         "Ready when you are. Let's proceed with your trade.",
+         "Excellent choice. Processing your swap now...",
+         "Transaction initiated. Preparing your exchange..."
       ];
       
       // Select a random message
@@ -1078,7 +1094,7 @@ export function Brief() {
     }
     
     // Default response if no match found
-    return "❓ I'm not sure I understood your question correctly.\n\nI can help you with:\n• Playing our games\n• Trading NEAR and CRANS\n• Community features\n• Blockchain information\n\nWhat would you like to know more about?";
+    return "I didn't catch that. I can assist with:\n\n- Game access and rules\n- NEAR/CRANS exchanges\n- Community features\n- Blockchain information\n\nWhat specific help do you need?";
   }
 
   return (
