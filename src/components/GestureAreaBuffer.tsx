@@ -70,6 +70,15 @@ export const GestureAreaBuffer: React.FC = () => {
           '--safe-area-padding-bottom', 
           `max(34px, calc(${safeAreaInsetBottom} * 2.5))`
         );
+        // Set component-specific variables for more precise control
+        document.documentElement.style.setProperty(
+          '--brief-safe-area-bottom', 
+          `max(34px, calc(${safeAreaInsetBottom} * 2.5))`
+        );
+        document.documentElement.style.setProperty(
+          '--profile-safe-area-bottom', 
+          `max(34px, calc(${safeAreaInsetBottom} * 2.5))`
+        );
         // Add a class to body for additional Brave-specific fixes if needed
         document.body.classList.add('brave-browser');
       } else {
@@ -77,6 +86,15 @@ export const GestureAreaBuffer: React.FC = () => {
         document.documentElement.style.setProperty(
           '--safe-area-padding-bottom', 
           `max(27px, ${safeAreaInsetBottom})`
+        );
+        // Set component-specific variables 
+        document.documentElement.style.setProperty(
+          '--brief-safe-area-bottom', 
+          `max(27px, calc(${safeAreaInsetBottom} * 1.33))`
+        );
+        document.documentElement.style.setProperty(
+          '--profile-safe-area-bottom', 
+          `max(27px, calc(${safeAreaInsetBottom} * 1.33))`
         );
         document.body.classList.remove('brave-browser');
       }
