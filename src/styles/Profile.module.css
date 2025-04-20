@@ -6,7 +6,7 @@
   justify-content: center;
   align-items: center;
   margin-top: 56px; /* Stały margin dla header MainLayout */
-  padding-bottom: calc(var(--safe-area-padding-bottom) * 1.33);
+  padding-bottom: calc(clamp(8px, 2vw, 16px) + var(--safe-area-padding-bottom) * 1.33);
 }
 
 .cardGrid {
@@ -148,7 +148,7 @@
     padding: 8px;
     align-items: flex-start;
     margin-top: 48px; /* Mniejszy margin na mobile */
-    padding-bottom: calc(var(--safe-area-padding-bottom) * 1.33);
+    padding-bottom: calc(8px + var(--safe-area-padding-bottom) * 1.33);
   }
 
   .card {
