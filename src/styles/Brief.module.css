@@ -220,19 +220,57 @@
   .inputContainer {
     max-width: 100%;
     padding: 16px;
-    padding-bottom: calc(16px + var(--safe-area-padding-bottom, 0px) * 3);
+    padding-bottom: calc(16px + var(--safe-area-padding-bottom, 0px) * 4);
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--background-dark);
+    background: rgba(0, 32, 0, 0.98);
     z-index: 1000;
     border-top: 1px solid rgba(var(--gold-accent), 0.2);
     backdrop-filter: blur(10px);
+    display: flex;
+    gap: 12px;
+    align-items: center;
   }
 
   .chatInput {
-    margin-bottom: calc(var(--safe-area-padding-bottom, 0px) * 0.5);
+    margin-bottom: calc(var(--safe-area-padding-bottom, 0px));
+    min-height: 36px;
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  .sendButton {
+    height: 36px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    margin-bottom: calc(var(--safe-area-padding-bottom, 0px));
+    min-width: 70px;
+  }
+
+  .topicsContainer {
+    padding: 4px;
+    gap: 6px;
+    padding-bottom: env(safe-area-inset-bottom, 8px);
+  }
+  
+  .topicButton {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
+  .messagesContainer {
+    padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 16px);
+    margin-bottom: env(safe-area-inset-bottom, 8px);
+  }
+
+  .inputContainer {
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 16px));
+    margin-bottom: env(safe-area-inset-bottom, 8px);
+    position: sticky;
+    bottom: 0;
+    background: var(--background-dark);
+    z-index: 100;
   }
 }
 
@@ -240,13 +278,13 @@
   .briefContainer {
     padding: 20px;
     padding-top: calc(64px + 20px);
-    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px) * 3);
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px) * 4);
   }
 
   .briefList {
     grid-template-columns: 1fr;
     gap: 20px;
-    padding-bottom: calc(80px + var(--safe-area-padding-bottom, 0px) * 3);
+    padding-bottom: calc(120px + var(--safe-area-padding-bottom, 0px) * 4);
   }
 
   .section {
@@ -254,24 +292,29 @@
   }
 
   .section:last-child {
-    margin-bottom: calc(80px + var(--safe-area-padding-bottom, 0px) * 3);
+    margin-bottom: calc(120px + var(--safe-area-padding-bottom, 0px) * 4);
   }
 
   .inputContainer {
     padding: 20px;
-    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px) * 3);
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px) * 4);
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--background-dark);
+    background: rgba(0, 32, 0, 0.98);
     z-index: 1000;
     border-top: 1px solid rgba(var(--gold-accent), 0.2);
     backdrop-filter: blur(10px);
   }
 
   .chatInput {
-    margin-bottom: calc(var(--safe-area-padding-bottom, 0px) * 0.5);
+    margin-bottom: calc(var(--safe-area-padding-bottom, 0px));
+    min-height: 40px;
+  }
+
+  .sendButton {
+    margin-bottom: calc(var(--safe-area-padding-bottom, 0px));
   }
 }
 
@@ -421,7 +464,6 @@
   position: relative;
   transform-style: preserve-3d;
   perspective: 1000px;
-  padding-bottom: calc(clamp(8px, 1.5vw, 12px) + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)));
 }
 
 .inputContainer::before {
@@ -566,7 +608,7 @@
   .briefList {
     grid-template-columns: 1fr;
     gap: 20px;
-    padding-bottom: calc(60px + var(--safe-area-padding-bottom, 0px));
+    padding-bottom: calc(80px + var(--safe-area-padding-bottom, 0px));
   }
 
   .section {
@@ -574,13 +616,16 @@
   }
 
   .section:last-child {
-    margin-bottom: calc(60px + var(--safe-area-padding-bottom, 0px));
+    margin-bottom: calc(80px + var(--safe-area-padding-bottom, 0px));
   }
 
   .inputContainer {
+    padding: 20px;
     padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px));
-    position: sticky;
+    position: fixed;
     bottom: 0;
+    left: 0;
+    right: 0;
     background: var(--background-dark);
     z-index: 100;
   }
