@@ -244,73 +244,10 @@ export function Brief() {
   const [inputValue, setInputValue] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [forceUpdate, setForceUpdate] = React.useState(0); // Add this state for forcing re-render
-  const [isBrave, setIsBrave] = React.useState(false); // Detect Brave browser
   
   // Store container ID for direct DOM access
   const messagesContainerId = 'messages-container';
   const inputId = 'chat-input';
-
-  // Check if running in Brave browser
-  React.useEffect(() => {
-    const detectBrave = async () => {
-      // Check if the body already has the brave-browser class
-      if (document.body.classList.contains('brave-browser')) {
-        setIsBrave(true);
-        return;
-      }
-      
-      // Otherwise do our own detection
-      try {
-        // Try using the navigator.brave API first
-        if ((navigator as any).brave) {
-          try {
-            const isBraveResult = await (navigator as any).brave.isBrave();
-            setIsBrave(isBraveResult);
-            return;
-          } catch (e) {
-            // Fall through to backup detection
-          }
-        }
-        
-        // Fallback detection through user agent
-        const userAgent = navigator.userAgent.toLowerCase();
-        const isBraveByUA = userAgent.includes("brave") || 
-                           (userAgent.includes("chrome") && !(window as any).chrome);
-        setIsBrave(isBraveByUA);
-      } catch (e) {
-        console.error("Error detecting browser:", e);
-      }
-    };
-    
-    detectBrave();
-  }, []);
-
-  // Add CSS variable for safe area inset - use a large consistent multiplier
-  React.useEffect(() => {
-    function updateSafeAreaInsets() {
-      // Get the safe area inset bottom value
-      const safeAreaInsetBottom = getComputedStyle(document.documentElement)
-        .getPropertyValue('--safe-area-inset-bottom').trim() || '0px';
-      
-      // Use isBrave state instead of checking classList
-      const safeAreaMultiplier = isBrave ? 2.5 : 1.33;
-      
-      // For mobile devices, ensure there's a minimum padding even if safe-area-inset-bottom is 0
-      let adjustedSafeAreaValue;
-      if (safeAreaInsetBottom === '0px' && window.innerWidth <= 768) {
-        adjustedSafeAreaValue = isBrave ? '34px' : '27px';
-      } else {
-        adjustedSafeAreaValue = `calc(${safeAreaInsetBottom} * ${safeAreaMultiplier})`;
-      }
-      
-      // Apply the adjusted value to CSS variables used in the component
-      document.documentElement.style.setProperty('--brief-safe-area-bottom', adjustedSafeAreaValue);
-    }
-    
-    updateSafeAreaInsets();
-    window.addEventListener('resize', updateSafeAreaInsets);
-    return () => window.removeEventListener('resize', updateSafeAreaInsets);
-  }, [isBrave]); // Add isBrave as dependency
 
   // Add new state for NEAR to CRANS swap process
   const [swapState, setSwapState] = React.useState<SwapState>({
