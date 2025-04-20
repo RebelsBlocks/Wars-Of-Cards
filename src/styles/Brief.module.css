@@ -222,7 +222,7 @@
     padding: 12px;
     padding-bottom: calc(12px + env(safe-area-inset-bottom, 34px));
     position: fixed;
-    bottom: 0;
+    bottom: env(safe-area-inset-bottom, 34px);
     left: 0;
     right: 0;
     background: rgba(0, 32, 0, 0.98);
@@ -231,7 +231,8 @@
     backdrop-filter: blur(10px);
     display: flex;
     gap: 12px;
-    align-items: flex-start;
+    align-items: center;
+    margin-bottom: env(safe-area-inset-bottom, 34px);
   }
 
   .chatInput {
@@ -240,6 +241,7 @@
     font-size: 16px;
     padding: 8px 12px;
     margin: 0;
+    margin-bottom: env(safe-area-inset-bottom, 34px);
     background: rgba(0, 0, 0, 0.3);
     border: 2px solid var(--accent-color);
     border-radius: 8px;
@@ -252,11 +254,11 @@
     font-size: 0.9rem;
     min-width: 70px;
     margin: 0;
+    margin-bottom: env(safe-area-inset-bottom, 34px);
     background: rgba(0, 0, 0, 0.3);
     border: 2px solid var(--accent-color);
     border-radius: 8px;
     color: var(--accent-color);
-    align-self: flex-start;
   }
 
   .topicsContainer {
@@ -271,7 +273,11 @@
   }
 
   .messagesContainer {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom, 34px));
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 34px));
+  }
+
+  .container {
+    padding-bottom: env(safe-area-inset-bottom, 34px);
   }
 }
 
@@ -553,69 +559,16 @@
   display: none;
 }
 
-/* Small screens and mobile */
-@media screen and (max-width: 480px) {
-  .container {
-    top: 56px;
-    left: 0;
-    right: 0;
-    bottom: env(safe-area-inset-bottom, 0px);
-    height: calc(100vh - 56px - env(safe-area-inset-bottom, 0px) - env(safe-area-inset-bottom, 0px));
-    padding-bottom: env(safe-area-inset-bottom, 16px);
-  }
+/* Mobile keyboard handling */
+body.keyboard-visible .inputContainer {
+  position: fixed;
+  bottom: env(safe-area-inset-bottom, 34px);
+  padding-bottom: calc(12px + env(safe-area-inset-bottom, 34px));
+}
 
-  .messagesContainer,
-  .inputContainer {
-    max-width: 100%;
-  }
-
-  .messageWrapper {
-    max-width: 90%;
-  }
-
-  .userMessage {
-    margin-right: 8px;
-  }
-
-  .assistantMessage {
-    margin-left: 8px;
-  }
-
-  .chatInput {
-    font-size: 0.9rem;
-  }
-
-  .sendButton {
-    height: 36px;
-    padding: 8px 12px;
-    font-size: 0.9rem;
-    margin-bottom: env(safe-area-inset-bottom, 8px);
-  }
-
-  .topicsContainer {
-    padding: 4px;
-    gap: 6px;
-    padding-bottom: env(safe-area-inset-bottom, 8px);
-  }
-  
-  .topicButton {
-    padding: 6px 10px;
-    font-size: 0.8rem;
-  }
-
-  .messagesContainer {
-    padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 16px);
-    margin-bottom: env(safe-area-inset-bottom, 8px);
-  }
-
-  .inputContainer {
-    padding-bottom: calc(16px + env(safe-area-inset-bottom, 16px));
-    margin-bottom: env(safe-area-inset-bottom, 8px);
-    position: sticky;
-    bottom: 0;
-    background: var(--background-dark);
-    z-index: 100;
-  }
+body.keyboard-visible .chatInput,
+body.keyboard-visible .sendButton {
+  margin-bottom: env(safe-area-inset-bottom, 34px);
 }
 
 /* Medium screens - tablets */
