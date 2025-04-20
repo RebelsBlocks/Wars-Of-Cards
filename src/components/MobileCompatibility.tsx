@@ -22,14 +22,15 @@ export const MobileCompatibility: React.FC = () => {
   const [browserType, setBrowserType] = useState<'brave' | 'chrome' | 'safari' | 'other'>('other');
   const [browserStyles, setBrowserStyles] = useState<string>('');
   const [safeAreaBottom, setSafeAreaBottom] = useState('0px');
+  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
   
   useEffect(() => {
     // Check if we're on a mobile device
     const checkIfMobile = () => {
-      setIsMobile(
-        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) &&
-        window.innerWidth <= 768
-      );
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) &&
+        window.innerWidth <= 768;
+      setIsMobile(isMobileDevice);
+      return isMobileDevice;
     };
     
     // Comprehensive browser detection
@@ -68,13 +69,27 @@ export const MobileCompatibility: React.FC = () => {
       }
     };
     
-    // Get actual safe area inset value
+    // Get actual safe area inset value with fallback
     const getSafeAreaInset = () => {
       const computedSafeArea = getComputedStyle(document.documentElement)
         .getPropertyValue('--safe-area-inset-bottom')
         .trim();
       
-      setSafeAreaBottom(computedSafeArea || '0px');
+      // If no safe area is defined, use device-specific defaults
+      if (!computedSafeArea || computedSafeArea === '0px') {
+        const userAgent = navigator.userAgent.toLowerCase();
+        if (userAgent.includes('iphone') || userAgent.includes('ipad')) {
+          setSafeAreaBottom('34px'); // Default for modern iOS devices
+        } else if (browserType === 'brave') {
+          setSafeAreaBottom('32px');
+        } else if (browserType === 'chrome') {
+          setSafeAreaBottom('28px');
+        } else {
+          setSafeAreaBottom('24px');
+        }
+      } else {
+        setSafeAreaBottom(computedSafeArea);
+      }
     };
     
     // Apply browser-specific CSS variables and classes
@@ -83,330 +98,79 @@ export const MobileCompatibility: React.FC = () => {
       document.body.classList.remove('brave-browser', 'safari-browser', 'chrome-browser', 'other-browser');
       
       // Default values for different browsers
-      let paddingMultiplier = 1.33;
-      let minPadding = '27px';
+      let paddingMultiplier = 1;
+      let minPadding = '24px';
+      let additionalPadding = '0px';
       
       // Browser-specific adjustments
-      if (browserType === 'brave') {
-        paddingMultiplier = 2.5;
-        minPadding = '34px';
-        document.body.classList.add('brave-browser');
-      } else if (browserType === 'safari') {
-        paddingMultiplier = 1.5;
-        minPadding = '30px';
-        document.body.classList.add('safari-browser');
-      } else if (browserType === 'chrome') {
-        paddingMultiplier = 1.33;
-        minPadding = '27px';
-        document.body.classList.add('chrome-browser');
-      } else {
-        document.body.classList.add('other-browser');
+      switch (browserType) {
+        case 'brave':
+          paddingMultiplier = 1.5;
+          minPadding = '32px';
+          additionalPadding = '16px';
+          document.body.classList.add('brave-browser');
+          break;
+        case 'safari':
+          paddingMultiplier = 1.2;
+          minPadding = '28px';
+          additionalPadding = '12px';
+          document.body.classList.add('safari-browser');
+          break;
+        case 'chrome':
+          paddingMultiplier = 1.1;
+          minPadding = '28px';
+          additionalPadding = '8px';
+          document.body.classList.add('chrome-browser');
+          break;
+        default:
+          document.body.classList.add('other-browser');
       }
       
-      // Set global variable
-      document.documentElement.style.setProperty(
-        '--safe-area-padding-bottom', 
-        `max(${minPadding}, calc(${safeAreaBottom} * ${paddingMultiplier}))`
-      );
+      // Calculate safe area padding with multiplier and additional padding
+      const calculatedPadding = `max(${minPadding}, calc((${safeAreaBottom} * ${paddingMultiplier}) + ${additionalPadding}))`;
+      
+      // Set global variables
+      document.documentElement.style.setProperty('--safe-area-padding-bottom', calculatedPadding);
+      document.documentElement.style.setProperty('--safe-area-multiplier', paddingMultiplier.toString());
+      document.documentElement.style.setProperty('--safe-area-additional', additionalPadding);
       
       // Set component-specific variables
-      document.documentElement.style.setProperty(
-        '--brief-safe-area-bottom', 
-        `max(${minPadding}, calc(${safeAreaBottom} * ${paddingMultiplier}))`
-      );
-      
-      document.documentElement.style.setProperty(
-        '--profile-safe-area-bottom', 
-        `max(${minPadding}, calc(${safeAreaBottom} * ${paddingMultiplier}))`
-      );
-      
-      document.documentElement.style.setProperty(
-        '--messages-safe-area-bottom', 
-        `max(${minPadding}, calc(${safeAreaBottom} * ${paddingMultiplier}))`
-      );
-      
-      document.documentElement.style.setProperty(
-        '--play-safe-area-bottom', 
-        `max(${minPadding}, calc(${safeAreaBottom} * ${paddingMultiplier}))`
-      );
+      const components = ['brief', 'messages', 'profile', 'play'];
+      components.forEach(component => {
+        document.documentElement.style.setProperty(
+          `--${component}-safe-area-bottom`,
+          calculatedPadding
+        );
+      });
     };
     
     // Fix for mobile viewport height issues
     const fixViewportHeight = () => {
-      // Get real viewport height (1% of viewport height)
       const vh = window.innerHeight * 0.01;
+      setViewportHeight(window.innerHeight);
       
-      // Set CSS variables for vh units
       document.documentElement.style.setProperty('--vh', `${vh}px`);
       document.documentElement.style.setProperty('--real-viewport-height', `${window.innerHeight}px`);
       
-      // Calculate addressBarHeight for browsers that show/hide it
+      // Calculate addressBarHeight
       const addressBarHeight = Math.max(0, window.outerHeight - window.innerHeight);
       document.documentElement.style.setProperty('--address-bar-height', `${addressBarHeight}px`);
       
-      // Browser-specific viewport fixes
-      if (browserType === 'brave') {
-        document.documentElement.style.setProperty('--viewport-offset', '16px');
-      } else if (browserType === 'safari') {
-        document.documentElement.style.setProperty('--viewport-offset', '8px');
-      } else {
-        document.documentElement.style.setProperty('--viewport-offset', '0px');
-      }
-      
-      // For browsers that don't support env(), set fallback values
-      const safeAreaInsetBottom = parseInt(
-        getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-bottom')
-      ) || 0;
-      
-      if (safeAreaInsetBottom === 0 && isMobile) {
-        if (browserType === 'brave') {
-          document.documentElement.style.setProperty('--safe-area-inset-bottom', '34px');
-        } else if (browserType === 'safari') {
-          document.documentElement.style.setProperty('--safe-area-inset-bottom', '30px');
-        } else {
-          document.documentElement.style.setProperty('--safe-area-inset-bottom', '27px');
-        }
-      }
-    };
-    
-    // Set up keyboard detection for mobile devices
-    const setupKeyboardDetection = () => {
-      if (!isMobile) return;
-      
-      // Initial viewport height reference
-      let initialViewportHeight = window.innerHeight;
-      
-      // Check if keyboard is visible by comparing viewport height
-      const checkKeyboard = () => {
-        const keyboardThreshold = 150; // Minimum height change to consider keyboard visible
-        const currentViewportHeight = window.innerHeight;
-        
-        if (initialViewportHeight - currentViewportHeight > keyboardThreshold) {
-          // Keyboard is likely visible
-          document.body.classList.add('keyboard-visible');
-          
-          // Apply keyboard-specific fixes
-          document.documentElement.style.setProperty('--keyboard-height', 
-            `${initialViewportHeight - window.innerHeight}px`);
-          
-          // Platform-specific fixes
-          if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-            // iOS-specific keyboard fixes
-            const activeElement = document.activeElement as HTMLElement;
-            if (activeElement && (activeElement.tagName === 'INPUT' || activeElement.tagName === 'TEXTAREA')) {
-              setTimeout(() => {
-                activeElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-              }, 100);
-            }
-          } else if (/Android/i.test(navigator.userAgent)) {
-            // Android-specific keyboard fixes
-            document.documentElement.style.setProperty('--android-keyboard-padding', '20px');
-          }
-        } else {
-          // Keyboard is likely hidden
-          document.body.classList.remove('keyboard-visible');
-          document.documentElement.style.setProperty('--keyboard-height', '0px');
-          document.documentElement.style.setProperty('--android-keyboard-padding', '0px');
-          
-          // Update initial height reference
-          initialViewportHeight = currentViewportHeight;
-        }
-      };
-      
-      // Handle resize events for keyboard detection
-      window.addEventListener('resize', checkKeyboard);
-      
-      // iOS specific events for better keyboard detection
-      if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        window.addEventListener('focusin', () => {
-          setTimeout(checkKeyboard, 100);
-        });
-        
-        window.addEventListener('focusout', () => {
-          setTimeout(() => {
-            document.body.classList.remove('keyboard-visible');
-            document.documentElement.style.setProperty('--keyboard-height', '0px');
-          }, 100);
-        });
-      }
-      
-      return () => {
-        window.removeEventListener('resize', checkKeyboard);
-        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-          window.removeEventListener('focusin', checkKeyboard);
-          window.removeEventListener('focusout', checkKeyboard);
-        }
-      };
-    };
-    
-    // Generate browser-specific CSS
-    const generateBrowserStylesheet = () => {
-      let css = '';
-      
-      // Only generate styles for mobile
-      if (!isMobile) return;
-      
-      switch (browserType) {
-        case 'brave':
-          css = `
-            /* Brave-specific fixes */
-            :root {
-              --brief-safe-area-bottom-multiplier: 1.3 !important;
-            }
-            
-            .messagesContainer {
-              max-height: calc(100% - var(--messages-safe-area-bottom) - 60px) !important;
-            }
-            
-            .inputContainer {
-              bottom: calc(var(--safe-area-padding-bottom) + 5px) !important;
-            }
-            
-            @media screen and (max-width: 480px) {
-              .container {
-                padding-bottom: calc(var(--safe-area-padding-bottom) + 10px) !important;
-              }
-              
-              .inputContainer {
-                bottom: calc(var(--safe-area-padding-bottom) + 10px) !important;
-                padding-bottom: 5px !important;
-              }
-            }
-            
-            /* Game screens */
-            .gameContainer {
-              padding-bottom: calc(var(--play-safe-area-bottom) + 10px) !important;
-            }
-            
-            /* Profile screen */
-            .profileContainer {
-              padding-bottom: calc(var(--profile-safe-area-bottom) + 10px) !important;
-            }
-          `;
-          break;
-          
-        case 'safari':
-          css = `
-            /* Safari-specific fixes */
-            :root {
-              --brief-safe-area-bottom-multiplier: 1.2 !important;
-            }
-            
-            .messagesContainer {
-              max-height: calc(100% - var(--messages-safe-area-bottom) - 55px) !important;
-            }
-            
-            .inputContainer {
-              bottom: calc(var(--safe-area-padding-bottom) + 3px) !important;
-            }
-            
-            /* Profile screen */
-            .profileContainer {
-              padding-bottom: calc(var(--profile-safe-area-bottom) + 5px) !important;
-            }
-            
-            /* Game screens */
-            .gameContainer {
-              padding-bottom: calc(var(--play-safe-area-bottom) + 5px) !important;
-            }
-          `;
-          break;
-          
-        case 'chrome':
-          css = `
-            /* Chrome-specific fixes */
-            :root {
-              --brief-safe-area-bottom-multiplier: 1.1 !important;
-            }
-            
-            .messagesContainer {
-              max-height: calc(100% - var(--messages-safe-area-bottom) - 50px) !important;
-            }
-            
-            .inputContainer {
-              bottom: var(--safe-area-padding-bottom) !important;
-            }
-            
-            /* Profile & game screens */
-            .profileContainer, .gameContainer {
-              padding-bottom: var(--safe-area-padding-bottom) !important;
-            }
-          `;
-          break;
-          
-        default:
-          css = `
-            /* General fixes for other browsers */
-            :root {
-              --brief-safe-area-bottom-multiplier: 1 !important;
-            }
-            
-            .messagesContainer {
-              max-height: calc(100% - var(--messages-safe-area-bottom) - 50px) !important;
-            }
-            
-            .inputContainer {
-              bottom: var(--safe-area-padding-bottom) !important;
-            }
-          `;
-          break;
-      }
-      
-      // Add keyboard visibility fixes
-      css += `
-        /* Keyboard visibility fixes */
-        body.keyboard-visible .inputContainer {
-          position: fixed;
-          bottom: 0 !important;
-          padding-bottom: 10px !important;
-          background-color: rgba(var(--felt-green-dark), 0.95);
-        }
-        
-        body.keyboard-visible .messagesContainer {
-          max-height: calc(100vh - 120px - var(--keyboard-height)) !important;
-          padding-bottom: 20px !important;
-        }
-        
-        /* iOS-specific keyboard fixes */
-        @supports (-webkit-touch-callout: none) {
-          body.keyboard-visible .inputContainer {
-            bottom: 0 !important;
-          }
-        }
-        
-        /* Android-specific keyboard fixes */
-        @supports not (-webkit-touch-callout: none) {
-          body.keyboard-visible {
-            padding-bottom: var(--android-keyboard-padding) !important;
-          }
-        }
-        
-        /* Fix height-related issues on rotate */
-        @media screen and (orientation: landscape) and (max-height: 500px) {
-          .inputContainer {
-            position: fixed;
-            bottom: 0 !important;
-            padding: 8px 10px !important;
-            z-index: 1000;
-          }
-          
-          .messagesContainer {
-            max-height: calc(100vh - 80px) !important;
-          }
-        }
-      `;
-      
-      setBrowserStyles(css);
+      // Browser-specific viewport adjustments
+      const viewportOffset = browserType === 'brave' ? '16px' : 
+                           browserType === 'safari' ? '8px' : '0px';
+      document.documentElement.style.setProperty('--viewport-offset', viewportOffset);
     };
     
     // Initialize all features
     const initMobileCompatibility = async () => {
-      checkIfMobile();
+      const isMobileDevice = checkIfMobile();
+      if (!isMobileDevice) return;
+      
       await detectBrowser();
       getSafeAreaInset();
       applyBrowserSpecificSettings();
       fixViewportHeight();
-      generateBrowserStylesheet();
       
       // Set up event listeners for screen changes
       const handleScreenChange = () => {
@@ -414,26 +178,28 @@ export const MobileCompatibility: React.FC = () => {
         getSafeAreaInset();
         applyBrowserSpecificSettings();
         fixViewportHeight();
-        generateBrowserStylesheet();
       };
       
       window.addEventListener('resize', handleScreenChange);
       window.addEventListener('orientationchange', handleScreenChange);
       
-      // Set up keyboard detection event listeners
-      const cleanupKeyboardDetection = setupKeyboardDetection();
+      // Handle visibility change for more reliable updates
+      document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+          handleScreenChange();
+        }
+      });
       
-      // Cleanup event listeners
       return () => {
         window.removeEventListener('resize', handleScreenChange);
         window.removeEventListener('orientationchange', handleScreenChange);
-        if (cleanupKeyboardDetection) cleanupKeyboardDetection();
+        document.removeEventListener('visibilitychange', handleScreenChange);
       };
     };
     
     // Initialize everything
     initMobileCompatibility();
-  }, [isMobile, browserType, safeAreaBottom]);
+  }, [browserType, safeAreaBottom, viewportHeight]);
   
   // Create a buffer element at the bottom for mobile devices
   const GestureAreaBuffer = () => {
@@ -441,14 +207,11 @@ export const MobileCompatibility: React.FC = () => {
     
     // Calculate buffer height based on browser type
     const getBufferHeight = () => {
-      switch (browserType) {
-        case 'brave':
-          return "calc(var(--safe-area-padding-bottom) * 1.1)";
-        case 'safari':
-          return "calc(var(--safe-area-padding-bottom) * 1.05)";
-        default:
-          return "var(--safe-area-padding-bottom)";
-      }
+      const baseHeight = `var(--safe-area-padding-bottom)`;
+      const multiplier = browserType === 'brave' ? 1.5 :
+                        browserType === 'safari' ? 1.2 : 1.1;
+      
+      return `calc(${baseHeight} * ${multiplier})`;
     };
     
     return (
