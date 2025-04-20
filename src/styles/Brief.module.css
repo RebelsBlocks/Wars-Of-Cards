@@ -220,7 +220,7 @@
   .inputContainer {
     max-width: 100%;
     padding: 16px;
-    padding-bottom: calc(16px + var(--safe-area-padding-bottom, 0px) * 4);
+    padding-bottom: calc(16px + var(--safe-area-padding-bottom, 0px) * 5);
     position: fixed;
     bottom: 0;
     left: 0;
@@ -230,22 +230,23 @@
     border-top: 1px solid rgba(var(--gold-accent), 0.2);
     backdrop-filter: blur(10px);
     display: flex;
-    gap: 12px;
+    gap: 16px;
     align-items: center;
   }
 
   .chatInput {
-    margin-bottom: calc(var(--safe-area-padding-bottom, 0px));
-    min-height: 36px;
-    font-size: 16px; /* Prevents zoom on iOS */
+    margin-bottom: calc(var(--safe-area-padding-bottom, 0px) * 2);
+    min-height: 44px;
+    font-size: 16px;
+    padding: 12px;
   }
 
   .sendButton {
-    height: 36px;
-    padding: 8px 16px;
-    font-size: 0.9rem;
-    margin-bottom: calc(var(--safe-area-padding-bottom, 0px));
-    min-width: 70px;
+    height: 44px;
+    padding: 8px 20px;
+    font-size: 1rem;
+    margin-bottom: calc(var(--safe-area-padding-bottom, 0px) * 2);
+    min-width: 80px;
   }
 
   .topicsContainer {
@@ -260,8 +261,7 @@
   }
 
   .messagesContainer {
-    padding-bottom: calc(env(safe-area-inset-bottom, 16px) + 16px);
-    margin-bottom: env(safe-area-inset-bottom, 8px);
+    padding-bottom: calc(140px + var(--safe-area-padding-bottom, 0px) * 5);
   }
 
   .inputContainer {
@@ -297,7 +297,7 @@
 
   .inputContainer {
     padding: 20px;
-    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px) * 4);
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px) * 5);
     position: fixed;
     bottom: 0;
     left: 0;
@@ -309,12 +309,27 @@
   }
 
   .chatInput {
-    margin-bottom: calc(var(--safe-area-padding-bottom, 0px));
-    min-height: 40px;
+    margin-bottom: calc(var(--safe-area-padding-bottom, 0px) * 2);
+    min-height: 44px;
+    padding: 12px;
   }
 
   .sendButton {
-    margin-bottom: calc(var(--safe-area-padding-bottom, 0px));
+    height: 44px;
+    margin-bottom: calc(var(--safe-area-padding-bottom, 0px) * 2);
+    min-width: 80px;
+  }
+
+  .briefList {
+    padding-bottom: calc(140px + var(--safe-area-padding-bottom, 0px) * 5);
+  }
+
+  .section:last-child {
+    margin-bottom: calc(140px + var(--safe-area-padding-bottom, 0px) * 5);
+  }
+
+  .messagesContainer {
+    padding-bottom: calc(140px + var(--safe-area-padding-bottom, 0px) * 5);
   }
 }
 
@@ -602,13 +617,13 @@
   .briefContainer {
     padding: 20px;
     padding-top: calc(64px + 20px);
-    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px));
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px) * 4);
   }
 
   .briefList {
     grid-template-columns: 1fr;
     gap: 20px;
-    padding-bottom: calc(80px + var(--safe-area-padding-bottom, 0px));
+    padding-bottom: calc(120px + var(--safe-area-padding-bottom, 0px) * 4);
   }
 
   .section {
@@ -616,18 +631,29 @@
   }
 
   .section:last-child {
-    margin-bottom: calc(80px + var(--safe-area-padding-bottom, 0px));
+    margin-bottom: calc(120px + var(--safe-area-padding-bottom, 0px) * 4);
   }
 
   .inputContainer {
     padding: 20px;
-    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px));
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px) * 4);
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--background-dark);
-    z-index: 100;
+    background: rgba(0, 32, 0, 0.98);
+    z-index: 1000;
+    border-top: 1px solid rgba(var(--gold-accent), 0.2);
+    backdrop-filter: blur(10px);
+  }
+
+  .chatInput {
+    margin-bottom: calc(var(--safe-area-padding-bottom, 0px));
+    min-height: 40px;
+  }
+
+  .sendButton {
+    margin-bottom: calc(var(--safe-area-padding-bottom, 0px));
   }
 }
 
