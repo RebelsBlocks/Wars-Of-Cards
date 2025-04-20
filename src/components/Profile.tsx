@@ -6,7 +6,6 @@ import styles from '../styles/Profile.module.css';
 import { NETWORK_CONFIG } from '@/contexts/NearWalletContext';
 import BN from 'bn.js';
 import { providers } from 'near-api-js';
-import { GestureAreaBuffer } from './GestureAreaBuffer';
 
 // Helper function to format token amounts with 2 decimal places
 function formatTokenAmount(amount: string): string {
@@ -305,7 +304,6 @@ export function Profile() {
           </div>
         </div>
       </div>
-      <GestureAreaBuffer />
     </div>
   );
 } 
