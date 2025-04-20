@@ -250,17 +250,42 @@ export function Brief() {
   const messagesContainerId = 'messages-container';
   const inputId = 'chat-input';
 
+  // Add state to track if it's Brave browser
+  const [isBraveBrowser, setIsBraveBrowser] = React.useState(false);
+  
+  // Detect Brave browser
+  React.useEffect(() => {
+    const checkBrave = async () => {
+      const isBrave = (navigator as any).brave !== undefined;
+      setIsBraveBrowser(isBrave);
+    };
+    
+    checkBrave();
+  }, []);
+  
   // Add CSS variable for safe area inset
   React.useEffect(() => {
     function updateSafeAreaInsets() {
       const safeAreaInsetBottom = window.getComputedStyle(document.documentElement).getPropertyValue('--sat') || '0px';
-      document.documentElement.style.setProperty('--safe-area-inset-bottom', safeAreaInsetBottom);
+      
+      // Apply different multiplier for Brave browser
+      const safeAreaMultiplier = isBraveBrowser ? 3 : 2;
+      const adjustedSafeAreaValue = `calc(${safeAreaInsetBottom} * ${safeAreaMultiplier})`;
+      
+      document.documentElement.style.setProperty('--safe-area-inset-bottom', adjustedSafeAreaValue);
+      
+      // Add a class to body if it's Brave browser for additional CSS targeting if needed
+      if (isBraveBrowser) {
+        document.body.classList.add('brave-browser');
+      } else {
+        document.body.classList.remove('brave-browser');
+      }
     }
     
     updateSafeAreaInsets();
     window.addEventListener('resize', updateSafeAreaInsets);
     return () => window.removeEventListener('resize', updateSafeAreaInsets);
-  }, []);
+  }, [isBraveBrowser]);
 
   // Add new state for NEAR to CRANS swap process
   const [swapState, setSwapState] = React.useState<SwapState>({
@@ -1178,7 +1203,9 @@ export function Brief() {
           </div>
         </div>
         
-        <div className={styles.inputContainer}>
+        <div className={styles.inputContainer} style={{
+          paddingBottom: isBraveBrowser ? "calc(var(--safe-area-inset-bottom) * 0.75)" : undefined
+        }}>
           <textarea
             id={inputId}
             value={inputValue}
@@ -1187,11 +1214,17 @@ export function Brief() {
             placeholder={wallet.accountId ? "For action, type 'swap' or 'balance'" : "Log in to perform actions..."}
             className={styles.chatInput}
             rows={1}
+            style={{
+              paddingBottom: isBraveBrowser ? "calc(var(--safe-area-inset-bottom) * 0.5)" : undefined
+            }}
           />
           <button 
             onClick={handleSendMessage}
             disabled={isLoading || !inputValue.trim()} 
             className={styles.sendButton}
+            style={{
+              marginBottom: isBraveBrowser ? "calc(var(--safe-area-inset-bottom) * 0.5)" : undefined
+            }}
           >
             Send
           </button>
