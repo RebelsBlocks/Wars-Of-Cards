@@ -1,15 +1,11 @@
 .container {
-  width: calc(100vw - 220px);
-  height: calc(100vh - 56px - 60px); /* Adjusted for header and action bar */
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  position: fixed;
-  top: 56px;
-  left: 220px;
-  right: 0;
-  bottom: 60px; /* Space for action bar */
   overflow: hidden;
   padding: clamp(8px, 2vw, 16px);
+  box-sizing: border-box;
 }
 
 .chatContainer {
@@ -17,7 +13,6 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  background: var(--background-dark);
   flex: 1;
   overflow: hidden;
   border: none;
@@ -33,6 +28,7 @@
     0 0 24px rgba(var(--gold-accent), 0.1);
   backdrop-filter: blur(10px);
   padding: clamp(12px, 2vw, 20px);
+  box-sizing: border-box;
 }
 
 .messagesContainer {
@@ -239,9 +235,13 @@
   .container {
     width: 100%;
     left: 0;
+    position: fixed;
+    top: 56px; 
+    right: 0;
+    bottom: 60px;
     padding: 8px;
     height: calc(100vh - 56px - 60px);
-    bottom: 60px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
   }
   
   .chatContainer {
@@ -266,6 +266,7 @@
     font-size: 14px;
     padding: 10px 14px;
     border-width: 1px;
+    margin-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .sendButton {
@@ -273,6 +274,7 @@
     min-width: 70px;
     padding: 0 12px;
     font-size: 14px;
+    margin-bottom: env(safe-area-inset-bottom, 0px);
   }
   
   .topicButton {
@@ -317,7 +319,7 @@
 /* iPhone safe area support */
 @supports (padding: max(0px)) {
   .container {
-    padding-bottom: calc(clamp(8px, 2vw, 16px) + var(--safe-area-padding-bottom, 0px));
+    padding-bottom: calc(clamp(8px, 2vw, 16px) + env(safe-area-inset-bottom, 0px));
   }
   
   @media screen and (max-width: 768px) {
@@ -328,10 +330,6 @@
     
     .inputContainer {
       padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
-    }
-    
-    .chatInput, .sendButton {
-      margin-bottom: env(safe-area-inset-bottom, 0px);
     }
   }
 }
