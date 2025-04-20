@@ -13,13 +13,8 @@ const NearWalletProvider = dynamic(
   { ssr: false }
 );
 
-const GestureAreaBuffer = dynamic(
-  () => import('@/components/GestureAreaBuffer').then(mod => mod.GestureAreaBuffer),
-  { ssr: false }
-);
-
-const ViewportFix = dynamic(
-  () => import('@/components/ViewportFix').then(mod => mod.ViewportFix),
+const MobileCompatibility = dynamic(
+  () => import('@/components/MobileCompatibility').then(mod => mod.MobileCompatibility),
   { ssr: false }
 );
 
@@ -45,9 +40,8 @@ function App({ Component, pageProps }: AppPropsWithLayout): React.ReactElement {
           content: 'width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no'
         })
       ),
-      React.createElement(ViewportFix, null),
-      React.createElement(Component, pageProps),
-      React.createElement(GestureAreaBuffer, null)
+      React.createElement(MobileCompatibility, null),
+      React.createElement(Component, pageProps)
     )
   );
 }
