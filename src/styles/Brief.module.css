@@ -231,22 +231,24 @@
     backdrop-filter: blur(10px);
     display: flex;
     gap: 16px;
-    align-items: center;
+    align-items: flex-start;
   }
 
   .chatInput {
-    margin-bottom: calc(var(--safe-area-padding-bottom, 0px) * 2);
     min-height: 44px;
     font-size: 16px;
     padding: 12px;
+    margin-bottom: 0;
   }
 
   .sendButton {
     height: 44px;
     padding: 8px 20px;
     font-size: 1rem;
-    margin-bottom: calc(var(--safe-area-padding-bottom, 0px) * 2);
     min-width: 80px;
+    margin-bottom: 0;
+    margin-top: 0;
+    align-self: flex-start;
   }
 
   .topicsContainer {
@@ -306,18 +308,23 @@
     z-index: 1000;
     border-top: 1px solid rgba(var(--gold-accent), 0.2);
     backdrop-filter: blur(10px);
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
   }
 
   .chatInput {
-    margin-bottom: calc(var(--safe-area-padding-bottom, 0px) * 2);
     min-height: 44px;
     padding: 12px;
+    margin-bottom: 0;
   }
 
   .sendButton {
     height: 44px;
-    margin-bottom: calc(var(--safe-area-padding-bottom, 0px) * 2);
     min-width: 80px;
+    margin-bottom: 0;
+    margin-top: 0;
+    align-self: flex-start;
   }
 
   .briefList {
@@ -636,7 +643,7 @@
 
   .inputContainer {
     padding: 20px;
-    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px) * 4);
+    padding-bottom: calc(20px + var(--safe-area-padding-bottom, 0px) * 5);
     position: fixed;
     bottom: 0;
     left: 0;
@@ -654,6 +661,18 @@
 
   .sendButton {
     margin-bottom: calc(var(--safe-area-padding-bottom, 0px));
+  }
+
+  .briefList {
+    padding-bottom: calc(140px + var(--safe-area-padding-bottom, 0px) * 5);
+  }
+
+  .section:last-child {
+    margin-bottom: calc(140px + var(--safe-area-padding-bottom, 0px) * 5);
+  }
+
+  .messagesContainer {
+    padding-bottom: calc(140px + var(--safe-area-padding-bottom, 0px) * 5);
   }
 }
 
