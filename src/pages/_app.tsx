@@ -18,6 +18,11 @@ const GestureAreaBuffer = dynamic(
   { ssr: false }
 );
 
+const ViewportFix = dynamic(
+  () => import('@/components/ViewportFix').then(mod => mod.ViewportFix),
+  { ssr: false }
+);
+
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: React.ReactElement) => React.ReactNode;
 };
@@ -37,9 +42,10 @@ function App({ Component, pageProps }: AppPropsWithLayout): React.ReactElement {
         React.createElement('link', { rel: 'icon', href: '/logo_transparent.png' }),
         React.createElement('meta', { 
           name: 'viewport', 
-          content: 'width=device-width, initial-scale=1, viewport-fit=cover'
+          content: 'width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no'
         })
       ),
+      React.createElement(ViewportFix, null),
       React.createElement(Component, pageProps),
       React.createElement(GestureAreaBuffer, null)
     )
