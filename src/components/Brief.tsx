@@ -40,10 +40,13 @@ const predefinedResponses: Record<string, string> = {
 // Define main topics for clickable buttons - more compact
 const mainTopics = [
   { id: 'what_to_do', label: 'What to do here?' },
-  { id: 'games', label: 'Play' },
-  { id: 'messages', label: 'Messages' },
+  { id: 'games', label: 'How To Play?' },
+  { id: 'messages', label: 'What can I read in Messages?' },
   { id: 'near', label: 'NEAR' },
-  { id: 'crans', label: 'CRANS' }
+  { id: 'crans', label: 'CRANS' },
+  { id: 'swap', label: 'SWAP' },
+  { id: 'balance', label: 'Balance' },
+  { id: 'help', label: 'Help' }
 ];
 
 // Add helper function for wallet name truncation
@@ -1171,7 +1174,7 @@ export function Brief() {
             value={inputValue}
             onChange={handleTextareaChange}
             onKeyDown={handleKeyDown}
-            placeholder={wallet.accountId ? "For action, type 'swap' or 'balance'" : "Log in to perform actions..."}
+            placeholder={wallet.accountId ? "Type command here..." : "Log in to perform actions..."}
             className={styles.chatInput}
             rows={1}
           />
