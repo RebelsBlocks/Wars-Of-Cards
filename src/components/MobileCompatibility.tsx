@@ -250,8 +250,8 @@ export const MobileCompatibility: React.FC = () => {
         case 'brave':
           css = `
             /* Brave-specific fixes */
-            .briefContainer {
-              padding-bottom: calc(var(--brief-safe-area-bottom) + 20px) !important;
+            :root {
+              --brief-safe-area-bottom-multiplier: 1.3 !important;
             }
             
             .messagesContainer {
@@ -288,8 +288,8 @@ export const MobileCompatibility: React.FC = () => {
         case 'safari':
           css = `
             /* Safari-specific fixes */
-            .briefContainer {
-              padding-bottom: calc(var(--brief-safe-area-bottom) + 15px) !important;
+            :root {
+              --brief-safe-area-bottom-multiplier: 1.2 !important;
             }
             
             .messagesContainer {
@@ -315,8 +315,8 @@ export const MobileCompatibility: React.FC = () => {
         case 'chrome':
           css = `
             /* Chrome-specific fixes */
-            .briefContainer {
-              padding-bottom: calc(var(--brief-safe-area-bottom) + 5px) !important;
+            :root {
+              --brief-safe-area-bottom-multiplier: 1.1 !important;
             }
             
             .messagesContainer {
@@ -337,8 +337,8 @@ export const MobileCompatibility: React.FC = () => {
         default:
           css = `
             /* General fixes for other browsers */
-            .briefContainer {
-              padding-bottom: calc(var(--brief-safe-area-bottom) + 5px) !important;
+            :root {
+              --brief-safe-area-bottom-multiplier: 1 !important;
             }
             
             .messagesContainer {
