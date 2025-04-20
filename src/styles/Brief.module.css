@@ -146,7 +146,7 @@
   .briefContainer {
     padding: 20px;
     padding-top: calc(56px + 20px);
-    padding-bottom: calc(20px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)));
+    padding-bottom: calc(20px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1));
     min-height: calc(var(--real-viewport-height) - 56px);
     max-height: none;
     overflow-y: visible;
@@ -155,7 +155,7 @@
   .briefList {
     grid-template-columns: 1fr;
     gap: 20px;
-    padding-bottom: calc(60px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)));
+    padding-bottom: calc(60px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
   }
 
   .section {
@@ -163,7 +163,7 @@
   }
 
   .section:last-child {
-    margin-bottom: calc(60px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)));
+    margin-bottom: calc(60px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
   }
 
   .section h1 {
@@ -786,24 +786,24 @@
 
 /* Brave browser-specific adjustments for Brief */
 :global(.brave-browser) .briefContainer {
-  padding-bottom: calc(20px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * 1.3);
+  padding-bottom: calc(20px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
 }
 
 :global(.brave-browser) .briefList {
-  padding-bottom: calc(60px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * 1.3);
+  padding-bottom: calc(60px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
 }
 
 :global(.brave-browser) .section:last-child {
-  margin-bottom: calc(60px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * 1.3);
+  margin-bottom: calc(60px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
 }
 
 :global(.brave-browser) .inputContainer {
-  padding-bottom: calc(16px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * 1.3);
-  margin-bottom: calc(var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * 1.3);
+  padding-bottom: calc(16px + var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
+  margin-bottom: calc(var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
 }
 
 :global(.brave-browser) .messagesContainer {
-  padding-bottom: calc(var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * 1.3);
+  padding-bottom: calc(var(--brief-safe-area-bottom, var(--safe-area-padding-bottom)) * var(--brief-safe-area-bottom-multiplier, 1.3));
 }
 
 @media screen and (max-width: 480px) {
