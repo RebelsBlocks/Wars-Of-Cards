@@ -200,7 +200,8 @@ const CommentForm = ({ postBlockHeight, onCommentSubmitted }: CommentFormProps) 
         methodName: 'set',
         args: { data },
         gas: '300000000000000',
-        deposit: '30000000000000000000000'
+        deposit: '30000000000000000000000',
+        callbackUrl: window.location.href
       });
 
       setComment('');
@@ -617,7 +618,8 @@ const LikeButton = ({ post, onLikeSubmitted }: { post: Post; onLikeSubmitted?: (
         methodName: 'set',
         args: { data },
         gas: '300000000000000',
-        deposit: '30000000000000000000000' // 0.03 NEAR
+        deposit: '30000000000000000000000',
+        callbackUrl: window.location.href
       });
 
       if (onLikeSubmitted) {
