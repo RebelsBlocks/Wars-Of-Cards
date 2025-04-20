@@ -4,11 +4,9 @@ import React, { useEffect, useState } from 'react';
  * Komponent bufora dla gesture area na urządzeniach mobilnych
  * Zapewnia dodatkową przestrzeń na dole ekranu, aby zapobiec
  * zakrywaniu zawartości przez gesture bar (iOS) lub navigation bar (Android)
- * Dodatkowe dostosowanie dla przeglądarki Brave
  */
 export const GestureAreaBuffer: React.FC = () => {
   const [isMobile, setIsMobile] = useState(false);
-  const [isBrave, setIsBrave] = useState(false);
 
   useEffect(() => {
     // Sprawdź, czy jesteśmy na urządzeniu mobilnym
@@ -16,16 +14,8 @@ export const GestureAreaBuffer: React.FC = () => {
       setIsMobile(window.innerWidth <= 768);
     };
 
-    // Sprawdź czy to przeglądarka Brave
-    const checkIfBrave = async () => {
-      // Brave browser has a specific navigator.brave object
-      const isBraveBrowser = (navigator as any).brave !== undefined;
-      setIsBrave(isBraveBrowser);
-    };
-
     // Sprawdź przy pierwszym renderowaniu
     checkIfMobile();
-    checkIfBrave();
 
     // Nasłuchuj na zmiany rozmiaru okna
     window.addEventListener('resize', checkIfMobile);
@@ -34,8 +24,8 @@ export const GestureAreaBuffer: React.FC = () => {
 
   if (!isMobile) return null;
 
-  // Użyj większej wysokości dla przeglądarki Brave
-  const heightMultiplier = isBrave ? 3 : 1.33;
+  // Use a consistent larger height multiplier
+  const heightMultiplier = 4;
 
   return (
     <div 
