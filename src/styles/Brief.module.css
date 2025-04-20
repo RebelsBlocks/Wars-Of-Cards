@@ -219,36 +219,44 @@
 
   .inputContainer {
     max-width: 100%;
-    padding: 16px;
-    padding-bottom: calc(16px + var(--safe-area-padding-bottom, 0px) * 5);
+    padding: 12px;
+    padding-bottom: calc(12px + var(--safe-area-padding-bottom, 0px));
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
     background: rgba(0, 32, 0, 0.98);
-    z-index: 1000;
-    border-top: 1px solid rgba(var(--gold-accent), 0.2);
+    z-index: 9999;
+    border-top: 1px solid rgba(255, 215, 0, 0.3);
     backdrop-filter: blur(10px);
     display: flex;
-    gap: 16px;
-    align-items: flex-start;
+    gap: 12px;
+    align-items: center;
+    margin: 0;
   }
 
   .chatInput {
-    min-height: 44px;
+    flex: 1;
+    min-height: 40px;
     font-size: 16px;
-    padding: 12px;
-    margin-bottom: 0;
+    padding: 8px 12px;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid var(--accent-color);
+    border-radius: 8px;
+    color: var(--text-primary);
   }
 
   .sendButton {
-    height: 44px;
-    padding: 8px 20px;
-    font-size: 1rem;
-    min-width: 80px;
-    margin-bottom: 0;
-    margin-top: 0;
-    align-self: flex-start;
+    height: 40px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    min-width: 70px;
+    margin: 0;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid var(--accent-color);
+    border-radius: 8px;
+    color: var(--accent-color);
   }
 
   .topicsContainer {
@@ -263,16 +271,7 @@
   }
 
   .messagesContainer {
-    padding-bottom: calc(140px + var(--safe-area-padding-bottom, 0px) * 5);
-  }
-
-  .inputContainer {
-    padding-bottom: calc(16px + env(safe-area-inset-bottom, 16px));
-    margin-bottom: env(safe-area-inset-bottom, 8px);
-    position: sticky;
-    bottom: 0;
-    background: var(--background-dark);
-    z-index: 100;
+    padding-bottom: 80px;
   }
 }
 
