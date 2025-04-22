@@ -211,23 +211,38 @@ export const BlackjackProvider: React.FC<BlackjackProviderProps> = ({ children }
     if (!wallet.accountId || gameState !== 'PLAYER_TURN') return;
 
     try {
-      setGameState('DEALER_TURN');
+      // Zamiast natychmiast zmieniać stan, ustawiamy flagę ładowania
+      setMessage("Drawing card...");
       
       const result = await blackjackService.hit(wallet.accountId);
       
+      // Najpierw aktualizujemy rękę gracza i pokazujemy nową kartę
       setPlayerHand(result.playerHand);
+      
+      // Krótka pauza aby pokazać karty przed aktualizacją wyniku
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
       setPlayerScore(result.playerScore);
       
+      // Kolejna pauza przed sprawdzeniem wyniku
+      await new Promise(resolve => setTimeout(resolve, 300));
+      
       if (result.playerScore === 21) {
+        // Usuwamy dodatkowy komunikat i pauzę dla wyniku 21
         setDealerHand(result.dealerHand);
         setDealerScore(result.dealerScore);
         setGameState('GAME_ENDED');
-        setMessage('Perfect 21! You win!');
+        setMessage(''); // Usuwamy komunikat tekstowy
       } else if (result.playerScore > 21) {
+        // Usuwamy komunikat tekstowy Bust!
+        
+        // Pauza aby gracz mógł zobaczyć zmiany
+        await new Promise(resolve => setTimeout(resolve, 800));
+        
         setDealerHand(result.dealerHand);
         setDealerScore(result.dealerScore);
         setGameState('GAME_ENDED');
-        setMessage('Bust! House wins!');
+        setMessage(''); // Usuwamy komunikat tekstowy
       } else {
         setGameState('PLAYER_TURN');
         setMessage('Your turn! Hit or Stand?');
@@ -249,24 +264,57 @@ export const BlackjackProvider: React.FC<BlackjackProviderProps> = ({ children }
       const result = await blackjackService.stand(wallet.accountId);
       
       // Najpierw odkrywamy ukrytą kartę dealera
-      setDealerHand(result.dealerHand.filter(card => !card.hidden));
+      const visibleDealerCards = result.dealerHand.map((card, index) => 
+        index === 1 ? { ...card, hidden: false } : card
+      ).slice(0, 2); // Bierzemy tylko pierwsze dwie karty na start
+      
+      setDealerHand(visibleDealerCards);
+      
+      // Pauza aby pokazać odkrycie pierwszej ukrytej karty
+      await new Promise(resolve => setTimeout(resolve, 800));
+      
+      // Aktualizujemy wynik dealera po odkryciu karty
+      setDealerScore(calculateScore(visibleDealerCards));
+      
+      // Pauza aby pokazać wynik po odkryciu karty
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Jeśli dealer ma więcej kart niż początkowe dwie, pokazujemy je sekwencyjnie
+      if (result.dealerHand.length > 2) {
+        let currentCards = [...visibleDealerCards];
+        
+        for (let i = 2; i < result.dealerHand.length; i++) {
+          // Dodajemy nową kartę do kopii tablicy
+          currentCards = [...currentCards, result.dealerHand[i]];
+          
+          // Ustawiamy zaktualizowaną tablicę kart
+          setDealerHand([...currentCards]);
+          
+          // Pauza po dodaniu każdej karty
+          await new Promise(resolve => setTimeout(resolve, 800));
+          
+          // Aktualizujemy wynik po każdej karcie
+          setDealerScore(calculateScore(currentCards));
+          
+          // Sprawdzamy czy dealer przekroczył 21, ale nie pokazujemy komunikatu
+          if (calculateScore(currentCards) > 21) {
+            await new Promise(resolve => setTimeout(resolve, 800));
+          }
+        }
+      }
+      
+      // Na koniec upewniamy się, że pokazujemy wszystkie karty
+      setDealerHand([...result.dealerHand]);
       setDealerScore(result.dealerScore);
       
-      // Minimalna pauza na pokazanie kart dealera
-      await new Promise(resolve => setTimeout(resolve, 100));
-      
-      // Pokazujemy pozostałe karty dealera (jeśli są)
-      setDealerHand(result.dealerHand);
-      setDealerScore(result.dealerScore);
-      
-      // Pauza aby gracz mógł porównać wyniki
+      // Pauza przed pokazaniem wyniku
       await new Promise(resolve => setTimeout(resolve, 800));
       
       // Aktualizujemy stan gry i pokazujemy wynik
       setGameState(result.state);
       setPlayerHand(result.playerHand);
       setPlayerScore(result.playerScore);
-      setMessage(result.message);
+      setMessage(''); // Usuwamy komunikat tekstowy na końcu gry
     } catch (error) {
       console.error('Failed to stand:', error);
       setMessage('Error standing');
@@ -326,12 +374,43 @@ const getSuitSymbol = (suit: Suit): string => {
 interface CardProps {
   card: Card;
   key?: string;
+  animationDelay?: number;
 }
 
-const Card: React.FC<CardProps> = ({ card }) => {
+const Card: React.FC<CardProps> = ({ card, animationDelay = 0 }) => {
+  const [isFlipping, setIsFlipping] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  
+  // Efekt dla animacji wejścia karty
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, animationDelay);
+    
+    return () => clearTimeout(timer);
+  }, [animationDelay]);
+  
+  // Efekt dla animacji odkrywania ukrytej karty
+  useEffect(() => {
+    if (card.hidden === false) {
+      setIsFlipping(true);
+      const timer = setTimeout(() => {
+        setIsFlipping(false);
+      }, 500); // Czas trwania animacji
+      
+      return () => clearTimeout(timer);
+    }
+  }, [card.hidden]);
+  
+  const cardClasses = [
+    styles.cardWrapper,
+    isVisible ? styles.cardVisible : styles.cardHidden,
+    isFlipping ? styles.flipping : ''
+  ].filter(Boolean).join(' ');
+  
   if (card.hidden) {
     return (
-      <div className={styles.cardWrapper}>
+      <div className={cardClasses} style={{ transitionDelay: `${animationDelay}ms` }}>
         <div className={styles.cardFaceHidden}>
           <div></div>
         </div>
@@ -343,7 +422,7 @@ const Card: React.FC<CardProps> = ({ card }) => {
   const colorClass = isRed ? styles.red : styles.black;
   
   return (
-    <div className={styles.cardWrapper}>
+    <div className={cardClasses} style={{ transitionDelay: `${animationDelay}ms` }}>
       <div className={styles.cardFace}>
         <div className={`${styles.cardValue} ${colorClass}`}>{card.rank}</div>
         <div className={`${styles.cardSuit} ${colorClass}`}>{getSuitSymbol(card.suit)}</div>
@@ -600,19 +679,22 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
           </div>
           <div className={styles.cardsContainer}>
             {dealerHand.map((card, index) => (
-              <Card key={`dealer-${index}`} card={card} />
+              <Card key={`dealer-${index}`} card={card} animationDelay={index * 100} />
             ))}
           </div>
         </div>
         
-        <div className={styles.messageDisplay}>
-          {message}
-        </div>
+        {/* Pokazujemy message tylko gdy gra nie jest zakończona */}
+        {gameState !== 'GAME_ENDED' && (
+          <div className={styles.messageDisplay}>
+            {message}
+          </div>
+        )}
         
         <div className={styles.playerSection}>
           <div className={styles.cardsContainer}>
             {playerHand.map((card, index) => (
-              <Card key={`player-${index}`} card={card} />
+              <Card key={`player-${index}`} card={card} animationDelay={index * 100} />
             ))}
           </div>
           <div className={styles.scoreDisplay}>
