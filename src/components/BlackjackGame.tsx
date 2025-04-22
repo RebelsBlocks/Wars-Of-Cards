@@ -225,11 +225,9 @@ export const BlackjackProvider: React.FC<BlackjackProviderProps> = ({ children }
       
       setPlayerScore(result.playerScore);
       
-      // Kolejna pauza przed sprawdzeniem wyniku
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
+      // Usuwamy dodatkową pauzę przed sprawdzeniem wyniku gdy gracz ma 21
       if (result.playerScore === 21) {
-        // Usuwamy dodatkowy komunikat i pauzę dla wyniku 21
+        // Natychmiast aktualizujemy stan gry bez dodatkowej pauzy
         setDealerHand(result.dealerHand);
         setDealerScore(result.dealerScore);
         setGameState('GAME_ENDED');
