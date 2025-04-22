@@ -219,8 +219,9 @@ export const BlackjackProvider: React.FC<BlackjackProviderProps> = ({ children }
       // Najpierw aktualizujemy rękę gracza i pokazujemy nową kartę
       setPlayerHand(result.playerHand);
       
-      // Krótka pauza aby pokazać karty przed aktualizacją wyniku
-      await new Promise(resolve => setTimeout(resolve, 300));
+      // Dłuższa pauza aby karta była w pełni widoczna przed aktualizacją wyniku
+      // Card animation takes ~300ms + transition time
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       setPlayerScore(result.playerScore);
       
@@ -270,11 +271,14 @@ export const BlackjackProvider: React.FC<BlackjackProviderProps> = ({ children }
       
       setDealerHand(visibleDealerCards);
       
+      // Dłuższa pauza dla pełnej animacji odkrycia karty
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
       // Aktualizujemy wynik dealera po odkryciu karty
       setDealerScore(calculateScore(visibleDealerCards));
       
       // Pauza aby pokazać wynik po odkryciu karty
-      await new Promise(resolve => setTimeout(resolve, 500));
+      await new Promise(resolve => setTimeout(resolve, 300));
       
       // Jeśli dealer ma więcej kart niż początkowe dwie, pokazujemy je sekwencyjnie
       if (result.dealerHand.length > 2) {
@@ -287,10 +291,10 @@ export const BlackjackProvider: React.FC<BlackjackProviderProps> = ({ children }
           // Ustawiamy zaktualizowaną tablicę kart
           setDealerHand([...currentCards]);
           
-          // Pauza po dodaniu każdej karty
+          // Dłuższa pauza po dodaniu każdej karty, aby animacja mogła się zakończyć
           await new Promise(resolve => setTimeout(resolve, 800));
           
-          // Aktualizujemy wynik po każdej karcie
+          // Aktualizujemy wynik po zakończeniu animacji karty
           setDealerScore(calculateScore(currentCards));
           
           // Sprawdzamy czy dealer przekroczył 21, ale nie pokazujemy komunikatu
