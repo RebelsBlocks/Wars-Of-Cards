@@ -270,9 +270,6 @@ export const BlackjackProvider: React.FC<BlackjackProviderProps> = ({ children }
       
       setDealerHand(visibleDealerCards);
       
-      // Pauza aby pokazać odkrycie pierwszej ukrytej karty
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
       // Aktualizujemy wynik dealera po odkryciu karty
       setDealerScore(calculateScore(visibleDealerCards));
       
