@@ -658,7 +658,7 @@
 
 .warResultImage {
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   height: auto;
   margin-bottom: 20px;
   opacity: 0;
@@ -861,8 +861,8 @@
   }
 
   .warResultImage {
-    width: 80vw;
-    max-width: 250px;
+    width: 90vw;
+    max-width: 300px;
   }
 
   .cardsContainer {
