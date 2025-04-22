@@ -142,12 +142,12 @@ export function MainLayout({
 
         <div className={styles.socialLinks}>
           <a 
-            href="https://x.com/RebelsBlocks" 
+            href="https://t.me/+-xPEx_2Kxuo5YmY0" 
             target="_blank" 
             rel="noopener noreferrer"
             className={styles.xLink}
           >
-            <img src="/x.png" alt="X (Twitter)" />
+            <img src="/telegram.png" alt="telegram" />
           </a>
         </div>
       </div>
