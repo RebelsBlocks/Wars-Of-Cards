@@ -89,6 +89,8 @@ class WarService {
 
     // Inicjalizacja połączenia Socket.IO
     const SOCKET_SERVER_URL = process.env.NEXT_PUBLIC_WARGAME_SERVER_URL || 'http://localhost:3003';
+    console.log(`Connecting to War Game server at: ${SOCKET_SERVER_URL}`);
+    
     this.socket = io(SOCKET_SERVER_URL, {
       transports: ['polling', 'websocket'],
       reconnectionAttempts: 5,
@@ -99,6 +101,7 @@ class WarService {
 
     // Obsługa połączenia
     this.socket.on('connect', () => {
+      console.log('Socket.IO connected successfully');
       this.connected = true;
       this.connectionError = null;
       
@@ -108,6 +111,7 @@ class WarService {
           id: nearAccountId,
           nearAccountId: nearAccountId
         };
+        console.log(`Joining game with payload:`, payload);
         this.socket.emit('join_game', payload);
       }
       
@@ -118,7 +122,8 @@ class WarService {
     });
     
     // Obsługa rozłączenia
-    this.socket.on('disconnect', () => {
+    this.socket.on('disconnect', (reason) => {
+      console.log(`Socket.IO disconnected. Reason: ${reason}`);
       this.connected = false;
       
       // Wywołaj callback, jeśli istnieje
@@ -129,12 +134,36 @@ class WarService {
     
     // Obsługa błędów
     this.socket.on('connect_error', (error) => {
+      console.error('Socket.IO connection error:', error);
       this.connectionError = `Connection error: ${error.message}`;
       this.connected = false;
       
       // Wywołaj callback, jeśli istnieje
       if (this.callbacks.onError) {
         this.callbacks.onError(error);
+      }
+    });
+    
+    // Additional error handlers
+    this.socket.on('error', (error) => {
+      console.error('Socket.IO general error:', error);
+      this.connectionError = `Socket error: ${error.message}`;
+      
+      if (this.callbacks.onError) {
+        this.callbacks.onError(error);
+      }
+    });
+    
+    this.socket.on('reconnect_attempt', (attemptNumber) => {
+      console.log(`Socket.IO reconnection attempt #${attemptNumber}`);
+    });
+    
+    this.socket.on('reconnect_failed', () => {
+      console.error('Socket.IO reconnection failed after all attempts');
+      this.connectionError = 'Reconnection failed after multiple attempts';
+      
+      if (this.callbacks.onError) {
+        this.callbacks.onError(new Error('Reconnection failed'));
       }
     });
     
