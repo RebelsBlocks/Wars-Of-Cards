@@ -30,10 +30,12 @@
     "react": "^18",
     "react-dom": "^18",
     "react-markdown": "^10.1.0",
+    "socket.io-client": "^4.7.5",
     "wagmi": "^2.12.16"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.5",
+    "@types/express": "^5.0.1",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.11.17",
     "@types/react": "^19.0.8",
