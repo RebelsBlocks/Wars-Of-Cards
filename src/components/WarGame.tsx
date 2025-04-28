@@ -18,8 +18,8 @@ interface ExtendedNetwork extends Network {
 }
 
 // Constants for betting
-const ENTRY_FEE = 4; // 4 CRANS
-const ENTRY_FEE_YOCTO = "4000000000000000000000000"; // 4 with 24 decimals
+const ENTRY_FEE = 420; // 420 CRANS
+const ENTRY_FEE_YOCTO = "420000000000000000000000000"; // 420 with 24 decimals
 
 // Helper function to format token amounts
 function formatTokenAmount(amount: string): string {
