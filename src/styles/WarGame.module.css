@@ -1,3 +1,79 @@
+/* Style dla komunikatu o błędzie połączenia */
+.connectionError {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.85);
+  border: 2px solid #ff4444;
+  border-radius: 15px;
+  padding: 2rem;
+  max-width: 80%;
+  width: 100%;
+  text-align: center;
+  gap: 1.5rem;
+  color: white;
+  position: absolute;
+  z-index: 100;
+  box-shadow: 0 0 30px rgba(255, 68, 68, 0.5);
+}
+
+.connectionError h2 {
+  color: #ff4444;
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.connectionError p {
+  font-size: 1rem;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.reconnectButton {
+  background: linear-gradient(135deg, #ff4444, #cc0000);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.8rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.reconnectButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(255, 68, 68, 0.4);
+}
+
+.reconnectButton:active {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 68, 68, 0.4);
+}
+
+@media (max-width: 768px) {
+  .connectionError {
+    max-width: 90%;
+    padding: 1.5rem;
+  }
+  
+  .connectionError h2 {
+    font-size: 1.5rem;
+  }
+  
+  .connectionError p {
+    font-size: 0.9rem;
+  }
+  
+  .reconnectButton {
+    padding: 0.7rem 1.2rem;
+    font-size: 1rem;
+  }
+}
+
 /* Style dla gry karcianej "Wojna" */
 
 .gameContainer {
@@ -9,18 +85,76 @@
   align-items: center;
   position: relative;
   touch-action: manipulation;
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 80px); /* Stary sposób */
+  min-height: calc(var(--vh, 1vh) * 100 - 80px); /* Nowy sposób z użyciem zmiennej --vh */
+  padding-top: env(safe-area-inset-top, 20px); /* Dodanie paddingu na górze dla iOS */
+  padding-bottom: env(safe-area-inset-bottom, 10px); /* Dodanie paddingu na dole dla iOS */
+  overflow: hidden;
+}
+
+/* Style dla urządzeń Xiaomi/MIUI wykrytych przez JavaScript */
+:root.miui-device .gameContainer {
+  padding-top: var(--miui-padding-top, 60px); /* Znacznie zwiększony padding, aby uzyskać odstęp jak na iPhone i Samsung */
+}
+
+:root.miui-device .gameTable {
+  padding-top: calc(var(--miui-padding-top, 60px) - 10px);
+  margin-top: 25px;
+}
+
+:root.miui-device .balanceDisplay {
+  margin-top: 15px;
+}
+
+/* Specyficzne rozwiązanie dla telefonów Xiaomi z MIUI */
+@supports (-webkit-touch-callout: none) {
+  .gameContainer {
+    padding-top: max(50px, env(safe-area-inset-top, 50px)); /* Zwiększony padding dla MIUI */
+  }
+}
+
+/* Specjalne style dla telefonów Xiaomi/Redmi, które mają problem z wysokością ekranu */
+@media screen and (max-width: 768px) and (min-resolution: 1.5dppx) {
+  .gameContainer {
+    padding-top: max(55px, env(safe-area-inset-top, 55px)); /* Jeszcze większy padding dla MIUI na mniejszych ekranach */
+  }
+  
+  .gameTable {
+    padding-top: max(40px, env(safe-area-inset-top, 40px)); /* Większy padding dla tabeli gry */
+    margin-top: 20px; /* Dodatkowy margines od góry */
+  }
+  
+  .balanceDisplay {
+    margin-top: 15px; /* Dodanie marginesu od góry dla wyświetlania salda */
+  }
+}
+
+/* Specjalnie zoptymalizowane media query dla telefonów Xiaomi Poco */
+@media screen and (width >= 360px) and (width <= 393px) and (min-resolution: 2.5dppx) {
+  :root.miui-device .gameContainer {
+    padding-top: max(65px, var(--miui-padding-top, 65px)); /* Zwiększony padding dla Poco */
+  }
+  
+  :root.miui-device .gameTable {
+    padding-top: max(50px, calc(var(--miui-padding-top, 65px) - 15px));
+    margin-top: 30px;
+  }
+  
+  :root.miui-device .balanceDisplay {
+    margin-top: 20px;
+    padding-top: 10px;
+  }
 }
 
 .gameTable {
   position: relative;
   width: 95%;
   max-width: 900px;
-  height: 90vh;
-  min-height: calc(100vh - 40px);
+  height: 100%;
   background: url('/Profile_back.png') center center/cover;
   border-radius: 25px;
-  padding: clamp(0.5rem, 2vw, 1.5rem);
+  padding: 1.5rem;
+  padding-top: max(1.5rem, env(safe-area-inset-top, 20px)); /* Dodanie paddingu na górze */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -28,59 +162,354 @@
   overflow: hidden;
 }
 
+/* Dodatkowe rozwiązanie dla telefonów z MIUI - specyficzna implementacja paska statusu */
+@media screen and (max-width: 480px) {
+  .gameTable {
+    padding-top: max(20px, env(safe-area-inset-top, 20px));
+    height: calc(100vh - 65px); /* Zmniejszona wysokość dla lepszego dopasowania */
+    min-height: calc(var(--vh, 1vh) * 100 - 65px);
+  }
+  
+  /* Korekta dla telefonów z wyższym paskiem statusu */
+  .balanceDisplay {
+    margin-top: 10px; /* Dodatkowy margines dla wyświetlacza salda */
+    padding-top: 8px; /* Zwiększony padding górny */
+  }
+  
+  /* Przesunięcie elementów w dół, aby uniknąć przycinania na górze */
+  .buttonContainer {
+    margin-bottom: max(10px, env(safe-area-inset-bottom, 10px)); /* Zapewnienie odstępu na dole */
+  }
+}
+
+/* Naprawienie viewportu dla przeglądarek mobilnych - zwalcza problem z 100vh */
+@supports (-webkit-touch-callout: none) {
+  .gameTable {
+    height: calc(-webkit-fill-available - 20px);
+    min-height: calc(-webkit-fill-available - 20px);
+    max-height: calc(-webkit-fill-available - 20px);
+    padding-top: max(25px, env(safe-area-inset-top, 25px)); /* Zwiększony padding dla wszystkich urządzeń z webkit */
+  }
+  
+  .parentContainer, .gameContainer {
+    min-height: calc(-webkit-fill-available - 20px);
+    max-height: calc(-webkit-fill-available - 20px);
+    padding-top: max(20px, env(safe-area-inset-top, 20px)); /* Większy padding dla kontenera */
+  }
+}
+
+/* Specyficzne rozwiązanie dla Xiaomi/Redmi z większym notchem i paskiem statusu */
+@media screen and (max-width: 393px) {
+  .gameContainer {
+    padding-top: max(60px, env(safe-area-inset-top, 60px)); /* Jeszcze większy padding dla Poco/Redmi */
+  }
+  
+  .gameTable {
+    padding-top: max(45px, env(safe-area-inset-top, 45px));
+    margin-top: 25px;
+  }
+  
+  .balanceDisplay {
+    margin-top: 20px;
+  }
+}
+
+/* Container dla zakładu wyświetlany podczas gry (timer, punkty, wielkość zakładu) */
 .betContainer {
-  position: relative;
-  width: 100%;
-  max-width: 800px;
-  height: calc(100vh - 60px);
-  background: transparent;
-  padding: 2rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
   align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+  gap: 1rem;
+  background: rgba(var(--felt-green-dark), 0.95);
+  padding: 1rem 1.5rem 1.5rem;
+  border-radius: 12px;
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  z-index: 100;
+  min-width: 300px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .balanceDisplay {
   background: rgba(0, 0, 0, 0.8);
-  padding: 0.6rem 1rem;
+  color: #ffffff;
+  padding: 0.8rem 1.5rem;
   border-radius: 8px;
-  border: 1px solid rgba(var(--gold-accent), 0.3);
-  width: 100%;
+  font-size: 1.2rem;
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.betDisplay {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.8rem 1.6rem;
+  color: white;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  min-width: 140px;
+  margin: 0.8rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.placeBetButton {
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
+  color: rgb(var(--felt-green-dark));
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 1rem;
+  width: 100%;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.placeBetButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg,
+    rgba(var(--secondary-accent), 0.9),
+    rgba(var(--gold-accent), 0.9)
+  );
+}
+
+.placeBetButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.placeBetButton:disabled {
+  background: linear-gradient(135deg, #a8a8a8, #6e6e6e);
+  cursor: not-allowed;
+  opacity: 0.7;
+  transform: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.backToGamesButton {
+  background: rgba(0, 0, 0, 0.5);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 100%;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.backToGamesButton:hover {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 215, 0, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.backToGamesButton:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.errorMessage {
+  color: #ff5252;
+  margin-top: 16px;
+  font-size: 14px;
+  max-width: 300px;
+  text-align: center;
+}
+
+/* Przycisk odświeżania salda - zawsze używa gradientu jak Enter Game */
+.refreshButton {
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.refreshButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.refreshButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.refreshIcon {
+  width: 16px;
+  height: 16px;
+  color: black;
+}
+
+.connectWalletMessage {
+  font-size: 18px;
+  color: #fff;
+  margin: 20px 0;
+}
+
+.rewardMessage {
+  font-size: 1.1rem;
+  padding: 10px;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+}
+
+.drawMessage {
+  font-size: 1.1rem;
+  padding: 10px;
+  color: #4dc9ff;
+  text-shadow: 0 0 10px rgba(77, 201, 255, 0.7);
 }
 
 .gameStats {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  color: rgb(var(--cream-text));
-  font-size: 0.9rem;
-  font-weight: 500;
+  width: 100%;
+  padding: 0 10px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+  padding-bottom: 8px;
 }
 
 .pointsStats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 0;
+  width: 100%;
   font-size: 0.9rem;
-  font-weight: 500;
-  color: rgb(var(--cream-text));
-  border-top: 1px solid rgba(var(--gold-accent), 0.2);
-  padding-top: 0.5rem;
-  text-align: center;
-  position: relative;
+  font-weight: 600;
+  color: #fff;
+}
+
+.betInfo, .timerInfo {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background-color: transparent;
+}
+
+.betInfo {
+  color: #ffd700;
+}
+
+.timerInfo {
+  color: #ffd700;
+}
+
+@media (max-width: 768px) {
+  .betInfo, .timerInfo {
+    padding: 3px 6px;
+    font-size: 0.85rem;
+  }
+  
+  .gameStats {
+    padding: 0 8px;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+  }
+  
+  .pointsStats {
+    font-size: 0.85rem;
+    padding: 6px 8px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .betInfo, .timerInfo {
+    padding: 2px 5px;
+    font-size: 0.8rem;
+  }
+  
+  .gameStats {
+    padding: 0 6px;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+  }
+  
+  .pointsStats {
+    font-size: 0.8rem;
+    padding: 5px 6px 0;
+  }
+}
+
+@media (max-width: 360px) {
+  .betInfo, .timerInfo {
+    padding: 2px 4px;
+    font-size: 0.75rem;
+  }
+  
+  .gameStats {
+    padding: 0 5px;
+    margin-bottom: 4px;
+    padding-bottom: 4px;
+  }
+  
+  .pointsStats {
+    font-size: 0.75rem;
+    padding: 4px 5px 0;
+  }
+}
+
+.pointsStats span {
+  font-size: inherit;
 }
 
 .pointsStats span:first-child {
   color: #ffd700;
+  font-weight: bold;
 }
 
 .pointsStats span:last-child {
   color: #ff4444;
+  font-weight: bold;
+}
+
+.pointsStats span:nth-child(2) {
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 5px;
 }
 
 .pointsToAdd {
@@ -123,16 +552,17 @@
 }
 
 .betDisplay {
-  background: rgba(0, 0, 0, 0.8);
-  color: #ffd700;
-  padding: 1rem 2rem;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-  font-size: 2rem;
-  font-weight: bold;
-  min-width: 200px;
+  padding: 0.8rem 1.6rem;
+  color: white;
   text-align: center;
-  border: 2px solid #ffd700;
-  text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  font-size: 1.8rem;
+  font-weight: bold;
+  min-width: 140px;
+  margin: 0.8rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
 .chipContainer {
@@ -184,7 +614,6 @@
 
 .placeBetButton,
 .backToGamesButton {
-  background: linear-gradient(135deg, #ffd700, #ffa500);
   border: none;
   color: #000;
   padding: 1rem 2rem;
@@ -213,26 +642,22 @@
 
 .gameInfo {
   width: 100%;
-  padding: clamp(0.3rem, 1vw, 0.5rem);
+  padding: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(10px);
   border-radius: 8px;
-  flex-wrap: wrap;
-  gap: 0.5rem;
 }
 
 .timerDisplay {
   background: rgba(0, 0, 0, 0.5);
   color: white;
-  padding: clamp(0.3rem, 1vw, 0.5rem) clamp(0.5rem, 1.5vw, 1rem);
+  padding: 0.5rem 1rem;
   border-radius: 8px;
-  font-size: clamp(0.8rem, 2vw, 1.1rem);
+  font-size: 1.1rem;
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  min-width: clamp(80px, 10vw, 100px);
+  min-width: 100px;
 }
 
 .timerWarning {
@@ -243,14 +668,14 @@
 .scoreBoard {
   background: rgba(0, 0, 0, 0.5);
   color: white;
-  padding: clamp(0.3rem, 1vw, 0.5rem) clamp(0.75rem, 2vw, 1.5rem);
+  padding: 0.5rem 1.5rem;
   border-radius: 8px;
-  font-size: clamp(0.8rem, 2vw, 1.2rem);
+  font-size: 1.2rem;
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
-  gap: clamp(0.5rem, 1.5vw, 1.5rem);
+  gap: 1.5rem;
 }
 
 .playerScore,
@@ -292,11 +717,11 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  gap: clamp(0.5rem, 1.5vw, 1rem);
+  gap: 1rem;
   position: relative;
   min-height: 0;
   overflow: hidden;
-  margin-bottom: clamp(0.25rem, 1vw, 1rem);
+  margin-bottom: 1rem;
 }
 
 .computerArea {
@@ -327,7 +752,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: min(0.5rem, 1.5vw);
+  gap: min(1rem, 2vw);
   width: 100%;
   max-width: min(300px, 90vw);
   margin: 0 auto;
@@ -341,8 +766,8 @@
 .computerCards,
 .playerCards {
   position: relative;
-  width: min(65px, calc(7vw + 23px));
-  height: min(97.5px, calc(10.5vw + 34.5px));
+  width: min(70px, calc(9vw + 30px));
+  height: min(105px, calc(13.5vw + 45px));
   display: flex;
   justify-content: center;
   align-items: flex-start;
@@ -369,14 +794,12 @@
 }
 
 /* Style dla aktualnej karty wojennej (ostatniej w kolejności) */
-.computerCards .cardWrapper:last-child[style*="top:"],
-.playerCards .cardWrapper:last-child[style*="top:"] {
+.computerCards .cardWrapper:last-child[style*="top:"]:hover,
+.playerCards .cardWrapper:last-child[style*="top:"]:hover {
+  transform: translateX(-50%) scale(1.01);
   box-shadow: 
-    0 0 20px rgba(139, 0, 0, 0.6),
-    0 0 40px rgba(139, 0, 0, 0.3);
-  border: 2px solid rgba(139, 0, 0, 0.5);
-  transform: translateX(-50%) scale(1.05);
-  z-index: 10;
+    0 0 5px rgba(139, 0, 0, 0.3),
+    0 0 10px rgba(139, 0, 0, 0.15);
 }
 
 .computerCards .cardWrapper:last-child[style*="top:"] .cardFace,
@@ -398,15 +821,6 @@
     0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
-/* Hover efekt dla aktualnej karty wojennej */
-.computerCards .cardWrapper:last-child[style*="top:"]:hover,
-.playerCards .cardWrapper:last-child[style*="top:"]:hover {
-  transform: translateX(-50%) scale(1.01);
-  box-shadow: 
-    0 0 5px rgba(139, 0, 0, 0.3),
-    0 0 10px rgba(139, 0, 0, 0.15);
-}
-
 /* Zachowaj poprzednie style */
 .computerCards .cardWrapper:hover,
 .playerCards .cardWrapper:hover {
@@ -415,9 +829,9 @@
 
 .cardsContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(65px, calc(7vw + 23px)), 1fr));
-  gap: min(0.5rem, 1.5vw);
-  padding: min(0.5rem, 1.5vw);
+  grid-template-columns: repeat(auto-fit, minmax(min(70px, calc(9vw + 30px)), 1fr));
+  gap: min(1rem, 2vw);
+  padding: min(1rem, 2vw);
   justify-content: center;
   align-items: center;
   width: 100%;
@@ -427,22 +841,19 @@
 }
 
 .cardWrapper {
-  width: min(65px, calc(7vw + 23px));
-  height: min(97.5px, calc(10.5vw + 34.5px));
+  width: min(70px, calc(9vw + 30px));
+  height: min(105px, calc(13.5vw + 45px));
   aspect-ratio: 2/3;
   transform: translateZ(0);
   backface-visibility: hidden;
   transition: all 0.2s ease-in-out;
   will-change: transform;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
 }
 
 .cardFace {
   width: 100%;
   height: 100%;
   background: url('/card_front.png') center center/cover;
-  background-size: 100% 100%;
   border-radius: min(8px, 1.5vw);
   padding: min(0.4rem, 1vw);
   display: flex;
@@ -454,14 +865,12 @@
 
 .cardFaceJoker {
   background: url('/card_joker_front.png') center center/cover;
-  background-size: 100% 100%;
 }
 
 .cardBack {
   width: 100%;
   height: 100%;
   background: url('/card_back.png') center center/cover;
-  background-size: 100% 100%;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -472,8 +881,8 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
-  width: min(65px, calc(7vw + 23px));
-  height: min(97.5px, calc(10.5vw + 34.5px));
+  width: min(70px, calc(9vw + 30px));
+  height: min(105px, calc(13.5vw + 45px));
 }
 
 .bonusCard {
@@ -504,11 +913,115 @@
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 3rem;
-  font-weight: bold;
+  font-weight: 900;
   color: #ff4444;
-  text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
-  animation: warAnimation 2s ease-in-out;
+  text-shadow: 
+    0 0 10px rgba(255, 68, 68, 0.8),
+    0 0 20px rgba(255, 0, 0, 0.6),
+    0 0 30px rgba(255, 0, 0, 0.4);
+  animation: warAnimation 1s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 100;
+  letter-spacing: 2px;
+  perspective: 600px;
+  transform-style: preserve-3d;
+  text-transform: uppercase;
+  filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.8));
+}
+
+.warStatus::before,
+.warStatus::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: rgba(255, 0, 0, 0.4);
+  transform: translate(-50%, -50%) scale(0);
+  z-index: -1;
+  animation: warRipple 1s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.warStatus::after {
+  animation-delay: 0.2s;
+}
+
+@keyframes warRipple {
+  0% {
+    transform: translate(-50%, -50%) scale(0);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(15);
+    opacity: 0;
+  }
+}
+
+/* Dostosowanie animacji */
+@keyframes warAnimation {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2) rotate(-5deg);
+    text-shadow: 0 0 0 rgba(255, 0, 0, 0);
+    clip-path: inset(0 50% 0 50%);
+    filter: blur(5px) brightness(2);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-52%, -48%) scale(1.5) rotate(5deg);
+    text-shadow: 
+      0 0 15px rgba(255, 68, 68, 1),
+      0 0 30px rgba(255, 0, 0, 0.8),
+      0 0 40px rgba(255, 0, 0, 0.6);
+    clip-path: inset(0 10% 0 10%);
+    filter: blur(0) brightness(1.5);
+  }
+  20% {
+    transform: translate(-48%, -52%) scale(1.3) rotate(-3deg);
+    filter: blur(0) brightness(1.2);
+    clip-path: inset(0 0 0 0);
+  }
+  30% {
+    transform: translate(-51%, -49%) scale(1.4) rotate(2deg);
+    filter: blur(1px) brightness(1.4);
+  }
+  40% {
+    transform: translate(-49%, -51%) scale(1.35) rotate(-1deg);
+    filter: blur(0) brightness(1.3);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.4) rotate(0deg);
+    text-shadow: 
+      0 0 20px rgba(255, 68, 68, 1),
+      0 0 40px rgba(255, 0, 0, 0.8),
+      0 0 60px rgba(255, 0, 0, 0.6);
+    filter: blur(0) brightness(1.5);
+  }
+  60% {
+    transform: translate(-50%, -50%) scale(1.35) rotate(1deg);
+    filter: blur(1px) brightness(1.2);
+  }
+  70% {
+    transform: translate(-50%, -50%) scale(1.3) rotate(-1deg);
+    filter: blur(0) brightness(1.3);
+  }
+  80% {
+    transform: translate(-50%, -50%) scale(1.2) rotate(0.5deg);
+    opacity: 1;
+    text-shadow: 
+      0 0 15px rgba(255, 68, 68, 0.8),
+      0 0 30px rgba(255, 0, 0, 0.6),
+      0 0 40px rgba(255, 0, 0, 0.4);
+    filter: blur(0) brightness(1.1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.8) rotate(0deg);
+    text-shadow: 0 0 0 rgba(255, 0, 0, 0);
+    filter: blur(3px) brightness(0.8);
+  }
 }
 
 .twistStatus {
@@ -524,33 +1037,157 @@
   z-index: 100;
 }
 
-@keyframes warAnimation {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(0.5);
+.extraCardStatus {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2em;
+  font-weight: bold;
+  color: gold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  animation: fadeInOut 2s ease-in-out;
+  z-index: 1000;
+}
+
+/* Media queries dla różnych rozmiarów ekranu */
+@media (max-width: 768px) {
+  .warStatus {
+    font-size: min(2.5rem, 8vw);
+    /* Mocno obniżona pozycja animacji */
+    top: min(250px, 45vw);
   }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) scale(1.2);
+  
+  .twistStatus {
+    font-size: min(2.5rem, 8vw);
+    top: min(250px, 45vw);
   }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) scale(1);
+  
+  .extraCardStatus {
+    font-size: min(2rem, 7vw);
+    top: min(250px, 45vw);
+  }
+  
+  .balanceDisplay {
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px 10px;
+  }
+  
+  .gameStats {
+    font-size: 0.85rem;
+    padding: 0 8px;
+    margin-bottom: 8px;
+  }
+  
+  .pointsStats {
+    font-size: 0.85rem;
+    padding: 6px 8px 0;
+    margin-top: 4px;
   }
 }
 
-@keyframes twistAnimation {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, -50%) rotate(0deg) scale(0.5);
+@media (max-width: 600px) {
+  .warStatus {
+    font-size: min(2rem, 7vw);
+    top: min(220px, 42vw);
   }
-  50% {
-    opacity: 1;
-    transform: translate(-50%, -50%) rotate(360deg) scale(1.2);
+  
+  .twistStatus {
+    font-size: min(2rem, 7vw);
+    top: min(220px, 42vw);
   }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -50%) rotate(720deg) scale(1);
+  
+  .extraCardStatus {
+    font-size: min(1.8rem, 6vw);
+    top: min(220px, 42vw);
+  }
+  
+  .balanceDisplay {
+    padding: 7px;
+  }
+  
+  .gameStats {
+    font-size: 0.8rem;
+    padding: 0 7px;
+    margin-bottom: 7px;
+  }
+  
+  .pointsStats {
+    font-size: 0.8rem;
+    padding: 5px 7px 0;
+    margin-top: 3px;
+  }
+}
+
+@media (max-width: 480px) {
+  .warStatus {
+    font-size: min(1.8rem, 6vw);
+    top: min(180px, 40vw);
+  }
+  
+  .twistStatus {
+    font-size: min(1.8rem, 6vw);
+    top: min(180px, 40vw);
+  }
+  
+  .extraCardStatus {
+    font-size: min(1.5rem, 5vw);
+    top: min(180px, 40vw);
+  }
+  
+  .balanceDisplay {
+    padding: 6px;
+  }
+  
+  .gameStats {
+    font-size: 0.75rem;
+    padding: 0 6px;
+    margin-bottom: 6px;
+  }
+  
+  .pointsStats {
+    font-size: 0.75rem;
+    padding: 4px 6px 0;
+    margin-top: 2px;
+  }
+  
+  /* Specyficzne poprawki dla bardzo małych ekranów */
+  .gameTable {
+    padding-top: 10px;
+  }
+}
+
+@media (max-width: 360px) {
+  .warStatus {
+    font-size: min(1.5rem, 5vw);
+    top: min(150px, 38vw);
+  }
+  
+  .twistStatus {
+    font-size: min(1.5rem, 5vw);
+    top: min(150px, 38vw);
+  }
+  
+  .extraCardStatus {
+    font-size: min(1.2rem, 4vw);
+    top: min(150px, 38vw);
+  }
+  
+  .balanceDisplay {
+    padding: 5px;
+  }
+  
+  .gameStats {
+    font-size: 0.7rem;
+    padding: 0 5px;
+    margin-bottom: 5px;
+  }
+  
+  .pointsStats {
+    font-size: 0.7rem;
+    padding: 3px 5px 0;
+    margin-top: 2px;
   }
 }
 
@@ -565,17 +1202,12 @@
 .buttonContainer {
   display: flex;
   justify-content: center;
-  gap: clamp(0.3rem, 1vw, 1rem);
-  padding: clamp(0.25rem, 1vw, 0.5rem);
+  gap: 1rem;
+  padding: 0.5rem;
   margin: 0;
   width: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  background: transparent;
   border-radius: 8px;
-  position: relative;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 10;
 }
 
 .actionButton {
@@ -585,43 +1217,38 @@
   );
   color: rgb(var(--felt-green-dark));
   border: none;
-  padding: clamp(0.5rem, 1.2vw, 0.8rem) clamp(1rem, 2.5vw, 2rem);
+  padding: 0.8rem 2rem;
   border-radius: 8px;
-  font-size: clamp(0.8rem, 2vw, 1.1rem);
+  font-size: 1.1rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
-  min-width: clamp(90px, 15vw, 120px);
+  margin-top: 1rem;
+  width: 100%;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.2),
-    0 0 15px rgba(var(--gold-accent), 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .actionButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 
-    0 6px 12px rgba(0, 0, 0, 0.25),
-    0 0 20px rgba(var(--gold-accent), 0.3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg,
+    rgba(var(--secondary-accent), 0.9),
+    rgba(var(--gold-accent), 0.9)
+  );
 }
 
 .actionButton:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.15),
-    0 0 10px rgba(var(--gold-accent), 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .actionButton:disabled {
-  opacity: 0.5;
+  background: linear-gradient(135deg, #a8a8a8, #6e6e6e);
   cursor: not-allowed;
-}
-
-.giveUpButton {
-  background: linear-gradient(135deg, #666, #444);
-  color: white;
+  opacity: 0.7;
 }
 
 .gameEndOverlay {
@@ -717,185 +1344,77 @@
 @media (max-width: 768px) {
   .gameTable {
     width: 100%;
-    height: calc(100vh - 40px);
-    min-height: calc(100vh - 40px);
-    padding: 1rem;
+    height: calc(100vh - 80px); /* Stary sposób */
+    height: calc(var(--vh, 1vh) * 100 - 80px); /* Nowy sposób z użyciem zmiennej --vh */
+    min-height: calc(100vh - 80px);
+    min-height: calc(var(--vh, 1vh) * 100 - 80px); /* Nowy sposób */
+    padding: 1rem 0.5rem 0.5rem 0.5rem; /* Zmniejszenie paddingu na dole, zwiększenie na górze */
     border-radius: 12px;
+    margin-top: 10px; /* Dodanie marginesu od góry */
   }
-
-  .bonusCardContainer {
-    width: min(60px, calc(7vw + 25px));
-    height: min(90px, calc(10.5vw + 37.5px));
-  }
-
-  .bonusCard {
-    width: 100%;
-    height: 100%;
-  }
-
-  .bonusCardLabel {
-    font-size: 0.8rem;
-    padding: 0.35rem 0.75rem;
-    top: -25px;
-  }
-
-  .buttonContainer {
-    padding: 0.5rem;
-    margin-top: auto;
-  }
-
-  .playArea {
-    flex: 1;
-    min-height: 0;
-    gap: 1rem;
+  
+  /* Dostosowanie paddingu dla lepszego wyświetlania na małych ekranach */
+  .gameInfo {
+    padding: 0.3rem;
+    margin-top: 10px; /* Dodanie marginesu od góry */
     margin-bottom: 0.5rem;
   }
-
-  .cardWrapper {
-    width: min(60px, calc(7vw + 25px));
-    height: min(90px, calc(10.5vw + 37.5px));
-  }
-
-  .computerCards,
-  .playerCards {
-    width: min(60px, calc(7vw + 25px));
-    height: min(90px, calc(10.5vw + 37.5px));
-  }
-
-  .cardColumn {
-    width: min(60px, calc(7vw + 25px));
-    height: min(90px, calc(10.5vw + 37.5px));
-  }
   
-  .gameInfo {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-  
-  .timerDisplay,
-  .scoreBoard,
-  .deckInfo {
-    font-size: 0.85rem;
-    padding: 0.3rem 0.6rem;
-  }
-  
-  .actionButton {
-    padding: 0.6rem 1.5rem;
-    font-size: 0.9rem;
-    min-width: 90px;
-  }
-  
-  .scoreValue {
-    font-size: 1rem;
+  /* Korekta dla bardzo małych ekranów */
+  @media (max-height: 600px) {
+    .gameTable {
+      padding-top: max(0.5rem, env(safe-area-inset-top, 15px));
+      height: calc(100vh - 60px);
+      height: calc(var(--vh, 1vh) * 100 - 60px); /* Nowy sposób */
+      min-height: calc(100vh - 60px);
+      min-height: calc(var(--vh, 1vh) * 100 - 60px); /* Nowy sposób */
+    }
   }
 }
 
-@media (max-width: 480px) {
+/* Dodane specjalne styles dla @supports */
+@supports (-webkit-touch-callout: none) {
+  .gameContainer {
+    height: calc(-webkit-fill-available - 20px);
+    min-height: calc(-webkit-fill-available - 20px);
+  }
+
   .gameTable {
-    width: 95%;
-    height: 70vh;
-    min-height: 450px;
-    padding: 0.5rem;
-  }
-
-  .bonusCardContainer {
-    width: min(50px, calc(6vw + 20px));
-    height: min(75px, calc(9vw + 30px));
-  }
-
-  .bonusCard {
-    width: 100%;
-    height: 100%;
-  }
-
-  .bonusCardLabel {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    top: -22px;
-  }
-
-  .buttonContainer {
-    padding: 0.25rem;
-    gap: 0.5rem;
-  }
-
-  .playArea {
-    gap: 0.5rem;
-    margin-bottom: 0.25rem;
-  }
-
-  .cardWrapper {
-    width: min(50px, calc(6vw + 20px));
-    height: min(75px, calc(9vw + 30px));
-  }
-
-  .computerCards,
-  .playerCards {
-    width: min(50px, calc(6vw + 20px));
-    height: min(75px, calc(9vw + 30px));
-  }
-
-  .cardColumn {
-    width: min(50px, calc(6vw + 20px));
-    height: min(75px, calc(9vw + 30px));
-  }
-
-  .cardValue {
-    font-size: min(0.9rem, calc(0.7vw + 0.6rem));
-  }
-
-  .cardSuit {
-    font-size: min(1.4rem, calc(1vw + 0.8rem));
+    height: calc(-webkit-fill-available - 20px);
+    min-height: calc(-webkit-fill-available - 20px);
   }
   
-  .actionButton {
-    padding: 0.4rem 1rem;
-    font-size: 0.8rem;
-    min-width: 80px;
+  .parentContainer {
+    min-height: calc(-webkit-fill-available - 20px);
   }
-  
-  .gameInfo {
-    padding: 0.25rem;
-  }
-  
-  .timerDisplay,
-  .scoreBoard,
-  .deckInfo {
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-  }
-  
-  .warDeckContainer {
-    left: 0.5rem;
-  }
-  
-  .warDeck {
-    width: 45px;
-    height: 67.5px;
-  }
-  
-  .warDeckCounter {
-    font-size: 0.7rem;
-    padding: 0.15rem 0.3rem;
-  }
+}
+
+.parentContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: calc(100vh - 60px);
+  width: 100%;
 }
 
 .playerCardsArea {
   display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 20px;
-  max-width: 800px;
+  justify-content: space-around;
+  gap: min(12px, 2vw); /* Zwiększony odstęp między kartami */
+  padding: min(20px, 3vw);
+  max-width: min(850px, 95vw);
   margin: 0 auto;
-  margin-top: 20px;
+  margin-top: min(20px, 3vw);
+  transform-origin: center center;
+  flex-wrap: wrap;
+  margin-bottom: 4rem;
 }
 
 .cardColumn {
   position: relative;
-  width: min(70px, calc(8vw + 30px));
-  margin: 0 min(5px, 1vw);
-  height: min(105px, calc(12vw + 45px));
+  width: min(70px, calc(9vw + 20px));
+  margin: 0 min(8px, 1vw); /* Zwiększony margines poziomy między kolumnami */
+  height: min(105px, calc(13.5vw + 30px));
 }
 
 .cardColumn .cardWrapper {
@@ -922,23 +1441,23 @@
 
 /* Dostosuj wysokości kolumn w zależności od liczby kart */
 .cardColumn[data-cards="5"] {
-  height: min(225px, calc(25vw + 90px)); /* wysokość karty + (4 * przesunięcie) */
+  height: min(225px, calc(25vw + 65px)); /* wysokość karty + (4 * przesunięcie) */
 }
 
 .cardColumn[data-cards="4"] {
-  height: min(195px, calc(22vw + 75px)); /* wysokość karty + (3 * przesunięcie) */
+  height: min(195px, calc(22vw + 55px)); /* wysokość karty + (3 * przesunięcie) */
 }
 
 .cardColumn[data-cards="3"] {
-  height: min(165px, calc(19vw + 60px)); /* wysokość karty + (2 * przesunięcie) */
+  height: min(165px, calc(19vw + 45px)); /* wysokość karty + (2 * przesunięcie) */
 }
 
 .cardColumn[data-cards="2"] {
-  height: min(135px, calc(16vw + 45px)); /* wysokość karty + (1 * przesunięcie) */
+  height: min(135px, calc(16vw + 35px)); /* wysokość karty + (1 * przesunięcie) */
 }
 
 .cardColumn[data-cards="1"] {
-  height: min(105px, calc(12vw + 45px)); /* tylko wysokość karty */
+  height: min(105px, calc(12vw + 30px)); /* tylko wysokość karty */
 }
 
 .playerCardColumn {
@@ -969,8 +1488,8 @@
 }
 
 .bonusCard .cardWrapper {
-  width: 70px !important;
-  height: 105px !important;
+  width: 70px;
+  height: 105px;
 }
 
 .cardLabel {
@@ -978,7 +1497,7 @@
   top: -25px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 12px;
+  font-size: min(12px, calc(0.7vw + 8px));
   text-transform: uppercase;
   letter-spacing: 1px;
   font-weight: 500;
@@ -986,11 +1505,11 @@
 }
 
 .computerCards .cardLabel {
-  color: #ffd700 !important;
+  color: #ffd700;
 }
 
 .playerCards .cardLabel {
-  color: #ff4444 !important;
+  color: #ff4444;
 }
 
 .scoreContainer {
@@ -1097,34 +1616,20 @@
 
 .warDeck {
   position: relative;
-  width: 70px;
-  height: 100px;
+  width: min(70px, calc(9vw + 20px));
+  height: min(105px, calc(13.5vw + 30px));
 }
 
 .warDeckCounter {
   color: rgb(var(--cream-text));
-  font-size: 0.9rem;
+  font-size: min(0.9rem, calc(0.5vw + 0.7rem));
   font-weight: 500;
   text-align: center;
   background: rgba(0, 0, 0, 0.6);
-  padding: 0.3rem 0.6rem;
+  padding: min(0.3rem, 0.2vw) min(0.6rem, 0.4vw);
   border-radius: 4px;
   border: 1px solid rgba(var(--gold-accent), 0.3);
-}
-
-@media (max-width: 768px) {
-  .warDeckContainer {
-    left: 1rem;
-  }
-  
-  .warDeck {
-    width: 60px;
-    height: 85px;
-  }
-  
-  .warDeckCounter {
-    font-size: 0.8rem;
-  }
+  white-space: nowrap;
 }
 
 .emptyDeck {
@@ -1161,7 +1666,7 @@
   box-shadow: 
     0 12px 20px rgba(0, 0, 0, 0.4),
     0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 3 !important;
+  z-index: 3;
 }
 
 /* Style dla karty bonusowej */
@@ -1171,8 +1676,8 @@
   left: 50%;
   transform: translateX(-50%);
   z-index: 1;
-  width: 70px;
-  height: 105px;
+  width: min(70px, calc(9vw + 20px));
+  height: min(105px, calc(13.5vw + 30px));
 }
 
 .bonusCardContainer .cardWrapper {
@@ -1182,28 +1687,18 @@
 
 /* Style dla wartości kart */
 .cardValue {
-  font-size: min(1.1rem, calc(0.9vw + 0.7rem));
+  font-size: min(1.1rem, calc(1.2vw + 0.7rem));
   font-weight: 700;
-  text-shadow: 
-    -1px -1px 0 rgba(0, 0, 0, 0.3),
-    1px -1px 0 rgba(0, 0, 0, 0.3),
-    -1px 1px 0 rgba(0, 0, 0, 0.3),
-    1px 1px 0 rgba(0, 0, 0, 0.3),
-    2px 2px 3px rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
   display: inline-block;
   font-family: 'Arial', sans-serif;
   line-height: 1;
 }
 
 .cardSuit {
-  font-size: min(1.8rem, calc(1.3vw + 1rem));
+  font-size: min(1.8rem, calc(1.8vw + 1rem));
   align-self: center;
-  text-shadow: 
-    -1px -1px 0 rgba(0, 0, 0, 0.3),
-    1px -1px 0 rgba(0, 0, 0, 0.3),
-    -1px 1px 0 rgba(0, 0, 0, 0.3),
-    1px 1px 0 rgba(0, 0, 0, 0.3),
-    2px 2px 3px rgba(0, 0, 0, 0.5);
+  text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
   line-height: 1;
   margin-top: min(-0.2rem, -0.5vw);
   margin-bottom: min(-0.2rem, -0.5vw);
@@ -1212,21 +1707,42 @@
 .red { 
   color: #e60000; 
   text-shadow: 
-    -1px -1px 0 rgba(255, 255, 255, 0.6),
-    1px -1px 0 rgba(255, 255, 255, 0.6),
-    -1px 1px 0 rgba(255, 255, 255, 0.6),
-    1px 1px 0 rgba(255, 255, 255, 0.6),
-    2px 2px 3px rgba(0, 0, 0, 0.4);
+    -1px -1px 0 rgba(255, 255, 255, 0.5),
+    1px -1px 0 rgba(255, 255, 255, 0.5),
+    -1px 1px 0 rgba(255, 255, 255, 0.5),
+    1px 1px 0 rgba(255, 255, 255, 0.5),
+    2px 2px 3px rgba(0, 0, 0, 0.3);
 }
 
 .black { 
   color: #000000; 
   text-shadow: 
-    -1px -1px 0 rgba(255, 255, 255, 0.6),
-    1px -1px 0 rgba(255, 255, 255, 0.6),
-    -1px 1px 0 rgba(255, 255, 255, 0.6),
-    1px 1px 0 rgba(255, 255, 255, 0.6),
-    2px 2px 3px rgba(0, 0, 0, 0.4);
+    -1px -1px 0 rgba(255, 255, 255, 0.5),
+    1px -1px 0 rgba(255, 255, 255, 0.5),
+    -1px 1px 0 rgba(255, 255, 255, 0.5),
+    1px 1px 0 rgba(255, 255, 255, 0.5),
+    2px 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* Style dla etykiet kart */
+.cardLabel {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: min(12px, calc(0.7vw + 8px));
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.computerCards .cardLabel {
+  color: #ffd700;
+}
+
+.playerCards .cardLabel {
+  color: #ff4444;
 }
 
 /* Style dla pustych slotów */
@@ -1238,27 +1754,31 @@
   margin: 0 auto;
 }
 
-/* Podstawowe style dla interfejsu gry */
+/* Podstawowe styles dla interfejsu gry */
 .gameInfo {
   width: 100%;
   padding: 0.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(10px);
   border-radius: 8px;
 }
 
-.buttonContainer {
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
-  padding: 0.5rem;
-  margin: 0;
-  width: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 8px;
+.betInfo, .timerInfo {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background-color: transparent;
+}
+
+.betInfo {
+  color: #ffd700;
+}
+
+.timerInfo {
+  color: #ffd700;
 }
 
 @media (min-width: 1024px) {
@@ -1293,114 +1813,1161 @@
   }
 }
 
-.parentContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  min-height: calc(100vh - 60px);
-  width: 100%;
-}
-
-/* Dodajemy breakpoint dla rozdzielczości pomiędzy 769px a 900px */
-@media (min-width: 769px) and (max-width: 900px) {
+@media (max-width: 768px) {
   .gameTable {
     width: 100%;
-    padding: 1rem;
+    height: calc(100vh - 80px); /* Stary sposób */
+    height: calc(var(--vh, 1vh) * 100 - 80px); /* Nowy sposób z użyciem zmiennej --vh */
+    min-height: calc(100vh - 80px);
+    min-height: calc(var(--vh, 1vh) * 100 - 80px); /* Nowy sposób */
+    padding: 1rem 0.5rem 0.5rem 0.5rem; /* Zmniejszenie paddingu na dole, zwiększenie na górze */
+    border-radius: 12px;
+    margin-top: 10px; /* Dodanie marginesu od góry */
   }
   
-  .cardWrapper,
-  .computerCards,
-  .playerCards,
-  .bonusCardContainer,
-  .cardColumn {
-    width: min(60px, calc(6vw + 20px));
-    height: min(90px, calc(9vw + 30px));
+  /* Dostosowanie paddingu dla lepszego wyświetlania na małych ekranach */
+  .gameInfo {
+    padding: 0.3rem;
+    margin-top: 10px; /* Dodanie marginesu od góry */
+    margin-bottom: 0.5rem;
   }
   
-  .bonusCardContainer .cardWrapper {
-    width: 100% !important;
-    height: 100% !important;
+  /* Korekta dla bardzo małych ekranów */
+  @media (max-height: 600px) {
+    .gameTable {
+      padding-top: max(0.5rem, env(safe-area-inset-top, 15px));
+      height: calc(100vh - 60px);
+      height: calc(var(--vh, 1vh) * 100 - 60px); /* Nowy sposób */
+      min-height: calc(100vh - 60px);
+      min-height: calc(var(--vh, 1vh) * 100 - 60px); /* Nowy sposób */
+    }
   }
-  
-  .selectedCards {
-    gap: 0.5rem;
+
+  .bonusCardContainer {
+    width: min(60px, calc(8vw + 25px));
+    height: min(90px, calc(12vw + 37.5px));
   }
-  
-  .cardsContainer {
-    grid-template-columns: repeat(auto-fit, minmax(min(60px, calc(6vw + 20px)), 1fr));
-    gap: 0.5rem;
+
+  .bonusCard {
+    width: min(60px, calc(8vw + 25px));
+    height: min(90px, calc(12vw + 37.5px));
   }
-  
-  .gameInfo,
+
+  .bonusCardLabel {
+    font-size: 0.8rem;
+    padding: 0.35rem 0.75rem;
+    top: -25px;
+  }
+
   .buttonContainer {
-    padding: 0.4rem;
-  }
-  
-  .actionButton {
-    padding: 0.6rem 1.5rem;
+    padding: 0.5rem;
+    margin-top: auto;
     font-size: 0.9rem;
+  }
+
+  .actionButton {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.5rem;
     min-width: 100px;
   }
-  
-  .timerDisplay,
-  .scoreBoard {
-    padding: 0.4rem 0.6rem;
-    font-size: 0.9rem;
-  }
-  
-  .warDeckContainer {
-    left: 0.75rem;
-  }
-  
-  .warDeck {
-    width: 55px;
-    height: 82.5px;
-  }
-}
 
-/* Niestandardowy breakpoint dla granicznych wartości, takich jak 771px */
-@media (min-width: 760px) and (max-width: 780px) {
-  .gameTable {
-    width: 100%;
-    padding: 0.8rem;
+  .playArea {
+    flex: 1;
+    min-height: 0;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
   }
-  
-  .cardWrapper,
+
+  .cardWrapper {
+    width: min(60px, calc(8vw + 25px));
+    height: min(90px, calc(12vw + 37.5px));
+  }
+
   .computerCards,
-  .playerCards,
-  .bonusCardContainer,
-  .cardColumn {
-    width: min(55px, calc(5.5vw + 18px));
-    height: min(82.5px, calc(8.25vw + 27px));
+  .playerCards {
+    width: min(60px, calc(8vw + 25px));
+    height: min(90px, calc(12vw + 37.5px));
   }
 
-  .cardsContainer {
-    grid-template-columns: repeat(auto-fit, minmax(min(55px, calc(5.5vw + 18px)), 1fr));
-    gap: 0.4rem;
+  .cardColumn {
+    width: min(60px, calc(8vw + 25px));
+    height: min(90px, calc(12vw + 37.5px));
   }
-  
+
+  .cardColumn .cardWrapper {
+    position: absolute;
+    left: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(1) { top: 0; }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(2) { top: min(25px, 4vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(3) { top: min(50px, 8vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(4) { top: min(75px, 12vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(5) { top: min(100px, 16vw); }
+
+  .cardColumn[data-cards="5"] {
+    height: min(190px, calc(25vw + 35px));
+  }
+
+  .cardColumn[data-cards="4"] {
+    height: min(165px, calc(22vw + 35px));
+  }
+
+  .cardColumn[data-cards="3"] {
+    height: min(140px, calc(19vw + 30px));
+  }
+
+  .cardColumn[data-cards="2"] {
+    height: min(115px, calc(16vw + 25px));
+  }
+
+  .cardColumn[data-cards="1"] {
+    height: min(90px, calc(12vw + 22.5px));
+  }
+
+  .playerCardsArea {
+    gap: min(5px, 1vw);
+    padding: min(10px, 2vw);
+  }
+
+  .selectedCardArea {
+    transform-origin: center center;
+  }
+
   .selectedCards {
-    gap: 0.4rem;
+    gap: min(0.7rem, 1.5vw);
+    max-width: min(280px, 85vw);
+    top: 20px;
+    min-height: 100px;
   }
-  
-  .actionButton {
-    padding: 0.5rem 1.2rem;
-    font-size: 0.85rem;
-    min-width: 90px;
+
+  .warStatus, .twistStatus {
+    font-size: min(2.5rem, 8vw);
+    /* Zapewnienie że będzie na wysokości kart */
+    top: min(60px, 25vw);
   }
-  
+
+  .extraCardStatus {
+    font-size: min(2rem, 7vw);
+    top: min(60px, 25vw);
+  }
+
   .warDeckContainer {
-    left: 0.5rem;
+    left: min(1rem, 2vw);
   }
   
   .warDeck {
-    width: 50px;
-    height: 75px;
+    width: min(60px, calc(8vw + 25px));
+    height: min(90px, calc(12vw + 37.5px));
   }
   
   .warDeckCounter {
+    font-size: min(0.8rem, calc(0.4vw + 0.6rem));
+    padding: min(0.25rem, 0.15vw) min(0.5rem, 0.3vw);
+  }
+
+  .cardLabel {
+    top: min(-20px, -3vw);
+    font-size: min(10px, calc(0.6vw + 7px));
+  }
+}
+
+@media (max-width: 600px) {
+  .cardWrapper {
+    width: min(55px, calc(7.5vw + 20px));
+    height: min(82.5px, calc(11.25vw + 30px));
+  }
+
+  .computerCards,
+  .playerCards {
+    width: min(55px, calc(7.5vw + 20px));
+    height: min(82.5px, calc(11.25vw + 30px));
+  }
+
+  .cardColumn {
+    width: min(55px, calc(7.5vw + 20px));
+    margin: 0 min(5px, 0.8vw); /* Zwiększony margines poziomy dla średnich ekranów */
+  }
+
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(1) { top: 0; }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(2) { top: min(20px, 3vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(3) { top: min(40px, 6vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(4) { top: min(60px, 9vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(5) { top: min(80px, 12vw); }
+
+  .cardColumn[data-cards="5"] {
+    height: min(160px, calc(21vw + 30px));
+  }
+
+  .cardColumn[data-cards="4"] {
+    height: min(140px, calc(18vw + 25px));
+  }
+
+  .cardColumn[data-cards="3"] {
+    height: min(120px, calc(15vw + 20px));
+  }
+
+  .cardColumn[data-cards="2"] {
+    height: min(100px, calc(12vw + 15px));
+  }
+
+  .cardColumn[data-cards="1"] {
+    height: min(82.5px, calc(9.75vw + 15px));
+  }
+
+  .playerCardsArea {
+    gap: min(2px, 0.5vw);
+    padding: min(8px, 1.5vw);
+  }
+
+  .balanceDisplay {
+    font-size: 0.8rem;
+  }
+
+  .gameStats {
+    font-size: 0.8rem;
+  }
+
+  .pointsStats {
+    font-size: 0.8rem;
+  }
+
+  .actionButton {
+    font-size: 0.8rem;
+    padding: 0.5rem 1.2rem;
+    min-width: 90px;
+  }
+
+  .selectedCards {
+    gap: min(0.5rem, 1vw);
+    max-width: min(260px, 80vw);
+    top: 15px;
+    min-height: 90px;
+  }
+
+  .warStatus, .twistStatus {
+    font-size: min(2rem, 7vw);
+    top: min(50px, 20vw);
+  }
+
+  .extraCardStatus {
+    font-size: min(1.8rem, 6vw);
+    top: min(50px, 20vw);
+  }
+
+  .warDeckContainer {
+    left: min(0.5rem, 1.5vw);
+  }
+  
+  .warDeck {
+    width: min(55px, calc(7.5vw + 20px));
+    height: min(82.5px, calc(11.25vw + 30px));
+  }
+  
+  .warDeckCounter {
+    font-size: min(0.7rem, calc(0.35vw + 0.55rem));
+    padding: min(0.2rem, 0.12vw) min(0.4rem, 0.25vw);
+  }
+
+  .cardLabel {
+    top: min(-18px, -2.7vw);
+    font-size: min(9px, calc(0.55vw + 6px));
+  }
+  
+  .cardValue {
+    font-size: min(1rem, calc(1vw + 0.7rem));
+  }
+
+  .cardSuit {
+    font-size: min(1.6rem, calc(1.5vw + 0.9rem));
+  }
+
+  .bonusCardContainer {
+    width: min(55px, calc(7.5vw + 20px));
+    height: min(82.5px, calc(11.25vw + 30px));
+  }
+}
+
+@media (max-width: 480px) {
+  .gameTable {
+    width: 100%;
+    padding: 0.5rem 0.25rem;
+    /* Zmodyfikowana wysokość dla małych ekranów */
+    height: calc(100vh - 60px);
+    min-height: calc(100vh - 60px);
+    /* Dodanie przewijania w przypadku gdy zawartość nie mieści się */
+    overflow-y: auto;
+  }
+
+  /* Dostosowanie paddingu dla lepszego wyświetlania na małych ekranach */
+  .gameInfo {
+    padding: 0.3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Zmniejszenie paddingu dla lepszego dopasowania na małych ekranach */
+  .balanceDisplay {
+    padding: 6px;
+  }
+
+  /* Poprawka dla przycisków na dole */
+  .buttonContainer {
+    padding: 0.25rem;
+    /* Zapewnienie, że przyciski będą zawsze widoczne */
+    position: sticky;
+    bottom: 0;
+    z-index: 50;
+    margin-top: 0.5rem;
+  }
+
+  /* Reszta istniejących styli */
+  .bonusCardContainer {
+    width: min(50px, calc(7vw + 15px));
+    height: min(75px, calc(10.5vw + 22.5px));
+  }
+
+  .cardWrapper {
+    width: min(50px, calc(7vw + 15px));
+    height: min(75px, calc(10.5vw + 22.5px));
+  }
+
+  .computerCards,
+  .playerCards {
+    width: min(50px, calc(7vw + 15px));
+    height: min(75px, calc(10.5vw + 22.5px));
+  }
+
+  .cardColumn {
+    width: min(50px, calc(7vw + 15px));
+    margin: 0 min(4px, 0.6vw); /* Zwiększony margines poziomy dla małych ekranów */
+  }
+
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(1) { top: 0; }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(2) { top: min(18px, 2.5vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(3) { top: min(36px, 5vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(4) { top: min(54px, 7.5vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(5) { top: min(72px, 10vw); }
+
+  .cardColumn[data-cards="5"] {
+    height: min(147px, calc(19vw + 25px));
+  }
+
+  .cardColumn[data-cards="4"] {
+    height: min(129px, calc(16vw + 20px));
+  }
+
+  .cardColumn[data-cards="3"] {
+    height: min(111px, calc(14vw + 15px));
+  }
+
+  .cardColumn[data-cards="2"] {
+    height: min(93px, calc(11vw + 10px));
+  }
+
+  .cardColumn[data-cards="1"] {
+    height: min(75px, calc(9vw + 12px));
+  }
+
+  .playerCardsArea {
+    gap: min(1px, 0.2vw);
+    padding: min(5px, 1vw);
+  }
+
+  .cardValue {
+    font-size: min(0.9rem, calc(0.9vw + 0.6rem));
+  }
+
+  .cardSuit {
+    font-size: min(1.4rem, calc(1.3vw + 0.8rem));
+  }
+  
+  .balanceDisplay {
+    font-size: 0.7rem;
+    padding: 0.4rem 0.7rem;
+  }
+
+  .gameStats {
+    font-size: 0.7rem;
+    gap: 0.5rem;
+  }
+
+  .pointsStats {
+    font-size: 0.7rem;
+    padding-top: 3px;
+  }
+
+  .actionButton {
+    font-size: 0.7rem;
+    padding: 0.4rem 1rem;
+    min-width: 80px;
+  }
+
+  .selectedCards {
+    gap: min(0.3rem, 0.8vw);
+    max-width: min(240px, 75vw);
+    top: 10px;
+    min-height: 80px;
+  }
+
+  .warStatus, .twistStatus {
+    font-size: min(1.8rem, 6vw);
+    top: min(40px, 15vw);
+  }
+
+  .extraCardStatus {
+    font-size: min(1.5rem, 5vw);
+    top: min(40px, 15vw);
+  }
+
+  .warDeckContainer {
+    left: min(0.3rem, 1vw);
+  }
+  
+  .warDeck {
+    width: min(50px, calc(7vw + 15px));
+    height: min(75px, calc(10.5vw + 22.5px));
+  }
+  
+  .warDeckCounter {
+    font-size: min(0.6rem, calc(0.3vw + 0.5rem));
+    padding: min(0.15rem, 0.1vw) min(0.3rem, 0.2vw);
+  }
+
+  .cardLabel {
+    top: min(-15px, -2.4vw);
+    font-size: min(8px, calc(0.5vw + 5px));
+  }
+}
+
+@media (max-width: 360px) {
+  .cardWrapper {
+    width: min(45px, calc(6.5vw + 12px));
+    height: min(67.5px, calc(9.75vw + 18px));
+  }
+
+  .computerCards,
+  .playerCards {
+    width: min(45px, calc(6.5vw + 12px));
+    height: min(67.5px, calc(9.75vw + 18px));
+  }
+
+  .cardColumn {
+    width: min(45px, calc(6.5vw + 12px));
+    margin: 0 min(3px, 0.5vw); /* Zwiększony margines poziomy dla bardzo małych ekranów */
+  }
+
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(1) { top: 0; }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(2) { top: min(15px, 2vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(3) { top: min(30px, 4vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(4) { top: min(45px, 6vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(5) { top: min(60px, 8vw); }
+
+  .cardColumn[data-cards="5"] {
+    height: min(127.5px, calc(16.25vw + 20px));
+  }
+
+  .cardColumn[data-cards="4"] {
+    height: min(112.5px, calc(14.25vw + 17.5px));
+  }
+
+  .cardColumn[data-cards="3"] {
+    height: min(97.5px, calc(12.25vw + 15px));
+  }
+
+  .cardColumn[data-cards="2"] {
+    height: min(82.5px, calc(10.25vw + 12.5px));
+  }
+
+  .cardColumn[data-cards="1"] {
+    height: min(67.5px, calc(8.25vw + 7.5px));
+  }
+
+  .playerCardsArea {
+    gap: 0;
+    padding: min(3px, 0.5vw);
+  }
+
+  .cardValue {
+    font-size: min(0.8rem, calc(0.8vw + 0.5rem));
+  }
+
+  .cardSuit {
+    font-size: min(1.2rem, calc(1.1vw + 0.7rem));
+  }
+
+  .selectedCards {
+    gap: min(0.2rem, 0.5vw);
+    max-width: min(220px, 70vw);
+    top: 8px;
+    min-height: 70px;
+  }
+
+  .warStatus, .twistStatus {
+    font-size: min(1.5rem, 5vw);
+    top: min(30px, 12vw);
+  }
+
+  .extraCardStatus {
+    font-size: min(1.2rem, 4vw);
+    top: min(30px, 12vw);
+  }
+
+  .warDeckContainer {
+    left: min(0.2rem, 0.8vw);
+  }
+  
+  .warDeck {
+    width: min(45px, calc(6.5vw + 12px));
+    height: min(67.5px, calc(9.75vw + 18px));
+  }
+  
+  .warDeckCounter {
+    font-size: min(0.5rem, calc(0.25vw + 0.45rem));
+    padding: min(0.1rem, 0.08vw) min(0.2rem, 0.15vw);
+  }
+
+  .cardLabel {
+    top: min(-12px, -2vw);
+    font-size: min(7px, calc(0.45vw + 4.5px));
+  }
+
+  .bonusCardContainer {
+    width: min(45px, calc(6.5vw + 12px));
+    height: min(67.5px, calc(9.75vw + 18px));
+  }
+}
+
+/* Dodatkowe styles dla bardzo małych ekranów */
+@media (max-width: 360px) and (max-height: 700px) {
+  .gameTable {
+    /* Jeszcze mniejszy padding dla bardzo małych ekranów */
+    padding: 0.3rem 0.15rem;
+  }
+  
+  .buttonContainer {
+    /* Bardziej kompaktowe przyciski */
+    gap: 0.5rem;
+  }
+  
+  .actionButton {
+    /* Mniejsze przyciski */
+    font-size: 0.65rem;
+    padding: 0.35rem 0.75rem;
+    min-width: 70px;
+  }
+  
+  /* Zmniejszenie górnego paska */
+  .gameInfo {
+    padding: 0.2rem;
+  }
+  
+  /* Zmniejszenie rozmiaru tekstu w górnym pasku */
+  .gameStats, .pointsStats {
+    font-size: 0.65rem;
+  }
+}
+
+/* Specjalne styles dla iPhone SE i podobnych bardzo małych telefonów */
+@media (max-width: 375px) and (max-height: 667px) {
+  .playArea {
+    /* Większy margines dla kart, aby przyciski się zmieściły */
+    margin-bottom: 1rem;
+  }
+  
+  .selectedCards {
+    /* Przesunięcie kart wyżej */
+    top: 5px;
+  }
+  
+  /* Dodatkowe zmniejszenie przycisków */
+  .actionButton {
+    font-size: 0.6rem;
+    padding: 0.3rem 0.6rem;
+  }
+  
+  /* Usunięcie zbędnych marginesów */
+  .playerCardsArea {
+    margin-bottom: 2rem;
+  }
+}
+
+/* Naprawienie viewportu dla przeglądarek mobilnych - zwalcza problem z 100vh */
+@supports (-webkit-touch-callout: none) {
+  .gameTable {
+    height: calc(-webkit-fill-available - 20px);
+    min-height: calc(-webkit-fill-available - 20px);
+    max-height: calc(-webkit-fill-available - 20px);
+  }
+  
+  .parentContainer, .gameContainer {
+    min-height: calc(-webkit-fill-available - 20px);
+    max-height: calc(-webkit-fill-available - 20px);
+  }
+}
+
+@keyframes twistAnimation {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(0deg) scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) rotate(360deg) scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(720deg) scale(1);
+  }
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Specyficzne style dla orientacji poziomej na urządzeniach MIUI */
+@media screen and (orientation: landscape) {
+  :root.miui-device .gameContainer {
+    padding-top: max(15px, var(--miui-padding-top, 15px));
+  }
+  
+  :root.miui-device .gameTable {
+    padding-top: max(10px, calc(var(--miui-padding-top, 15px) - 5px));
+    margin-top: 5px;
+  }
+  
+  :root.miui-device .balanceDisplay {
+    margin-top: 5px;
+  }
+}
+
+/* Dodatkowe style dla mniejszych ekranów w orientacji poziomej */
+@media screen and (orientation: landscape) and (max-height: 450px) {
+  :root.miui-device .gameContainer {
+    padding-top: 10px;
+  }
+  
+  :root.miui-device .gameTable {
+    padding-top: 8px;
+    margin-top: 2px;
+  }
+  
+  :root.miui-device .balanceDisplay {
+    margin-top: 3px;
+    padding: 0.4rem 0.8rem;
+  }
+  
+  :root.miui-device .gameStats,
+  :root.miui-device .pointsStats {
+    font-size: 0.8rem;
+  }
+  
+  :root.miui-device .playerCardsArea {
+    margin-bottom: 2rem;
+  }
+}
+
+/* Uzupełnienie stylów ekranu zakładów */
+.betContainer {
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.balanceDisplay {
+  background: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  padding: 0.8rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.refreshButton {
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.refreshButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+}
+
+.refreshButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.refreshIcon {
+  width: 16px;
+  height: 16px;
+  color: black;
+}
+
+.placeBetButton {
+  
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.placeBetButton:hover:not(:disabled) {
+  background: linear-gradient(135deg, #ffe44d, #ffb700);
+}
+
+.backToGamesButton {
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+.backToGamesButton:hover {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid rgba(255, 215, 0, 0.5);
+}
+
+/* Styl dla wiadomości o nagrodzie */
+.rewardMessage {
+  font-size: 1.1rem;
+  padding: 10px;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+}
+
+/* Styl dla wiadomości o remisie */
+.drawMessage {
+  font-size: 1.1rem;
+  padding: 10px;
+  color: #4dc9ff;
+  text-shadow: 0 0 10px rgba(77, 201, 255, 0.7);
+}
+
+/* Responsywność ekranu zakładów */
+@media (max-width: 480px) {
+  .betContainer {
+    min-height: 350px;
+    padding: 15px;
+  }
+  
+  .balanceDisplay {
+    font-size: 16px;
+    padding: 8px 12px;
+  }
+  
+  .betDisplay {
+    font-size: 36px;
+    margin: 15px 0;
+  }
+  
+  .placeBetButton {
+    padding: 10px 20px;
+    font-size: 16px;
+  }
+  
+  .backToGamesButton {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 600px) {
+  /* ... existing code ... */
+  
+  .pointsStats {
+    gap: 5px;
+    padding: 5px 7px 0;
+  }
+  
+  .pointsStats span:nth-child(2) {
+    margin: 0 2px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* ... existing code ... */
+  
+  .pointsStats {
+    gap: 3px;
+    padding: 4px 6px 0;
+  }
+  
+  .pointsStats span:nth-child(2) {
+    margin: 0 1px;
+  }
+}
+
+@media (max-width: 360px) {
+  /* ... existing code ... */
+  
+  .pointsStats {
+    gap: 2px;
+    flex-wrap: nowrap;
+  }
+  
+  .pointsStats span {
+    font-size: 0.65rem;
+  }
+}
+
+.pointsStats,
+.pointsStats span,
+.pointsStats span:first-child,
+.pointsStats span:last-child,
+.pointsStats span:nth-child(2) {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 768px) {
+  .pointsStats,
+  .pointsStats span,
+  .pointsStats span:first-child,
+  .pointsStats span:last-child,
+  .pointsStats span:nth-child(2) {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .pointsStats,
+  .pointsStats span,
+  .pointsStats span:first-child,
+  .pointsStats span:last-child,
+  .pointsStats span:nth-child(2) {
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .pointsStats,
+  .pointsStats span,
+  .pointsStats span:first-child,
+  .pointsStats span:last-child,
+  .pointsStats span:nth-child(2) {
     font-size: 0.75rem;
-    padding: 0.2rem 0.4rem;
+  }
+}
+
+/* Style dla napisu z wartością CRANS */
+.betDisplay {
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(128, 128, 128, 0.5);
+  border-radius: 8px;
+  padding: 0.8rem 1.5rem;
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin: 1rem 0;
+}
+
+/* Nowa klasa dla kompaktowego wyświetlania informacji w grze */
+.ingameInfo {
+  background: rgba(0, 0, 0, 0.8);
+  color: #ffffff;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 95%;
+  max-width: 500px;
+  margin: 0 auto 1rem auto;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.ingameInfo .pointsStats {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  gap: 0.5rem;
+}
+
+.ingameInfo .timerInfo {
+  font-weight: bold;
+  color: #ffcc00;
+}
+
+/* Media queries for ingameInfo */
+@media (max-width: 768px) {
+  .ingameInfo {
+    padding: 0.4rem 0.8rem;
+    font-size: 1rem;
+    width: 98%;
+  }
+  
+  .ingameInfo .pointsStats {
+    gap: 0.4rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .ingameInfo {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.9rem;
+    width: 98%;
+  }
+  
+  .ingameInfo .pointsStats {
+    gap: 0.3rem;
+  }
+  
+  .ingameInfo .pointsStats span {
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 360px) {
+  .ingameInfo {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+    width: 98%;
+  }
+  
+  .ingameInfo .pointsStats {
+    gap: 0.2rem;
+  }
+}
+
+/* Nowa klasa dla ekranu wejściowego do gry (zamiast betContainer) */
+.houseGate {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -45%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(var(--felt-green-dark), 0.95);
+  padding: 0.75rem 1.5rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  z-index: 10;
+  min-width: 300px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding-bottom: calc(0.75rem + var(--safe-area-padding-bottom) * 0.5);
+  margin-bottom: -2rem;
+}
+
+/* Media queries dla houseGate */
+@media (max-width: 480px) {
+  .houseGate {
+    padding: 1.2rem 1.5rem 1.4rem;
+    min-width: 280px;
+    width: 90%;
+  }
+}
+
+/* Styl balance display w houseGate */
+.houseGate .balanceDisplay {
+  width: calc(100% + 2px);
+  margin: -1px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  align-items: center;
+}
+
+.houseGate .balanceDisplay span {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Stylizacja przycisku Refresh */
+.houseGate .refreshButton {
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
+  border: none;
+  color: rgb(var(--felt-green-dark));
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 0 8px rgba(var(--gold-accent), 0.2);
+}
+
+.houseGate .refreshButton:hover {
+  transform: translateY(-2px) rotate(180deg);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 0 12px rgba(var(--gold-accent), 0.3);
+  background: linear-gradient(135deg,
+    rgba(var(--secondary-accent), 0.9),
+    rgba(var(--gold-accent), 0.9)
+  );
+}
+
+.houseGate .refreshButton:active {
+  transform: translateY(0) rotate(180deg);
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.15),
+    0 0 6px rgba(var(--gold-accent), 0.2);
+}
+
+.houseGate .refreshIcon {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+/* Stylizacja wyświetlania stawki (4 CRANS) */
+.houseGate .betDisplay {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.8rem 1.6rem;
+  color: white;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  min-width: 140px;
+  margin: 0.8rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Stylizacja przycisku Enter Game */
+.houseGate .placeBetButton {
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
+  color: rgb(var(--felt-green-dark));
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 0.25rem;
+  width: 100%;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.houseGate .placeBetButton:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg,
+    rgba(var(--secondary-accent), 0.9),
+    rgba(var(--gold-accent), 0.9)
+  );
+}
+
+.houseGate .placeBetButton:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15),
+    0 0 10px rgba(var(--gold-accent), 0.2);
+}
+
+.houseGate .placeBetButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: linear-gradient(135deg, #999, #777);
+}
+
+/* Stylizacja przycisku Back to Games */
+.houseGate .backToGamesButton {
+  background: rgba(0, 0, 0, 0.5);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 100%;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
+.houseGate .backToGamesButton:hover {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 215, 0, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Stylizacja komunikatu o błędzie */
+.houseGate .errorMessage {
+  color: #ff4444;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(255, 68, 68, 0.1);
+  border-radius: 8px;
+  width: 90%;
+}
+
+/* Media queries dla responsywności */
+@media (max-width: 480px) {
+  .houseGate .balanceDisplay {
+    padding: 0.5rem 0.8rem;
+  }
+  
+  .houseGate .betDisplay {
+    font-size: 1.4rem;
+    padding: 0.6rem 1rem;
+  }
+  
+  .houseGate .placeBetButton {
+    font-size: 1.1rem;
+    padding: 0.7rem 1.2rem;
+  }
+  
+  .houseGate .backToGamesButton {
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem;
   }
 }
 
