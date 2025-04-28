@@ -89,7 +89,12 @@ class WarService {
 
     // Inicjalizacja połączenia Socket.IO
     const SOCKET_SERVER_URL = process.env.NEXT_PUBLIC_WARGAME_SERVER_URL || 'http://localhost:3003';
-    this.socket = io(SOCKET_SERVER_URL);
+    this.socket = io(SOCKET_SERVER_URL, {
+      transports: ['websocket', 'polling'],
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      timeout: 20000
+    });
 
     // Obsługa połączenia
     this.socket.on('connect', () => {
