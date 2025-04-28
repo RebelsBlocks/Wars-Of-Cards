@@ -64,7 +64,6 @@ class BlackjackService {
   }
 
   async createGame(playerId: string): Promise<GameStateResponse> {
-    console.log('Creating new game for player:', playerId);
     try {
       const response = await fetch(`${API_BASE_URL}/game/create`, {
         method: 'POST',
@@ -76,15 +75,12 @@ class BlackjackService {
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('Server error creating game:', errorData);
         throw new Error(`Failed to create game: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
-      console.log('Game created successfully:', data);
       return data;
     } catch (error) {
-      console.error('Error creating game:', error);
       throw error;
     }
   }
@@ -138,21 +134,17 @@ class BlackjackService {
   }
 
   async getGameState(playerId: string): Promise<GameStateResponse> {
-    console.log('Fetching game state for player:', playerId);
     try {
       const response = await fetch(`${API_BASE_URL}/game/state/${playerId}`);
 
       if (!response.ok) {
         const errorData = await response.json().catch(() => ({}));
-        console.error('Server error fetching game state:', errorData);
         throw new Error(`Failed to get game state: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
-      console.log('Game state fetched successfully:', data);
       return data;
     } catch (error) {
-      console.error('Error fetching game state:', error);
       throw error;
     }
   }
