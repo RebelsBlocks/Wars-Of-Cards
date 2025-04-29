@@ -993,9 +993,9 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
             <div className={styles.pointsStats}>
               <span>Dealer - {computerScore}</span>
               <span>|</span>
-              <span>{playerScore} - {playerId ? (playerId.length > 8 ? 
-                `${playerId.split('.')[0].substring(0, 3)}...${playerId.split('.')[0].substring(playerId.split('.')[0].length - 3)}` 
-                : playerId.split('.')[0]) : 'Player'}</span>
+              <span>{playerScore} - {playerId ? (playerId.length > 21 ? 
+                `${playerId.split('.')[0].substring(0, 3)}...${playerId.split('.')[0].substring(playerId.split('.')[0].length - 3)}.near` 
+                : playerId) : 'Player'}</span>
             </div>
           </div>
           
