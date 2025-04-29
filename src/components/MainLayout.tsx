@@ -149,6 +149,14 @@ export function MainLayout({
           >
             <img src="/telegram.png" alt="telegram" />
           </a>
+          <a 
+            href="https://x.com/rebelsblocks" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={styles.xLink}
+          >
+            <img src="/x.png" alt="x" />
+          </a>
         </div>
       </div>
       
