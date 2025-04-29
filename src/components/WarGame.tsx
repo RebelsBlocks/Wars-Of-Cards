@@ -11,6 +11,7 @@ import { useNearWallet } from '@/contexts/NearWalletContext';
 import { NETWORK_CONFIG } from '@/contexts/NearWalletContext';
 import { Network } from '@near-wallet-selector/core';
 import BN from 'bn.js';
+import { GestureAreaBuffer } from './GestureAreaBuffer';
 
 // Extend the Network type to include cransContractId
 interface ExtendedNetwork extends Network {
@@ -1216,8 +1217,13 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
               )}
             </div>
           )}
+          
+          {/* Dodanie komponentu GestureAreaBuffer */}
+          <GestureAreaBuffer />
         </div>
       )}
+      {/* Dodanie GestureAreaBuffer na poziomie głównego kontenera */}
+      <GestureAreaBuffer />
     </div>
   );
 };
