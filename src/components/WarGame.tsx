@@ -1188,10 +1188,6 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                 </div>
               ))}
             </div>
-
-            <div className={styles.buttonContainer}>
-              {/* Usuń przycisk Give Up */}
-            </div>
           </div>
 
           {isGameComplete && (
