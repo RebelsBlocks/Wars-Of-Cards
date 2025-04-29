@@ -2670,3 +2670,38 @@ body.brave-browser .gameTable {
   }
 }
 
+/* Dostosowanie dla dużych ekranów (desktop/laptop) */
+@media screen and (min-width: 960px) {
+  .gameContainer {
+    height: auto;
+    min-height: 95vh;
+    max-height: none;
+    padding-top: 0;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .gameTable {
+    width: 85%;
+    max-width: 960px;
+    min-height: auto;
+    height: auto;
+    max-height: 90vh;
+    padding: 2rem;
+    border-radius: 25px;
+    margin: 1rem auto;
+  }
+  
+  .selectedCardArea {
+    min-height: 280px;
+    margin-bottom: 1rem;
+  }
+  
+  .playerCardsArea {
+    min-height: 180px;
+    margin-bottom: 1rem;
+  }
+}
+
