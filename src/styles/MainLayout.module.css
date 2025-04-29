@@ -33,9 +33,6 @@
   transition: transform 0.3s ease;
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding-top: max(0px, env(safe-area-inset-top, 0px));
-  padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
-  padding-left: max(0px, env(safe-area-inset-left, 0px));
 }
 
 .logo {
@@ -468,7 +465,6 @@
   .mainContainer {
     overflow-x: hidden;
     height: 100vh;
-    height: calc(var(--vh, 1vh) * 100);
     position: fixed;
     width: 100%;
   }
@@ -480,17 +476,12 @@
   .content {
     margin-left: 0;
     padding: 12px 0 0;
-    height: calc(100vh - 56px - env(safe-area-inset-bottom, 0px));
-    min-height: calc(var(--vh, 1vh) * 100 - 56px - env(safe-area-inset-bottom, 0px));
+    height: calc(100vh - 56px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
     width: 100%;
     position: relative;
     z-index: 1;
-    padding-top: calc(56px + max(12px, env(safe-area-inset-top, 12px)));
-    padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
-    padding-left: max(0px, env(safe-area-inset-left, 0px));
-    padding-right: max(0px, env(safe-area-inset-right, 0px));
   }
 
   .content.shifted {
@@ -498,7 +489,7 @@
     transform: translateX(250px);
     transition: transform 0.3s ease;
     width: 100%;
-    padding-top: calc(12px + env(safe-area-inset-top, 0px));
+    padding-top: 12px;
   }
 
   .sidebar {
@@ -508,10 +499,6 @@
     z-index: 2;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     font-size: 0.95rem;
-    padding-top: max(0px, env(safe-area-inset-top, 0px));
-    padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
-    padding-left: max(0px, env(safe-area-inset-left, 0px));
-    height: calc(100% - env(safe-area-inset-bottom, 0px));
   }
 
   .sidebar.open {
@@ -532,9 +519,6 @@
     align-items: center;
     padding: 0 16px;
     padding-top: env(safe-area-inset-top);
-    height: calc(56px + env(safe-area-inset-top, 0px));
-    padding-left: max(16px, env(safe-area-inset-left, 16px));
-    padding-right: max(16px, env(safe-area-inset-right, 16px));
   }
 
   .sidebar.open ~ .mobileHeader {
@@ -600,10 +584,6 @@
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.3s ease;
-    padding-top: max(0px, env(safe-area-inset-top, 0px));
-    padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
-    padding-left: max(0px, env(safe-area-inset-left, 0px));
-    padding-right: max(0px, env(safe-area-inset-right, 0px));
   }
 
   .sidebar.open ~ .overlay {
@@ -694,14 +674,9 @@
   }
 }
 
-/* Extra adjustments for very small screens */
 @media (max-width: 360px) {
   .sidebar {
     width: 230px;
-  }
-
-  .content {
-    padding-top: calc(56px + max(8px, env(safe-area-inset-top, 8px)));
   }
 
   .content.shifted {
@@ -727,11 +702,26 @@
   }
 }
 
-/* Special handling for landscape orientation */
-@media (orientation: landscape) and (max-height: 450px) {
-  .content {
-    padding-top: calc(56px + max(5px, env(safe-area-inset-top, 5px)));
-    height: calc(100vh - 56px - env(safe-area-inset-bottom, 0px));
+/* iPhone X and newer safe area support */
+@supports (padding: max(0px)) {
+  @media (max-width: 768px) {
+    .mobileHeader {
+      height: calc(56px + env(safe-area-inset-top));
+    }
+
+    .content {
+      padding-top: calc(12px + env(safe-area-inset-top));
+      height: calc(100vh - 56px - env(safe-area-inset-bottom));
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    .content.shifted {
+      padding-top: env(safe-area-inset-top);
+    }
+
+    .sidebar {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
   }
 }
 
@@ -754,81 +744,4 @@
 .menuItem[data-header-action="true"]:hover {
   background: rgba(0, 32, 0, 0.6);
   border-color: rgba(var(--gold-accent), 0.5);
-}
-
-/* Specific styles for notched devices and full-screen mobile browsers */
-@supports (padding: max(0px)) {
-  .mobileHeader {
-    padding-top: max(0px, env(safe-area-inset-top, 0px));
-    padding-left: max(16px, env(safe-area-inset-left, 16px));
-    padding-right: max(16px, env(safe-area-inset-right, 16px));
-  }
-
-  /* Specific styles for fixed positioned elements */
-  .sidebar {
-    padding-top: max(0px, env(safe-area-inset-top, 0px));
-    padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
-    padding-left: max(0px, env(safe-area-inset-left, 0px));
-    height: calc(100% - env(safe-area-inset-bottom, 0px));
-  }
-
-  .content {
-    padding-top: calc(56px + max(12px, env(safe-area-inset-top, 12px)));
-    padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
-    min-height: calc(100vh - env(safe-area-inset-bottom, 0px));
-  }
-}
-
-/* Special styles for Xiaomi/MIUI devices */
-:root.miui-device .mobileHeader {
-  height: calc(56px + var(--miui-padding-top, 20px));
-  padding-top: var(--miui-padding-top, 20px);
-}
-
-/* Device-specific optimizations */
-@media screen and (width >= 360px) and (width <= 393px) and (min-resolution: 2.5dppx) {
-  :root.miui-device .mobileHeader {
-    height: calc(56px + var(--miui-padding-top, 45px));
-    padding-top: var(--miui-padding-top, 45px);
-  }
-}
-
-.menuToggle {
-  width: 44px;
-  height: 44px;
-  min-width: 44px;
-  min-height: 44px;
-  background: rgba(var(--felt-green), 0.95);
-  border: 1px solid rgba(var(--gold-accent), 0.3);
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 5px;
-  cursor: pointer;
-  padding: 10px;
-  margin-left: -6px;
-  position: relative;
-  transition: all 0.3s ease;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
-  z-index: 1;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  padding-top: max(0px, env(safe-area-inset-top, 0px));
-  padding-bottom: max(0px, env(safe-area-inset-bottom, 0px));
-  padding-left: max(0px, env(safe-area-inset-left, 0px));
-  padding-right: max(0px, env(safe-area-inset-right, 0px));
 } 
