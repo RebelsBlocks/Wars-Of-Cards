@@ -85,18 +85,16 @@
   align-items: center;
   position: relative;
   touch-action: manipulation;
-  min-height: calc(100vh - 80px); 
-  min-height: calc(var(--vh, 1vh) * 100 - 80px);
-  padding-top: env(safe-area-inset-top, 20px);
-  padding-bottom: max(10px, env(safe-area-inset-bottom, 10px));
-  padding-left: max(0px, env(safe-area-inset-left, 0px));
-  padding-right: max(0px, env(safe-area-inset-right, 0px));
+  min-height: calc(100vh - 80px); /* Stary sposób */
+  min-height: calc(var(--vh, 1vh) * 100 - 80px); /* Nowy sposób z użyciem zmiennej --vh */
+  padding-top: env(safe-area-inset-top, 20px); /* Dodanie paddingu na górze dla iOS */
+  padding-bottom: env(safe-area-inset-bottom, 10px); /* Dodanie paddingu na dole dla iOS */
   overflow: hidden;
 }
 
 /* Style dla urządzeń Xiaomi/MIUI wykrytych przez JavaScript */
 :root.miui-device .gameContainer {
-  padding-top: var(--miui-padding-top, 60px);
+  padding-top: var(--miui-padding-top, 60px); /* Znacznie zwiększony padding, aby uzyskać odstęp jak na iPhone i Samsung */
 }
 
 :root.miui-device .gameTable {
@@ -111,30 +109,30 @@
 /* Specyficzne rozwiązanie dla telefonów Xiaomi z MIUI */
 @supports (-webkit-touch-callout: none) {
   .gameContainer {
-    padding-top: max(50px, env(safe-area-inset-top, 50px));
+    padding-top: max(50px, env(safe-area-inset-top, 50px)); /* Zwiększony padding dla MIUI */
   }
 }
 
 /* Specjalne style dla telefonów Xiaomi/Redmi, które mają problem z wysokością ekranu */
 @media screen and (max-width: 768px) and (min-resolution: 1.5dppx) {
   .gameContainer {
-    padding-top: max(55px, env(safe-area-inset-top, 55px));
+    padding-top: max(55px, env(safe-area-inset-top, 55px)); /* Jeszcze większy padding dla MIUI na mniejszych ekranach */
   }
   
   .gameTable {
-    padding-top: max(40px, env(safe-area-inset-top, 40px));
-    margin-top: 20px;
+    padding-top: max(40px, env(safe-area-inset-top, 40px)); /* Większy padding dla tabeli gry */
+    margin-top: 20px; /* Dodatkowy margines od góry */
   }
   
   .balanceDisplay {
-    margin-top: 15px;
+    margin-top: 15px; /* Dodanie marginesu od góry dla wyświetlania salda */
   }
 }
 
 /* Specjalnie zoptymalizowane media query dla telefonów Xiaomi Poco */
 @media screen and (width >= 360px) and (width <= 393px) and (min-resolution: 2.5dppx) {
   :root.miui-device .gameContainer {
-    padding-top: max(65px, var(--miui-padding-top, 65px));
+    padding-top: max(65px, var(--miui-padding-top, 65px)); /* Zwiększony padding dla Poco */
   }
   
   :root.miui-device .gameTable {
@@ -156,8 +154,7 @@
   background: url('/Profile_back.png') center center/cover;
   border-radius: 25px;
   padding: 1.5rem;
-  padding-top: max(1.5rem, env(safe-area-inset-top, 20px));
-  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 20px));
+  padding-top: max(1.5rem, env(safe-area-inset-top, 20px)); /* Dodanie paddingu na górze */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -169,20 +166,19 @@
 @media screen and (max-width: 480px) {
   .gameTable {
     padding-top: max(20px, env(safe-area-inset-top, 20px));
-    padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
-    height: calc(100vh - 65px);
+    height: calc(100vh - 65px); /* Zmniejszona wysokość dla lepszego dopasowania */
     min-height: calc(var(--vh, 1vh) * 100 - 65px);
   }
   
   /* Korekta dla telefonów z wyższym paskiem statusu */
   .balanceDisplay {
-    margin-top: 10px;
-    padding-top: 8px;
+    margin-top: 10px; /* Dodatkowy margines dla wyświetlacza salda */
+    padding-top: 8px; /* Zwiększony padding górny */
   }
   
   /* Przesunięcie elementów w dół, aby uniknąć przycinania na górze */
   .buttonContainer {
-    margin-bottom: max(10px, env(safe-area-inset-bottom, 10px));
+    margin-bottom: max(10px, env(safe-area-inset-bottom, 10px)); /* Zapewnienie odstępu na dole */
   }
 }
 
@@ -192,30 +188,29 @@
     height: calc(-webkit-fill-available - 20px);
     min-height: calc(-webkit-fill-available - 20px);
     max-height: calc(-webkit-fill-available - 20px);
-    padding-top: max(25px, env(safe-area-inset-top, 25px));
-    padding-bottom: max(25px, env(safe-area-inset-bottom, 25px));
+    padding-top: max(25px, env(safe-area-inset-top, 25px)); /* Zwiększony padding dla wszystkich urządzeń z webkit */
   }
   
   .parentContainer, .gameContainer {
     min-height: calc(-webkit-fill-available - 20px);
     max-height: calc(-webkit-fill-available - 20px);
-    padding-top: max(20px, env(safe-area-inset-top, 20px));
-    padding-bottom: max(20px, env(safe-area-inset-bottom, 20px));
+    padding-top: max(20px, env(safe-area-inset-top, 20px)); /* Większy padding dla kontenera */
   }
 }
 
+/* Specyficzne rozwiązanie dla Xiaomi/Redmi z większym notchem i paskiem statusu */
 @media screen and (max-width: 393px) {
   .gameContainer {
-    padding-top: max(55px, env(safe-area-inset-top, 55px));
+    padding-top: max(60px, env(safe-area-inset-top, 60px)); /* Jeszcze większy padding dla Poco/Redmi */
   }
   
   .gameTable {
-    padding-top: max(30px, env(safe-area-inset-top, 30px));
-    border-radius: 15px;
+    padding-top: max(45px, env(safe-area-inset-top, 45px));
+    margin-top: 25px;
   }
   
   .balanceDisplay {
-    margin-top: 8px;
+    margin-top: 20px;
   }
 }
 
@@ -846,81 +841,38 @@
 }
 
 .cardWrapper {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   width: min(70px, calc(9vw + 30px));
   height: min(105px, calc(13.5vw + 45px));
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  position: relative;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
+  aspect-ratio: 2/3;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  transition: all 0.2s ease-in-out;
+  will-change: transform;
 }
 
 .cardFace {
   width: 100%;
   height: 100%;
-  border-radius: 8px;
   background: url('/card_front.png') center center/cover;
+  border-radius: min(8px, 1.5vw);
+  padding: min(0.4rem, 1vw);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: flex-start;
-  padding: 0.5rem 0.3rem;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   position: relative;
-  overflow: hidden;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .cardFaceJoker {
-  background: url('/joker_card.png') center center/cover;
+  background: url('/card_joker_front.png') center center/cover;
 }
 
 .cardBack {
   width: 100%;
   height: 100%;
-  border-radius: 8px;
   background: url('/card_back.png') center center/cover;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* For mobile devices - increase touch area */
-@media (max-width: 768px) {
-  .cardWrapper {
-    min-width: 45px;
-    min-height: 67.5px;
-  }
-  
-  .cardWrapper::after {
-    content: '';
-    position: absolute;
-    top: -10px;
-    left: -5px;
-    right: -5px;
-    bottom: -10px;
-    z-index: -1;
-  }
-  
-  .cardColumn .cardWrapper:not(.disabled):hover {
-    transform: translateY(min(-5px, -1.2vw));
-  }
-  
-  .cardColumn .cardWrapper:not(.disabled):active {
-    transform: translateY(min(-2px, -0.5vw));
-  }
-}
-
-/* For smaller mobile devices */
-@media (max-width: 480px) {
-  .cardWrapper::after {
-    top: -12px;
-    left: -7px;
-    right: -7px;
-    bottom: -12px;
-  }
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .bonusCardContainer {
@@ -1314,10 +1266,6 @@
   border-radius: 25px;
   backdrop-filter: blur(5px);
   padding: 1rem;
-  padding-top: max(1rem, env(safe-area-inset-top, 1rem));
-  padding-bottom: max(1rem, env(safe-area-inset-bottom, 1rem));
-  padding-left: max(1rem, env(safe-area-inset-left, 1rem));
-  padding-right: max(1rem, env(safe-area-inset-right, 1rem));
 }
 
 .warResultImage {
@@ -1334,7 +1282,7 @@
   );
   color: rgb(var(--felt-green-dark));
   border: none;
-  padding: 0.8rem 2rem;
+  padding: 0.6rem 1.5rem;
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
@@ -1342,16 +1290,12 @@
   transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
-  min-width: 180px;
+  min-width: 100px;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
   box-shadow: 
     0 4px 8px rgba(0, 0, 0, 0.2),
     0 0 15px rgba(var(--gold-accent), 0.2);
   margin-top: 1rem;
-  margin-bottom: max(0rem, env(safe-area-inset-bottom, 0rem));
-  touch-action: manipulation;
-  min-height: 50px;
-  -webkit-tap-highlight-color: transparent;
 }
 
 .playAgainButton:hover {
@@ -1366,58 +1310,6 @@
   box-shadow: 
     0 2px 4px rgba(0, 0, 0, 0.15),
     0 0 10px rgba(var(--gold-accent), 0.2);
-}
-
-/* Mobile-specific styles for game end */
-@media (max-width: 480px) {
-  .gameEndOverlay {
-    border-radius: 15px;
-  }
-  
-  .warResultImage {
-    max-width: 90%;
-    margin-bottom: 1.5rem;
-  }
-  
-  .playAgainButton {
-    padding: 0.7rem 1.5rem;
-    min-width: 150px;
-    margin-bottom: max(0.5rem, env(safe-area-inset-bottom, 0.5rem));
-  }
-  
-  .playAgainButton::after {
-    content: '';
-    position: absolute;
-    top: -10px;
-    left: -10px;
-    right: -10px;
-    bottom: -10px;
-    z-index: -1;
-  }
-  
-  .rewardMessage {
-    font-size: 0.9rem;
-    max-width: 90%;
-    padding: 0.4rem 0.8rem;
-  }
-}
-
-/* Extra small devices */
-@media (max-width: 360px) {
-  .gameEndOverlay {
-    border-radius: 10px;
-  }
-  
-  .warResultImage {
-    max-width: 95%;
-    margin-bottom: 1rem;
-  }
-  
-  .playAgainButton {
-    padding: 0.6rem 1.2rem;
-    font-size: 0.9rem;
-    min-width: 140px;
-  }
 }
 
 @keyframes pulse {
@@ -1508,25 +1400,21 @@
 .playerCardsArea {
   display: flex;
   justify-content: space-around;
-  gap: min(12px, 2vw);
+  gap: min(12px, 2vw); /* Zwiększony odstęp między kartami */
   padding: min(20px, 3vw);
   max-width: min(850px, 95vw);
   margin: 0 auto;
   margin-top: min(20px, 3vw);
   transform-origin: center center;
   flex-wrap: wrap;
-  margin-bottom: calc(4rem + env(safe-area-inset-bottom, 0px));
-  padding-bottom: max(0, env(safe-area-inset-bottom, 0));
-  touch-action: manipulation;
-  overflow: visible;
+  margin-bottom: 4rem;
 }
 
 .cardColumn {
   position: relative;
   width: min(70px, calc(9vw + 20px));
-  margin: 0 min(8px, 1vw);
+  margin: 0 min(8px, 1vw); /* Zwiększony margines poziomy między kolumnami */
   height: min(105px, calc(13.5vw + 30px));
-  touch-action: manipulation;
 }
 
 .cardColumn .cardWrapper {
@@ -1535,7 +1423,6 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateY(0);
   will-change: transform, box-shadow;
-  touch-action: manipulation;
 }
 
 .cardColumn .cardWrapper:not(.disabled):hover {
@@ -1545,13 +1432,6 @@
     0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 100;
   cursor: pointer;
-}
-
-.cardColumn .cardWrapper:not(.disabled):active {
-  transform: translateY(min(-3px, -0.8vw));
-  box-shadow: 
-    0 3px 6px rgba(0, 0, 0, 0.15),
-    0 2px 3px rgba(0, 0, 0, 0.1);
 }
 
 .cardColumn .cardWrapper.disabled {
@@ -2673,12 +2553,6 @@
   padding: 10px;
   color: #ffd700;
   text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
-  background: rgba(0, 0, 0, 0.7);
-  color: rgb(var(--gold-accent));
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  margin-top: 0.5rem;
-  margin-bottom: max(0.5rem, env(safe-area-inset-bottom, 0.5rem));
 }
 
 /* Styl dla wiadomości o remisie */
@@ -2881,111 +2755,120 @@
 
 /* Nowa klasa dla ekranu wejściowego do gry (zamiast betContainer) */
 .houseGate {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -45%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  min-height: calc(100vh - 80px);
-  min-height: calc(var(--vh, 1vh) * 100 - 80px);
-  padding: 2rem;
-  padding-top: max(2rem, env(safe-area-inset-top, 2rem));
-  padding-bottom: max(2rem, env(safe-area-inset-bottom, 2rem));
-  padding-left: max(2rem, env(safe-area-inset-left, 2rem));
-  padding-right: max(2rem, env(safe-area-inset-right, 2rem));
-  background: url('/Profile_back.png') center center/cover;
-  border-radius: 15px;
-  gap: 1.5rem;
-  max-width: 900px;
-  margin: 0 auto;
+  gap: 0.5rem;
+  background: rgba(var(--felt-green-dark), 0.95);
+  padding: 0.75rem 1.5rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  z-index: 10;
+  min-width: 300px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding-bottom: calc(0.75rem + var(--safe-area-padding-bottom) * 0.5);
+  margin-bottom: -2rem;
 }
 
+/* Media queries dla houseGate */
 @media (max-width: 480px) {
   .houseGate {
-    padding: 1.5rem;
-    padding-top: max(1.5rem, env(safe-area-inset-top, 1.5rem));
-    padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 1.5rem));
-    border-radius: 10px;
+    padding: 1.2rem 1.5rem 1.4rem;
+    min-width: 280px;
+    width: 90%;
   }
 }
 
+/* Styl balance display w houseGate */
 .houseGate .balanceDisplay {
-  background: rgba(0, 0, 0, 0.7);
-  color: rgb(var(--gold-accent));
-  padding: 0.5rem 1rem;
-  border-radius: 10px;
-  font-size: 1rem;
+  width: calc(100% + 2px);
+  margin: -1px;
+  margin-bottom: 0.5rem;
   display: flex;
-  align-items: center;
+  flex-direction: row;
   justify-content: center;
   gap: 0.5rem;
-  min-width: 160px;
-  text-align: center;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-  margin-top: max(0, env(safe-area-inset-top, 0));
+  background: rgba(0, 0, 0, 0.8);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  align-items: center;
 }
 
 .houseGate .balanceDisplay span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 140px;
-  display: inline-block;
-  font-weight: bold;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
 }
 
+/* Stylizacja przycisku Refresh */
 .houseGate .refreshButton {
-  background: none;
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
   border: none;
-  color: rgb(var(--gold-accent));
-  width: 24px;
-  height: 24px;
-  padding: 4px;
-  border-radius: 50%;
+  color: rgb(var(--felt-green-dark));
+  cursor: pointer;
+  padding: 6px;
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+  border-radius: 50%;
   transition: all 0.2s ease;
-  position: relative;
-  background-color: rgba(0, 0, 0, 0.3);
-  transform-origin: center;
-  touch-action: manipulation;
-  min-width: 36px;
-  min-height: 36px;
+  margin-left: 8px;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 0 8px rgba(var(--gold-accent), 0.2);
 }
 
 .houseGate .refreshButton:hover {
-  transform: rotate(30deg);
-  background-color: rgba(0, 0, 0, 0.5);
+  transform: translateY(-2px) rotate(180deg);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 0 12px rgba(var(--gold-accent), 0.3);
+  background: linear-gradient(135deg,
+    rgba(var(--secondary-accent), 0.9),
+    rgba(var(--gold-accent), 0.9)
+  );
 }
 
 .houseGate .refreshButton:active {
-  transform: rotate(60deg);
-  background-color: rgba(0, 0, 0, 0.7);
+  transform: translateY(0) rotate(180deg);
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.15),
+    0 0 6px rgba(var(--gold-accent), 0.2);
 }
 
 .houseGate .refreshIcon {
-  width: 16px;
-  height: 16px;
-  stroke: rgb(var(--gold-accent));
-  stroke-width: 3;
-  transition: all 0.2s ease;
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
 }
 
+/* Stylizacja wyświetlania stawki (4 CRANS) */
 .houseGate .betDisplay {
-  background: rgba(0, 0, 0, 0.7);
-  color: rgb(var(--gold-accent));
-  padding: 0.8rem 1.5rem;
-  border-radius: 10px;
-  font-size: 1.4rem;
-  font-weight: bold;
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.8rem 1.6rem;
+  color: white;
   text-align: center;
-  min-width: 160px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  font-size: 1.8rem;
+  font-weight: bold;
+  min-width: 140px;
+  margin: 0.8rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
+/* Stylizacja przycisku Enter Game */
 .houseGate .placeBetButton {
   background: linear-gradient(135deg,
     rgba(var(--gold-accent), 0.9),
@@ -2993,7 +2876,7 @@
   );
   color: rgb(var(--felt-green-dark));
   border: none;
-  padding: 0.8rem 2rem;
+  padding: 0.6rem 1.5rem;
   border-radius: 8px;
   font-size: 1.1rem;
   font-weight: 600;
@@ -3001,95 +2884,90 @@
   transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 1px;
-  min-width: 200px;
+  margin-top: 0.25rem;
+  width: 100%;
   text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.2),
-    0 0 15px rgba(var(--gold-accent), 0.2);
-  margin-top: 1rem;
-  touch-action: manipulation;
-  min-height: 50px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .houseGate .placeBetButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 
-    0 6px 12px rgba(0, 0, 0, 0.25),
-    0 0 20px rgba(var(--gold-accent), 0.3);
+  background: linear-gradient(135deg,
+    rgba(var(--secondary-accent), 0.9),
+    rgba(var(--gold-accent), 0.9)
+  );
 }
 
 .houseGate .placeBetButton:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.15),
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15),
     0 0 10px rgba(var(--gold-accent), 0.2);
 }
 
 .houseGate .placeBetButton:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
-  background: linear-gradient(135deg, #999999, #666666);
+  background: linear-gradient(135deg, #999, #777);
 }
 
+/* Stylizacja przycisku Back to Games */
 .houseGate .backToGamesButton {
-  background: rgba(0, 0, 0, 0.6);
-  color: rgb(var(--gold-accent));
-  border: 1px solid rgba(var(--gold-accent), 0.3);
-  padding: 0.7rem 1.5rem;
+  background: rgba(0, 0, 0, 0.5);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  padding: 0.6rem 1.5rem;
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  letter-spacing: 0.5px;
-  margin-top: 1rem;
-  min-width: 200px;
-  text-align: center;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-  margin-top: auto;
-  margin-bottom: max(0, env(safe-area-inset-bottom, 0));
-  touch-action: manipulation;
-  min-height: 50px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 100%;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-top: 0.25rem;
+  margin-bottom: 0;
 }
 
 .houseGate .backToGamesButton:hover {
-  background: rgba(0, 0, 0, 0.8);
-  border-color: rgba(var(--gold-accent), 0.5);
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 215, 0, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
+/* Stylizacja komunikatu o błędzie */
 .houseGate .errorMessage {
-  background: rgba(var(--error-accent), 0.2);
-  border: 1px solid rgba(var(--error-accent), 0.5);
-  color: rgb(var(--error-accent));
-  padding: 0.7rem 1rem;
-  border-radius: 8px;
+  color: #ff4444;
   font-size: 0.9rem;
-  max-width: 300px;
   text-align: center;
   margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(255, 68, 68, 0.1);
+  border-radius: 8px;
+  width: 90%;
 }
 
+/* Media queries dla responsywności */
 @media (max-width: 480px) {
   .houseGate .balanceDisplay {
-    font-size: 0.9rem;
-    min-width: 140px;
+    padding: 0.5rem 0.8rem;
   }
   
   .houseGate .betDisplay {
-    font-size: 1.2rem;
-    padding: 0.6rem 1.2rem;
+    font-size: 1.4rem;
+    padding: 0.6rem 1rem;
   }
   
   .houseGate .placeBetButton {
-    font-size: 1rem;
-    padding: 0.7rem 1.5rem;
-    min-width: 180px;
+    font-size: 1.1rem;
+    padding: 0.7rem 1.2rem;
   }
   
   .houseGate .backToGamesButton {
     font-size: 0.9rem;
     padding: 0.6rem 1rem;
-    min-width: 180px;
   }
 }
 
