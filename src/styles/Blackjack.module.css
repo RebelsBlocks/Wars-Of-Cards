@@ -147,6 +147,9 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
 }
 
 .gameInfo {
@@ -201,7 +204,8 @@
   width: 100%;
   max-width: min(1200px, 95vw);
   flex-wrap: nowrap;
-  overflow-x: auto;
+  overflow: hidden;
+  position: relative;
 }
 
 .cardWrapper {
@@ -211,6 +215,7 @@
   transition: all 0.3s ease;
   flex-shrink: 0;
   margin: 0 -0.25rem;
+  position: relative;
 }
 
 .cardWrapper:hover {
@@ -1018,6 +1023,7 @@
     touch-action: pan-y;
     overflow: hidden;
     padding: 0;
+    overscroll-behavior: none;
   }
 
   .gameTable {
@@ -1032,6 +1038,11 @@
     box-shadow: 0 0 10px rgba(var(--gold-accent), 0.2),
                 0 0 20px rgba(var(--gold-accent), 0.1),
                 inset 0 0 10px rgba(var(--gold-accent), 0.1);
+    overflow: hidden;
+  }
+
+  .dealerArea, .playerSection {
+    max-height: 35vh;
   }
 }
 
@@ -1083,16 +1094,19 @@
 .cardHidden {
   opacity: 0;
   transform: translateY(20px) scale(0.9);
+  position: absolute;
 }
 
 .cardVisible {
   opacity: 1;
   transform: translateY(0) scale(1);
+  position: relative;
 }
 
 .cardWrapper {
   transition: all 0.3s ease-out;
   perspective: 1000px;
+  position: relative;
 }
 
 .flipping .cardFace,
@@ -1131,4 +1145,9 @@
   100% {
     box-shadow: 0 0 0 rgba(0, 255, 0, 0.4);
   }
+}
+
+html, body {
+  overflow: hidden;
+  overscroll-behavior: none;
 } 
