@@ -1403,7 +1403,7 @@
   
   .gameContainer {
     padding: 8px;
-    padding-top: calc(56px + env(safe-area-inset-top));
+    padding-top: calc(46px + env(safe-area-inset-top));
     height: 100vh;
     max-height: -webkit-fill-available;
     padding-bottom: calc(8px + var(--safe-area-padding-bottom, 15px));
@@ -1892,7 +1892,7 @@
     margin-top: 0.5rem;
     margin-bottom: 0.5rem;
   }
-
+  
   .playerCardsArea {
     gap: 0.2rem;
     min-height: 130px;
@@ -1902,7 +1902,7 @@
   
   .gameContainer {
     padding: 8px;
-    padding-top: calc(56px + env(safe-area-inset-top));
+    padding-top: calc(46px + env(safe-area-inset-top));
     height: 100vh;
     max-height: -webkit-fill-available;
     padding-bottom: calc(8px + var(--safe-area-padding-bottom, 15px));
@@ -2625,7 +2625,7 @@
   }
   
   .gameContainer {
-    padding-top: calc(56px + env(safe-area-inset-top));
+    padding-top: calc(46px + env(safe-area-inset-top));
   }
 }
 
@@ -2659,7 +2659,7 @@ body.brave-browser .gameTable {
     height: 100vh;
     max-height: -webkit-fill-available;
     padding: 12px;
-    padding-top: calc(56px + env(safe-area-inset-top));
+    padding-top: calc(46px + env(safe-area-inset-top));
     padding-bottom: calc(16px + var(--safe-area-padding-bottom) * 2);
   }
 
