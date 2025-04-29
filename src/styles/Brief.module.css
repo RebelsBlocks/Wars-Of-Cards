@@ -494,3 +494,30 @@
     margin-left: 8px;
   }
 }
+
+/* Przystosowanie Brief.module.css do korzystania z globalnych zmiennych */
+@media screen and (max-width: 768px) {
+  .container {
+    /* Zamiast height: calc(100vh - 56px - 60px) używamy zmiennej --app-height */
+    height: calc(var(--app-height) - 56px - 60px);
+    /* Zwiększamy padding na dole, aby uniknąć zasłonięcia przez pasek nawigacyjny */
+    padding-bottom: calc(8px + var(--safe-area-bottom));
+  }
+  
+  .inputContainer {
+    /* Zwiększamy odstęp na dole */
+    margin-bottom: var(--safe-area-bottom);
+    z-index: 100;
+  }
+  
+  .chatContainer {
+    /* Dostosowujemy wysokość kontenera chatu */
+    height: calc(var(--app-height) - 116px);
+    max-height: calc(var(--app-height) - 116px);
+  }
+  
+  .messagesContainer {
+    /* Dostosowujemy wysokość kontenera wiadomości */
+    max-height: calc(var(--app-height) - 220px);
+  }
+}
