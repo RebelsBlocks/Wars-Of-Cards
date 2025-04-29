@@ -88,7 +88,7 @@
   min-height: calc(100vh - 80px); /* Stary sposób */
   min-height: calc(var(--vh, 1vh) * 100 - 80px); /* Nowy sposób z użyciem zmiennej --vh */
   padding-top: env(safe-area-inset-top, 20px); /* Dodanie paddingu na górze dla iOS */
-  padding-bottom: env(safe-area-inset-bottom, 25px); /* Zwiększony padding na dole dla iOS */
+  padding-bottom: env(safe-area-inset-bottom, 15px); /* Tylko padding na dole dla systemowych przycisków */
   overflow: hidden;
 }
 
@@ -148,15 +148,14 @@
 
 .gameTable {
   position: relative;
-  width: 95%;
-  max-width: 900px;
-  height: 100%;
+  width: 70%; /* Zmniejszenie o 30% z 95% */
+  max-width: 630px; /* Zmniejszenie o 30% z 900px */
+  height: 70%; /* Zmniejszenie wysokości o 30% */
   background: url('/Profile_back.png') center center/cover;
   border-radius: 25px;
   padding: 1.5rem;
   padding-top: max(1.5rem, env(safe-area-inset-top, 20px)); /* Dodanie paddingu na górze */
-  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 20px)); /* Dodanie paddingu na dole */
-  margin-bottom: env(safe-area-inset-bottom, 15px); /* Dodany margines na dole dla systemowych przycisków */
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 15px)); /* Padding na dole dla systemowych przycisków */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1205,9 +1204,12 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
-  margin-top: 2rem;
+  padding: 0.5rem;
+  margin: 0;
+  width: 100%;
+  background: transparent;
+  border-radius: 8px;
   padding-bottom: env(safe-area-inset-bottom, 15px); /* Dodane dla urządzeń z przyciskami systemowymi */
-  z-index: 10;
 }
 
 .actionButton {
@@ -1266,6 +1268,7 @@
   border-radius: 25px;
   backdrop-filter: blur(5px);
   padding: 1rem;
+  padding-bottom: env(safe-area-inset-bottom, 15px);
 }
 
 .warResultImage {
@@ -1343,32 +1346,41 @@
 
 @media (max-width: 768px) {
   .gameTable {
-    width: 100%;
-    height: calc(100vh - 80px); /* Stary sposób */
-    height: calc(var(--vh, 1vh) * 100 - 80px); /* Nowy sposób z użyciem zmiennej --vh */
-    min-height: calc(100vh - 80px);
-    min-height: calc(var(--vh, 1vh) * 100 - 80px); /* Nowy sposób */
-    padding: 1rem 0.5rem 0.5rem 0.5rem; /* Zmniejszenie paddingu na dole, zwiększenie na górze */
-    border-radius: 12px;
-    margin-top: 10px; /* Dodanie marginesu od góry */
+    width: 85%; /* Większy procent na mniejszych ekranach */
+    height: 85%;
+    max-width: 500px;
+    padding: 1rem;
+    border-radius: 20px;
   }
   
-  /* Dostosowanie paddingu dla lepszego wyświetlania na małych ekranach */
-  .gameInfo {
-    padding: 0.3rem;
-    margin-top: 10px; /* Dodanie marginesu od góry */
+  .selectedCardArea {
+    min-height: 200px;
+  }
+  
+  .playerCardsArea {
+    min-height: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gameTable {
+    width: 90%; /* Jeszcze większy procent na najmniejszych ekranach */
+    height: 90%;
+    max-width: 380px;
+    padding: 0.8rem;
+    border-radius: 15px;
+  }
+  
+  .selectedCardArea {
+    min-height: 160px;
+    margin-top: 0.5rem;
     margin-bottom: 0.5rem;
   }
   
-  /* Korekta dla bardzo małych ekranów */
-  @media (max-height: 600px) {
-    .gameTable {
-      padding-top: max(0.5rem, env(safe-area-inset-top, 15px));
-      height: calc(100vh - 60px);
-      height: calc(var(--vh, 1vh) * 100 - 60px); /* Nowy sposób */
-      min-height: calc(100vh - 60px);
-      min-height: calc(var(--vh, 1vh) * 100 - 60px); /* Nowy sposób */
-    }
+  .playerCardsArea {
+    gap: 0.2rem; /* Jeszcze mniejszy odstęp na małych ekranach */
+    min-height: 130px;
+    padding: 0 0.3rem;
   }
 }
 
@@ -1815,161 +1827,41 @@
 
 @media (max-width: 768px) {
   .gameTable {
-    width: 100%;
-    height: calc(100vh - 80px); /* Stary sposób */
-    height: calc(var(--vh, 1vh) * 100 - 80px); /* Nowy sposób z użyciem zmiennej --vh */
-    min-height: calc(100vh - 80px);
-    min-height: calc(var(--vh, 1vh) * 100 - 80px); /* Nowy sposób */
-    padding: 1rem 0.5rem 0.5rem 0.5rem; /* Zmniejszenie paddingu na dole, zwiększenie na górze */
-    border-radius: 12px;
-    margin-top: 10px; /* Dodanie marginesu od góry */
+    width: 85%; /* Większy procent na mniejszych ekranach */
+    height: 85%;
+    max-width: 500px;
+    padding: 1rem;
+    border-radius: 20px;
   }
   
-  /* Dostosowanie paddingu dla lepszego wyświetlania na małych ekranach */
-  .gameInfo {
-    padding: 0.3rem;
-    margin-top: 10px; /* Dodanie marginesu od góry */
-    margin-bottom: 0.5rem;
-  }
-  
-  /* Korekta dla bardzo małych ekranów */
-  @media (max-height: 600px) {
-    .gameTable {
-      padding-top: max(0.5rem, env(safe-area-inset-top, 15px));
-      height: calc(100vh - 60px);
-      height: calc(var(--vh, 1vh) * 100 - 60px); /* Nowy sposób */
-      min-height: calc(100vh - 60px);
-      min-height: calc(var(--vh, 1vh) * 100 - 60px); /* Nowy sposób */
-    }
-  }
-
-  .bonusCardContainer {
-    width: min(60px, calc(8vw + 25px));
-    height: min(90px, calc(12vw + 37.5px));
-  }
-
-  .bonusCard {
-    width: min(60px, calc(8vw + 25px));
-    height: min(90px, calc(12vw + 37.5px));
-  }
-
-  .bonusCardLabel {
-    font-size: 0.8rem;
-    padding: 0.35rem 0.75rem;
-    top: -25px;
-  }
-
-  .buttonContainer {
-    padding: 0.5rem;
-    margin-top: auto;
-    font-size: 0.9rem;
-  }
-
-  .actionButton {
-    font-size: 0.9rem;
-    padding: 0.6rem 1.5rem;
-    min-width: 100px;
-  }
-
-  .playArea {
-    flex: 1;
-    min-height: 0;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .cardWrapper {
-    width: min(60px, calc(8vw + 25px));
-    height: min(90px, calc(12vw + 37.5px));
-  }
-
-  .computerCards,
-  .playerCards {
-    width: min(60px, calc(8vw + 25px));
-    height: min(90px, calc(12vw + 37.5px));
-  }
-
-  .cardColumn {
-    width: min(60px, calc(8vw + 25px));
-    height: min(90px, calc(12vw + 37.5px));
-  }
-
-  .cardColumn .cardWrapper {
-    position: absolute;
-    left: 0;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .cardColumn[data-cards="5"] .cardWrapper:nth-child(1) { top: 0; }
-  .cardColumn[data-cards="5"] .cardWrapper:nth-child(2) { top: min(25px, 4vw); }
-  .cardColumn[data-cards="5"] .cardWrapper:nth-child(3) { top: min(50px, 8vw); }
-  .cardColumn[data-cards="5"] .cardWrapper:nth-child(4) { top: min(75px, 12vw); }
-  .cardColumn[data-cards="5"] .cardWrapper:nth-child(5) { top: min(100px, 16vw); }
-
-  .cardColumn[data-cards="5"] {
-    height: min(190px, calc(25vw + 35px));
-  }
-
-  .cardColumn[data-cards="4"] {
-    height: min(165px, calc(22vw + 35px));
-  }
-
-  .cardColumn[data-cards="3"] {
-    height: min(140px, calc(19vw + 30px));
-  }
-
-  .cardColumn[data-cards="2"] {
-    height: min(115px, calc(16vw + 25px));
-  }
-
-  .cardColumn[data-cards="1"] {
-    height: min(90px, calc(12vw + 22.5px));
-  }
-
-  .playerCardsArea {
-    gap: min(5px, 1vw);
-    padding: min(10px, 2vw);
-  }
-
   .selectedCardArea {
-    transform-origin: center center;
-  }
-
-  .selectedCards {
-    gap: min(0.7rem, 1.5vw);
-    max-width: min(280px, 85vw);
-    top: 20px;
-    min-height: 100px;
-  }
-
-  .warStatus, .twistStatus {
-    font-size: min(2.5rem, 8vw);
-    /* Zapewnienie że będzie na wysokości kart */
-    top: min(60px, 25vw);
-  }
-
-  .extraCardStatus {
-    font-size: min(2rem, 7vw);
-    top: min(60px, 25vw);
-  }
-
-  .warDeckContainer {
-    left: min(1rem, 2vw);
+    min-height: 200px;
   }
   
-  .warDeck {
-    width: min(60px, calc(8vw + 25px));
-    height: min(90px, calc(12vw + 37.5px));
+  .playerCardsArea {
+    min-height: 140px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gameTable {
+    width: 90%; /* Jeszcze większy procent na najmniejszych ekranach */
+    height: 90%;
+    max-width: 380px;
+    padding: 0.8rem;
+    border-radius: 15px;
   }
   
-  .warDeckCounter {
-    font-size: min(0.8rem, calc(0.4vw + 0.6rem));
-    padding: min(0.25rem, 0.15vw) min(0.5rem, 0.3vw);
+  .selectedCardArea {
+    min-height: 160px;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
   }
-
-  .cardLabel {
-    top: min(-20px, -3vw);
-    font-size: min(10px, calc(0.6vw + 7px));
+  
+  .playerCardsArea {
+    gap: 0.2rem; /* Jeszcze mniejszy odstęp na małych ekranach */
+    min-height: 130px;
+    padding: 0 0.3rem;
   }
 }
 
@@ -2091,13 +1983,15 @@
 
 @media (max-width: 480px) {
   .gameTable {
-    width: 100%;
-    padding: 0.5rem 0.25rem;
-    /* Zmodyfikowana wysokość dla małych ekranów */
-    height: calc(100vh - 60px);
-    min-height: calc(100vh - 60px);
-    /* Dodanie przewijania w przypadku gdy zawartość nie mieści się */
-    overflow-y: auto;
+    width: 90%; /* Jeszcze większy procent na najmniejszych ekranach */
+    height: 90%;
+    max-width: 400px;
+    padding: 0.8rem;
+  }
+  
+  .selectedCardArea {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
   }
 
   /* Dostosowanie paddingu dla lepszego wyświetlania na małych ekranach */
@@ -2772,217 +2666,43 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding-bottom: calc(0.75rem + var(--safe-area-padding-bottom) * 0.5);
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 15px)); /* Dodane padding-bottom dla safe-area */
   margin-bottom: -2rem;
 }
 
-/* Media queries dla houseGate */
-@media (max-width: 480px) {
-  .houseGate {
-    padding: 1.2rem 1.5rem 1.4rem;
-    min-width: 280px;
-    width: 90%;
-  }
-}
-
-/* Styl balance display w houseGate */
-.houseGate .balanceDisplay {
-  width: calc(100% + 2px);
-  margin: -1px;
-  margin-bottom: 0.5rem;
+/* Zmniejszam odległości pomiędzy kartami dla kompaktowego wyglądu */
+.selectedCardArea {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
-  gap: 0.5rem;
-  background: rgba(0, 0, 0, 0.8);
-  padding: 0.6rem 1rem;
-  border-radius: 8px;
-  border: 1px solid rgba(var(--gold-accent), 0.3);
   align-items: center;
-}
-
-.houseGate .balanceDisplay span {
-  color: #fff;
-  font-size: 1rem;
-  font-weight: 500;
-  text-align: center;
-}
-
-/* Stylizacja przycisku Refresh */
-.houseGate .refreshButton {
-  background: linear-gradient(135deg,
-    rgba(var(--gold-accent), 0.9),
-    rgba(var(--secondary-accent), 0.9)
-  );
-  border: none;
-  color: rgb(var(--felt-green-dark));
-  cursor: pointer;
-  padding: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.2s ease;
-  margin-left: 8px;
-  box-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.2),
-    0 0 8px rgba(var(--gold-accent), 0.2);
-}
-
-.houseGate .refreshButton:hover {
-  transform: translateY(-2px) rotate(180deg);
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.25),
-    0 0 12px rgba(var(--gold-accent), 0.3);
-  background: linear-gradient(135deg,
-    rgba(var(--secondary-accent), 0.9),
-    rgba(var(--gold-accent), 0.9)
-  );
-}
-
-.houseGate .refreshButton:active {
-  transform: translateY(0) rotate(180deg);
-  box-shadow: 
-    0 1px 2px rgba(0, 0, 0, 0.15),
-    0 0 6px rgba(var(--gold-accent), 0.2);
-}
-
-.houseGate .refreshIcon {
-  width: 20px;
-  height: 20px;
-  transition: transform 0.3s ease;
-}
-
-/* Stylizacja wyświetlania stawki (4 CRANS) */
-.houseGate .betDisplay {
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  padding: 0.8rem 1.6rem;
-  color: white;
-  text-align: center;
-  font-size: 1.8rem;
-  font-weight: bold;
-  min-width: 140px;
-  margin: 0.8rem 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
-}
-
-/* Stylizacja przycisku Enter Game */
-.houseGate .placeBetButton {
-  background: linear-gradient(135deg,
-    rgba(var(--gold-accent), 0.9),
-    rgba(var(--secondary-accent), 0.9)
-  );
-  color: rgb(var(--felt-green-dark));
-  border: none;
-  padding: 0.6rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-top: 0.25rem;
   width: 100%;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.houseGate .placeBetButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  background: linear-gradient(135deg,
-    rgba(var(--secondary-accent), 0.9),
-    rgba(var(--gold-accent), 0.9)
-  );
-}
-
-.houseGate .placeBetButton:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15),
-    0 0 10px rgba(var(--gold-accent), 0.2);
-}
-
-.houseGate .placeBetButton:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: linear-gradient(135deg, #999, #777);
-}
-
-/* Stylizacja przycisku Back to Games */
-.houseGate .backToGamesButton {
-  background: rgba(0, 0, 0, 0.5);
-  color: #ffd700;
-  border: 1px solid rgba(255, 215, 0, 0.3);
-  padding: 0.6rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  width: 100%;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin-top: 0.25rem;
-  margin-bottom: 0;
-}
-
-.houseGate .backToGamesButton:hover {
-  background: rgba(0, 0, 0, 0.6);
-  border-color: rgba(255, 215, 0, 0.5);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-/* Stylizacja komunikatu o błędzie */
-.houseGate .errorMessage {
-  color: #ff4444;
-  font-size: 0.9rem;
-  text-align: center;
+  position: relative;
+  height: 40%;
+  min-height: 240px;
   margin-top: 0.5rem;
-  padding: 0.5rem;
-  background: rgba(255, 68, 68, 0.1);
-  border-radius: 8px;
-  width: 90%;
+  margin-bottom: 0.5rem;
 }
 
-/* Media queries dla responsywności */
+.playerCardsArea {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.3rem; /* Zmniejszony odstęp między kolumnami kart */
+  position: relative;
+  width: 100%;
+  padding: 0 0.5rem;
+  height: 40%;
+  min-height: 160px;
+}
+
 @media (max-width: 480px) {
-  .houseGate .balanceDisplay {
-    padding: 0.5rem 0.8rem;
-  }
-  
-  .houseGate .betDisplay {
-    font-size: 1.4rem;
-    padding: 0.6rem 1rem;
-  }
-  
-  .houseGate .placeBetButton {
-    font-size: 1.1rem;
-    padding: 0.7rem 1.2rem;
-  }
-  
-  .houseGate .backToGamesButton {
-    font-size: 0.9rem;
-    padding: 0.6rem 1rem;
-  }
-}
-
-/* Dodatkowa obsługa dla iPhone'ów z home bar na dole */
-@supports (padding-bottom: constant(safe-area-inset-bottom)) or (padding-bottom: env(safe-area-inset-bottom)) {
-  .gameEndOverlay {
-    padding-bottom: env(safe-area-inset-bottom, 20px);
-  }
-  
-  .houseGate {
-    padding-bottom: env(safe-area-inset-bottom, 20px);
-  }
-  
   .playerCardsArea {
-    margin-bottom: env(safe-area-inset-bottom, 15px);
+    gap: 0.2rem; /* Jeszcze mniejszy odstęp na małych ekranach */
+  }
+  
+  .selectedCardArea {
+    min-height: 180px; /* Mniejsza minimalna wysokość */
   }
 }
 
