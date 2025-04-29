@@ -540,20 +540,6 @@ export const WarProvider: React.FC<WarProviderProps> = ({
                     userAgent.includes('redmi') || 
                     userAgent.includes('poco');
       
-      // Check for gesture navigation
-      const hasGestureNav = window.innerHeight / window.innerWidth >= 2 || // Very tall screens likely have gesture nav
-                           (userAgent.includes('android') && parseInt(userAgent.split('android ')[1]) >= 10); // Android 10+ uses gesture nav by default
-      
-      if (hasGestureNav) {
-        document.documentElement.classList.add('gesture-nav');
-        
-        // Add additional bottom space for gesture navigation
-        const gestureSpace = window.innerHeight <= 740 ? 15 : 20;
-        document.documentElement.style.setProperty('--gesture-space', `${gestureSpace}px`);
-      } else {
-        document.documentElement.classList.remove('gesture-nav');
-      }
-      
       if (isMIUI) {
         // Dodanie specjalnej klasy dla urządzeń Xiaomi
         document.documentElement.classList.add('miui-device');
@@ -564,24 +550,11 @@ export const WarProvider: React.FC<WarProviderProps> = ({
       } else {
         document.documentElement.classList.remove('miui-device');
       }
-      
-      // Check for iPhones with notch or dynamic island
-      const isIphone = /iphone/.test(userAgent);
-      const isNotchedIphone = isIphone && (window.screen.height >= 812 || window.screen.width >= 812);
-      
-      if (isNotchedIphone) {
-        document.documentElement.classList.add('notched-iphone');
-      } else {
-        document.documentElement.classList.remove('notched-iphone');
-      }
     };
 
     handleResize();
     window.addEventListener('resize', handleResize);
     window.addEventListener('orientationchange', handleResize);
-
-    // Additional call after short delay to handle some mobile browsers behavior
-    setTimeout(handleResize, 300);
 
     return () => {
       window.removeEventListener('resize', handleResize);
@@ -883,6 +856,44 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
   };
 
   const hasEnoughBalance = parseFloat(nearBalance) >= ENTRY_FEE;
+
+  // Efekt dla dostosowania wysokości viewportu na urządzeniach mobilnych
+  useEffect(() => {
+    const handleResize = () => {
+      // Dostosowanie wysokości do rzeczywistej wysokości viewportu
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+      
+      // Wykrywanie urządzeń Xiaomi/Redmi/MIUI poprzez sprawdzanie user agent
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isMIUI = userAgent.includes('miui') || 
+                     userAgent.includes('xiaomi') || 
+                     userAgent.includes('redmi') || 
+                     userAgent.includes('poco');
+      
+      if (isMIUI) {
+        document.documentElement.classList.add('miui-device');
+        
+        // Dodatkowy padding dla górnego paska na urządzeniach Xiaomi
+        const extraPadding = window.innerWidth <= 393 ? 40 : 30;
+        document.documentElement.style.setProperty('--miui-padding-top', `${extraPadding}px`);
+      } else {
+        document.documentElement.classList.remove('miui-device');
+      }
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleResize);
+    
+    // Dodatkowe wywołanie po krótkim czasie, aby upewnić się, że viewporty są prawidłowo obliczone
+    setTimeout(handleResize, 300);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
+    };
+  }, []);
 
   // Automatyczne kończenie gry, gdy czas się skończy
   useEffect(() => {
