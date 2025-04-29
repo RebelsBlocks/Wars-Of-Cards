@@ -78,7 +78,7 @@
 
 .gameContainer {
   width: 100%;
-  height: 100vh; /* Podobnie jak w Blackjack.module.css */
+  height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -86,9 +86,9 @@
   position: relative;
   touch-action: manipulation;
   overflow: hidden;
-  max-height: 100vh; /* Podobnie jak w Blackjack.module.css */
+  max-height: 100vh;
   padding-top: env(safe-area-inset-top, 20px);
-  padding-bottom: env(safe-area-inset-bottom, 15px);
+  padding-bottom: var(--safe-area-padding-bottom, env(safe-area-inset-bottom, 15px));
 }
 
 /* Style dla urządzeń Xiaomi/MIUI wykrytych przez JavaScript */
@@ -149,24 +149,25 @@
   position: relative;
   width: 70%;
   max-width: 630px;
-  height: auto; /* Zmiana z 70% na auto, aby dostosować się do zawartości */
-  min-height: auto; /* Zmiana aby nie wymuszać zbyt dużej wysokości */
+  height: auto;
+  min-height: auto;
   background: url('/Profile_back.png') center center/cover;
   border-radius: 25px;
   padding: 1.5rem;
   padding-top: max(1.5rem, env(safe-area-inset-top, 20px));
-  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 15px));
+  padding-bottom: 1.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Zmiana z space-between na flex-start */
-  margin: 0 auto;
-  margin-bottom: 1rem; /* Dodanie marginesu na dole */
+  justify-content: flex-start;
+  margin-left: auto;
+  margin-right: auto;
   overflow: hidden;
-  border: 1px solid rgba(var(--gold-accent), 0.3); /* Dodanie ramki podobnie jak w Blackjack */
+  border: 1px solid rgba(var(--gold-accent), 0.3);
   box-shadow: 
     0 0 10px rgba(var(--gold-accent), 0.2),
     0 0 20px rgba(var(--gold-accent), 0.1),
-    inset 0 0 10px rgba(var(--gold-accent), 0.1); /* Dodanie cienia podobnie jak w Blackjack */
+    inset 0 0 10px rgba(var(--gold-accent), 0.1);
+  margin-bottom: calc(var(--safe-area-padding-bottom, 15px) + 10px);
 }
 
 /* Dodatkowe rozwiązanie dla telefonów z MIUI - specyficzna implementacja paska statusu */
@@ -1360,7 +1361,8 @@
     max-width: 500px;
     padding: 1rem;
     border-radius: 20px;
-    margin-bottom: 0.5rem;
+    /* Aktualizuję margin-bottom, używając zmiennej z GestureAreaBuffer */
+    margin-bottom: calc(var(--safe-area-padding-bottom, 15px) + 8px);
   }
   
   .selectedCardArea {
@@ -1370,7 +1372,8 @@
   
   .playerCardsArea {
     min-height: 140px;
-    margin-bottom: 1rem; /* Zachowujemy 1rem marginesu, nawet na mobilnych urządzeniach */
+    /* Zmniejszam margin-bottom */
+    margin-bottom: 0.5rem;
   }
 }
 
@@ -1382,7 +1385,8 @@
     max-width: 380px;
     padding: 0.8rem;
     border-radius: 15px;
-    margin-bottom: 0.5rem;
+    /* Aktualizuję margin-bottom dla małych ekranów */
+    margin-bottom: calc(var(--safe-area-padding-bottom, 15px) + 5px);
   }
   
   .selectedCardArea {
@@ -1395,7 +1399,7 @@
     gap: 0.2rem;
     min-height: 130px;
     padding: 0 0.3rem;
-    margin-bottom: 1rem; /* Zachowujemy 1rem marginesu, nawet na mobilnych urządzeniach */
+    margin-bottom: 0.5rem;
   }
   
   .gameContainer {
@@ -1403,7 +1407,8 @@
     padding-top: calc(env(safe-area-inset-top, 20px) + 8px);
     height: 100vh;
     max-height: -webkit-fill-available;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom, 15px));
+    /* Aktualizuję padding-bottom, używając zmiennej z GestureAreaBuffer */
+    padding-bottom: var(--safe-area-padding-bottom, env(safe-area-inset-bottom, 15px));
   }
 }
 
@@ -1442,7 +1447,7 @@
   padding: 0 0.5rem;
   height: auto;
   min-height: 160px;
-  margin-bottom: 1rem;
+  margin-bottom: 0.5rem;
 }
 
 .cardColumn {
@@ -1856,7 +1861,8 @@
     max-width: 500px;
     padding: 1rem;
     border-radius: 20px;
-    margin-bottom: 0.5rem;
+    /* Aktualizuję margin-bottom, używając zmiennej z GestureAreaBuffer */
+    margin-bottom: calc(var(--safe-area-padding-bottom, 15px) + 8px);
   }
   
   .selectedCardArea {
@@ -1866,7 +1872,8 @@
   
   .playerCardsArea {
     min-height: 140px;
-    margin-bottom: 1rem; /* Zachowujemy 1rem marginesu, nawet na mobilnych urządzeniach */
+    /* Zmniejszam margin-bottom */
+    margin-bottom: 0.5rem;
   }
 }
 
@@ -1878,7 +1885,8 @@
     max-width: 380px;
     padding: 0.8rem;
     border-radius: 15px;
-    margin-bottom: 0.5rem;
+    /* Aktualizuję margin-bottom dla małych ekranów */
+    margin-bottom: calc(var(--safe-area-padding-bottom, 15px) + 5px);
   }
   
   .selectedCardArea {
@@ -1891,7 +1899,7 @@
     gap: 0.2rem;
     min-height: 130px;
     padding: 0 0.3rem;
-    margin-bottom: 1rem; /* Zachowujemy 1rem marginesu, nawet na mobilnych urządzeniach */
+    margin-bottom: 0.5rem;
   }
   
   .gameContainer {
@@ -1899,7 +1907,8 @@
     padding-top: calc(env(safe-area-inset-top, 20px) + 8px);
     height: 100vh;
     max-height: -webkit-fill-available;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom, 15px));
+    /* Aktualizuję padding-bottom, używając zmiennej z GestureAreaBuffer */
+    padding-bottom: var(--safe-area-padding-bottom, env(safe-area-inset-bottom, 15px));
   }
 }
 
@@ -2604,17 +2613,42 @@
     height: auto;
     min-height: auto;
     max-height: 80vh;
-    margin-bottom: 0.5rem;
+    /* Aktualizuję margin-bottom dla orientacji poziomej */
+    margin-bottom: calc(var(--safe-area-padding-bottom, 15px) + 5px);
   }
   
   .playerCardsArea {
     min-height: 120px;
-    margin-bottom: 1rem; /* Zachowujemy 1rem marginesu, nawet na urządzeniach w trybie landscape */
+    margin-bottom: 0.5rem;
   }
   
   .selectedCardArea {
     min-height: 140px;
     margin-bottom: 0.5rem;
+  }
+}
+
+/* Dodatkowe style dla iOS, aby upewnić się, że ramka jest widoczna nad systemowymi przyciskami */
+@supports (-webkit-touch-callout: none) {
+  .gameTable {
+    /* iOS-specific margin-bottom */
+    margin-bottom: calc(var(--safe-area-padding-bottom, 15px) + 20px);
+  }
+}
+
+/* Specjalne style dla przeglądarki Brave lub Chrome na Androida */
+body.brave-browser .gameTable {
+  margin-bottom: calc(var(--safe-area-padding-bottom, 15px) + 25px);
+}
+
+/* Specyficzne style dla iPhone X i nowszych z notchem */
+@supports (padding: max(0px)) {
+  .gameContainer {
+    padding-bottom: max(var(--safe-area-padding-bottom, 15px), env(safe-area-inset-bottom, 15px));
+  }
+  
+  .gameTable {
+    margin-bottom: max(var(--safe-area-padding-bottom, 15px) + 10px, env(safe-area-inset-bottom, 15px) + 10px);
   }
 }
 
