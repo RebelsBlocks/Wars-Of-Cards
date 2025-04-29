@@ -7,6 +7,7 @@ import '@/styles/globals.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import '@near-wallet-selector/modal-ui/styles.css';
+import ImagePreloader from '@/components/ImagePreloader';
 
 const NearWalletProvider = dynamic(
   () => import('@/contexts/NearWalletContext').then(mod => mod.NearWalletProvider),
@@ -123,6 +124,7 @@ function App({ Component, pageProps }: AppPropsWithLayout): React.ReactElement {
           content: 'width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no'
         })
       ),
+      React.createElement(ImagePreloader),
       React.createElement(Component, pageProps)
     )
   );
