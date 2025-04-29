@@ -83,14 +83,20 @@ const HomePage: NextPage = () => {
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        overflow: 'hidden' // Prevent scrolling
       }}>
         <img 
           src="/logo_load.png" 
           alt="Loading..."
           style={{
-            width: '500px',
-            height: 'auto'
+            width: 'min(500px, 85vw)', // Responsive sizing
+            height: 'auto',
+            maxHeight: '60vh', // Prevent logo from being too large
+            objectFit: 'contain' // Maintain aspect ratio
           }}
         />
       </div>
