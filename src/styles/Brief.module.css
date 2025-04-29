@@ -244,7 +244,7 @@
     padding: 8px;
     height: calc(100vh - 56px - 60px);
     max-height: none;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px) * 0.5);
   }
   
   .chatContainer {
@@ -264,7 +264,7 @@
     padding: 8px;
     min-height: 46px;
     z-index: 100;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px) * 0.5);
   }
 
   .chatInput {
@@ -272,7 +272,7 @@
     font-size: 14px;
     padding: 10px 14px;
     border-width: 1px;
-    margin-bottom: env(safe-area-inset-bottom, 0px);
+    margin-bottom: 0;
   }
 
   .sendButton {
@@ -280,7 +280,7 @@
     min-width: 70px;
     padding: 0 12px;
     font-size: 14px;
-    margin-bottom: env(safe-area-inset-bottom, 0px);
+    margin-bottom: 0;
   }
   
   .topicButton {
@@ -325,17 +325,17 @@
 /* iPhone safe area support */
 @supports (padding: max(0px)) {
   .container {
-    padding-bottom: calc(clamp(8px, 2vw, 16px) + env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(clamp(8px, 2vw, 16px) + env(safe-area-inset-bottom, 0px) * 0.5);
   }
   
   @media screen and (max-width: 768px) {
     .container {
-      height: calc(100vh - 56px - 60px - env(safe-area-inset-bottom, 0px));
-      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+      height: calc(100vh - 56px - 60px - env(safe-area-inset-bottom, 0px) * 0.5);
+      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px) * 0.5);
     }
     
     .inputContainer {
-      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px) * 0.5);
     }
   }
 }
@@ -389,17 +389,17 @@
 /* Fix the iPhone safe area support section */
 @supports (padding: max(0px)) {
   .actionBar {
-    height: calc(60px + env(safe-area-inset-bottom, 0px));
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    height: calc(60px + env(safe-area-inset-bottom, 0px) * 0.5);
+    padding-bottom: env(safe-area-inset-bottom, 0px) * 0.5;
   }
   
   @media screen and (max-width: 768px) {
     .container {
-      height: calc(100vh - 56px - 60px - env(safe-area-inset-bottom, 0px));
+      height: calc(100vh - 56px - 60px - env(safe-area-inset-bottom, 0px) * 0.5);
     }
     
     .actionBar {
-      height: calc(60px + env(safe-area-inset-bottom, 0px));
+      height: calc(60px + env(safe-area-inset-bottom, 0px) * 0.5);
     }
   }
 }
@@ -474,7 +474,7 @@
     width: 100%;
     height: 60px;
     padding: 0 12px;
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px) * 0.5;
     box-sizing: border-box;
   }
   
@@ -500,13 +500,13 @@
   .container {
     /* Zamiast height: calc(100vh - 56px - 60px) używamy zmiennej --app-height */
     height: calc(var(--app-height) - 56px - 60px);
-    /* Zwiększamy padding na dole, aby uniknąć zasłonięcia przez pasek nawigacyjny */
-    padding-bottom: calc(8px + var(--safe-area-bottom));
+    /* Zmniejszamy padding na dole */
+    padding-bottom: calc(8px + var(--safe-area-bottom) * 0.5);
   }
   
   .inputContainer {
-    /* Zwiększamy odstęp na dole */
-    margin-bottom: var(--safe-area-bottom);
+    /* Zmniejszamy odstęp na dole */
+    margin-bottom: calc(var(--safe-area-bottom) * 0.5);
     z-index: 100;
   }
   
