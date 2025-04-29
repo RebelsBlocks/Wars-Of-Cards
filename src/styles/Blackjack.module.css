@@ -495,6 +495,14 @@
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
+.errorMessage {
+  color: #ff5252;
+  margin-top: 16px;
+  font-size: 14px;
+  max-width: 300px;
+  text-align: center;
+}
+
 .betInput {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -581,6 +589,16 @@
 .placeBetButton:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.placeBetButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: linear-gradient(135deg,
+    rgba(var(--felt-green-light), 0.3),
+    rgba(var(--felt-green-dark), 0.3)
+  );
+  box-shadow: none;
 }
 
 .betDisplay {
