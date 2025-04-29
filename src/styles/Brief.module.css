@@ -242,9 +242,11 @@
     right: 0;
     bottom: 60px;
     padding: 8px;
-    height: calc(100vh - 56px - 60px);
+    height: calc(var(--app-height) - 56px - 40px);
     max-height: none;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px) * 0.5);
+    padding-bottom: calc(8px + var(--safe-area-bottom) - 5px);
+    padding-left: 6px;
+    padding-right: 6px;
   }
   
   .chatContainer {
@@ -261,26 +263,26 @@
   }
 
   .inputContainer {
-    padding: 8px;
-    min-height: 46px;
+    padding: 6px;
+    min-height: 42px;
     z-index: 100;
-    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px) * 0.5);
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
   }
 
   .chatInput {
-    min-height: 38px;
+    min-height: 36px;
     font-size: 14px;
-    padding: 10px 14px;
+    padding: 8px 12px;
     border-width: 1px;
-    margin-bottom: 0;
+    margin-bottom: env(safe-area-inset-bottom, 0px);
   }
 
   .sendButton {
-    height: 38px;
-    min-width: 70px;
-    padding: 0 12px;
+    height: 36px;
+    min-width: 60px;
+    padding: 0 10px;
     font-size: 14px;
-    margin-bottom: 0;
+    margin-bottom: env(safe-area-inset-bottom, 0px);
   }
   
   .topicButton {
@@ -325,17 +327,17 @@
 /* iPhone safe area support */
 @supports (padding: max(0px)) {
   .container {
-    padding-bottom: calc(clamp(8px, 2vw, 16px) + env(safe-area-inset-bottom, 0px) * 0.5);
+    padding-bottom: calc(clamp(8px, 2vw, 16px) + env(safe-area-inset-bottom, 0px));
   }
   
   @media screen and (max-width: 768px) {
     .container {
-      height: calc(100vh - 56px - 60px - env(safe-area-inset-bottom, 0px) * 0.5);
-      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px) * 0.5);
+      height: calc(100vh - 56px - 60px - env(safe-area-inset-bottom, 0px));
+      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     }
     
     .inputContainer {
-      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px) * 0.5);
+      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     }
   }
 }
@@ -389,17 +391,17 @@
 /* Fix the iPhone safe area support section */
 @supports (padding: max(0px)) {
   .actionBar {
-    height: calc(60px + env(safe-area-inset-bottom, 0px) * 0.5);
-    padding-bottom: env(safe-area-inset-bottom, 0px) * 0.5;
+    height: calc(60px + env(safe-area-inset-bottom, 0px));
+    padding-bottom: env(safe-area-inset-bottom, 0px);
   }
   
   @media screen and (max-width: 768px) {
     .container {
-      height: calc(100vh - 56px - 60px - env(safe-area-inset-bottom, 0px) * 0.5);
+      height: calc(100vh - 56px - 60px - env(safe-area-inset-bottom, 0px));
     }
     
     .actionBar {
-      height: calc(60px + env(safe-area-inset-bottom, 0px) * 0.5);
+      height: calc(60px + env(safe-area-inset-bottom, 0px));
     }
   }
 }
@@ -474,7 +476,7 @@
     width: 100%;
     height: 60px;
     padding: 0 12px;
-    padding-bottom: env(safe-area-inset-bottom, 0px) * 0.5;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
     box-sizing: border-box;
   }
   
@@ -495,29 +497,106 @@
   }
 }
 
-/* Przystosowanie Brief.module.css do korzystania z globalnych zmiennych */
+/* Przystosowanie Brief.module.css do korzystania z globalnych zmiennych i pełnego wykorzystania przestrzeni */
 @media screen and (max-width: 768px) {
   .container {
-    /* Zamiast height: calc(100vh - 56px - 60px) używamy zmiennej --app-height */
-    height: calc(var(--app-height) - 56px - 60px);
-    /* Zmniejszamy padding na dole */
-    padding-bottom: calc(8px + var(--safe-area-bottom) * 0.5);
+    /* Zwiększamy wysokość o kilka pikseli, aby lepiej wykorzystać przestrzeń */
+    height: calc(var(--app-height) - 56px - 40px); /* 60px -> 40px dla większej wysokości */
+    /* Zwiększamy padding na dole, ale nie za dużo */
+    padding-bottom: calc(8px + var(--safe-area-bottom) - 5px);
+    /* Zmniejsz padding z boków dla więcej przestrzeni */
+    padding-left: 6px;
+    padding-right: 6px;
   }
   
   .inputContainer {
-    /* Zmniejszamy odstęp na dole */
-    margin-bottom: calc(var(--safe-area-bottom) * 0.5);
+    /* Zmniejszamy margines dla lepszego wykorzystania przestrzeni */
+    margin-bottom: calc(var(--safe-area-bottom) - 8px);
+    /* Zmniejszamy padding */
+    padding: 6px;
     z-index: 100;
+    min-height: 42px; /* Zmniejszamy minimalną wysokość */
   }
   
   .chatContainer {
     /* Dostosowujemy wysokość kontenera chatu */
-    height: calc(var(--app-height) - 116px);
-    max-height: calc(var(--app-height) - 116px);
+    height: calc(var(--app-height) - 100px); /* 116px -> 100px dla większej wysokości */
+    max-height: calc(var(--app-height) - 100px);
+    /* Zmniejszamy padding dla lepszego wykorzystania przestrzeni */
+    padding: 8px;
   }
   
   .messagesContainer {
     /* Dostosowujemy wysokość kontenera wiadomości */
-    max-height: calc(var(--app-height) - 220px);
+    max-height: calc(var(--app-height) - 200px); /* 220px -> 200px dla większej wysokości */
+    /* Zmniejszamy margin na dole */
+    margin-bottom: 8px;
+  }
+  
+  .chatInput {
+    /* Dostosowujemy wysokość inputu */
+    min-height: 36px;
+    padding: 8px 12px;
+  }
+  
+  .sendButton {
+    height: 36px;
+    min-width: 60px;
+    padding: 0 10px;
+  }
+  
+  /* Zmniejszamy odstępy w układzie wiadomości */
+  .messagesWrapper {
+    gap: 6px;
+    padding-bottom: 6px;
+  }
+  
+  /* Zmniejszamy padding w wiadomościach */
+  .messageContent {
+    padding: 10px;
+  }
+  
+  .messageHeader {
+    padding: 6px 10px;
+  }
+}
+
+/* Dodaj specjalne style dla bardzo małych ekranów */
+@media screen and (max-width: 360px) {
+  .container {
+    /* Jeszcze bardziej zwiększamy wysokość */
+    height: calc(var(--app-height) - 56px - 30px); /* Jeszcze mniejszy offset */
+    padding: 4px;
+    padding-bottom: calc(4px + var(--safe-area-bottom) - 8px);
+  }
+  
+  .chatContainer {
+    padding: 6px;
+    height: calc(var(--app-height) - 90px);
+    max-height: calc(var(--app-height) - 90px);
+  }
+  
+  .messagesContainer {
+    padding: 6px;
+    margin-bottom: 6px;
+    max-height: calc(var(--app-height) - 180px);
+  }
+  
+  .inputContainer {
+    padding: 4px;
+    min-height: 38px;
+  }
+  
+  .chatInput {
+    min-height: 34px;
+    font-size: 13px;
+    padding: 6px 10px;
+  }
+  
+  .sendButton {
+    height: 34px;
+    min-width: 50px;
+    padding: 0 8px;
+    font-size: 13px;
   }
 }
