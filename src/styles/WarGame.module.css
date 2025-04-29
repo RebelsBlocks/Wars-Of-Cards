@@ -2587,7 +2587,178 @@
   margin-bottom: -2rem;
 }
 
-/* Add appropriate media queries for .houseGate to match .betContainer */
+/* Style wewnętrznych elementów kontenera .houseGate */
+.houseGate .balanceDisplay {
+  width: calc(100% + 2px);
+  margin: -1px;
+  margin-bottom: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  align-items: center;
+}
+
+.houseGate .balanceDisplay span {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+.houseGate .refreshButton {
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
+  border: none;
+  color: rgb(var(--felt-green-dark));
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  margin-left: 8px;
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    0 0 8px rgba(var(--gold-accent), 0.2);
+}
+
+.houseGate .refreshButton:hover {
+  transform: translateY(-2px) rotate(180deg);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.25),
+    0 0 12px rgba(var(--gold-accent), 0.3);
+  background: linear-gradient(135deg,
+    rgba(var(--secondary-accent), 0.9),
+    rgba(var(--gold-accent), 0.9)
+  );
+}
+
+.houseGate .refreshButton:active {
+  transform: translateY(0) rotate(180deg);
+  box-shadow: 
+    0 1px 2px rgba(0, 0, 0, 0.15),
+    0 0 6px rgba(var(--gold-accent), 0.2);
+}
+
+.houseGate .refreshIcon {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s ease;
+}
+
+.houseGate .betDisplay {
+  background: rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 0.8rem 1.6rem;
+  color: white;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  min-width: 140px;
+  margin: 0.8rem 0;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.houseGate .placeBetButton {
+  background: linear-gradient(135deg,
+    rgba(var(--gold-accent), 0.9),
+    rgba(var(--secondary-accent), 0.9)
+  );
+  color: rgb(var(--felt-green-dark));
+  border: none;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 0.25rem;
+  width: 100%;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.houseGate .placeBetButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  background: linear-gradient(135deg,
+    rgba(var(--secondary-accent), 0.9),
+    rgba(var(--gold-accent), 0.9)
+  );
+}
+
+.houseGate .placeBetButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.houseGate .placeBetButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: linear-gradient(135deg,
+    rgba(var(--felt-green-light), 0.3),
+    rgba(var(--felt-green-dark), 0.3)
+  );
+  box-shadow: none;
+}
+
+.houseGate .backToGamesButton {
+  background: rgba(0, 0, 0, 0.5);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.3);
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  width: 100%;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-top: 0.25rem;
+  margin-bottom: 0;
+}
+
+.houseGate .backToGamesButton:hover {
+  background: rgba(0, 0, 0, 0.6);
+  border-color: rgba(255, 215, 0, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.houseGate .backToGamesButton:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.houseGate .errorMessage {
+  color: #ff5252;
+  margin-top: 16px;
+  font-size: 14px;
+  max-width: 300px;
+  text-align: center;
+}
+
+.houseGate .connectWalletMessage {
+  font-size: 18px;
+  color: #fff;
+  margin: 20px 0;
+}
+
+/* Media queries dla .houseGate */
 @media (max-width: 480px) {
   .houseGate {
     padding: 0.6rem 1rem 0.6rem;
@@ -2596,6 +2767,24 @@
     margin-bottom: -2.5rem;
     top: 42%;
     transform: translate(-50%, -42%);
+  }
+  
+  .houseGate .backToGamesButton {
+    padding: 0.5rem 1.2rem;
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .houseGate .placeBetButton {
+    padding: 0.5rem 1.2rem;
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .houseGate .betDisplay {
+    font-size: calc(1vw + 1rem);
+    padding: calc(0.6vw + 3px) calc(1.2vw + 6px);
+    min-width: calc(25vw + 60px);
   }
 }
 
@@ -2696,7 +2885,7 @@ body.brave-browser .gameTable {
   }
 }
 
-/* Tablet breakpoint */
+/* Tablet breakpoint dla całego układu gry */
 @media (min-width: 481px) and (max-width: 768px) {
   .gameContainer {
     height: 100vh;
