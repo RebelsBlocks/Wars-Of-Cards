@@ -1215,7 +1215,9 @@
   width: 100%;
   background: transparent;
   border-radius: 8px;
-  padding-bottom: env(safe-area-inset-bottom, 15px); /* Dodane dla urządzeń z przyciskami systemowymi */
+  padding-bottom: env(safe-area-inset-bottom, 15px);
+  height: 0;
+  overflow: hidden;
 }
 
 .actionButton {
@@ -1368,7 +1370,7 @@
   
   .playerCardsArea {
     min-height: 140px;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem; /* Zachowujemy 1rem marginesu, nawet na mobilnych urządzeniach */
   }
 }
 
@@ -1393,7 +1395,7 @@
     gap: 0.2rem;
     min-height: 130px;
     padding: 0 0.3rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem; /* Zachowujemy 1rem marginesu, nawet na mobilnych urządzeniach */
   }
   
   .gameContainer {
@@ -1438,15 +1440,15 @@
   position: relative;
   width: 100%;
   padding: 0 0.5rem;
-  height: auto; /* Zmiana z 40% na auto */
+  height: auto;
   min-height: 160px;
-  margin-bottom: 0.5rem; /* Dodanie małego marginesu na dole */
+  margin-bottom: 1rem;
 }
 
 .cardColumn {
   position: relative;
   width: min(70px, calc(9vw + 20px));
-  margin: 0 min(8px, 1vw); /* Zwiększony margines poziomy między kolumnami */
+  margin: 0 min(8px, 1vw);
   height: min(105px, calc(13.5vw + 30px));
 }
 
@@ -1474,23 +1476,23 @@
 
 /* Dostosuj wysokości kolumn w zależności od liczby kart */
 .cardColumn[data-cards="5"] {
-  height: min(225px, calc(25vw + 65px)); /* wysokość karty + (4 * przesunięcie) */
+  height: min(225px, calc(25vw + 65px));
 }
 
 .cardColumn[data-cards="4"] {
-  height: min(195px, calc(22vw + 55px)); /* wysokość karty + (3 * przesunięcie) */
+  height: min(195px, calc(22vw + 55px));
 }
 
 .cardColumn[data-cards="3"] {
-  height: min(165px, calc(19vw + 45px)); /* wysokość karty + (2 * przesunięcie) */
+  height: min(165px, calc(19vw + 45px));
 }
 
 .cardColumn[data-cards="2"] {
-  height: min(135px, calc(16vw + 35px)); /* wysokość karty + (1 * przesunięcie) */
+  height: min(135px, calc(16vw + 35px));
 }
 
 .cardColumn[data-cards="1"] {
-  height: min(105px, calc(12vw + 30px)); /* tylko wysokość karty */
+  height: min(105px, calc(12vw + 30px));
 }
 
 .playerCardColumn {
@@ -1501,23 +1503,23 @@
 
 .playerCardColumn:nth-child(1),
 .playerCardColumn:nth-child(2) {
-  height: 160px; /* First card 112px + 4 cards * 12px */
+  height: 160px;
 }
 
 .playerCardColumn:nth-child(3) {
-  height: 148px; /* First card 112px + 3 cards * 12px */
+  height: 148px;
 }
 
 .playerCardColumn:nth-child(4) {
-  height: 136px; /* First card 112px + 2 cards * 12px */
+  height: 136px;
 }
 
 .playerCardColumn:nth-child(5) {
-  height: 124px; /* First card 112px + 1 card * 12px */
+  height: 124px;
 }
 
 .playerCardColumn:nth-child(6) {
-  height: 112px; /* Just one card */
+  height: 112px;
 }
 
 .bonusCard .cardWrapper {
@@ -1572,14 +1574,14 @@
 .computerPoints {
   left: 30%;
   top: 100px;
-  color: #ffd700; /* złoty kolor dla dealera */
+  color: #ffd700;
   text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
 }
 
 .playerPoints {
   right: 30%;
   top: 100px;
-  color: #ff4444; /* czerwony kolor dla gracza */
+  color: #ff4444;
   text-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
 }
 
@@ -1864,7 +1866,7 @@
   
   .playerCardsArea {
     min-height: 140px;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem; /* Zachowujemy 1rem marginesu, nawet na mobilnych urządzeniach */
   }
 }
 
@@ -1889,7 +1891,7 @@
     gap: 0.2rem;
     min-height: 130px;
     padding: 0 0.3rem;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem; /* Zachowujemy 1rem marginesu, nawet na mobilnych urządzeniach */
   }
   
   .gameContainer {
@@ -1915,7 +1917,7 @@
 
   .cardColumn {
     width: min(55px, calc(7.5vw + 20px));
-    margin: 0 min(5px, 0.8vw); /* Zwiększony margines poziomy dla średnich ekranów */
+    margin: 0 min(5px, 0.8vw);
   }
 
   .cardColumn[data-cards="5"] .cardWrapper:nth-child(1) { top: 0; }
@@ -2019,7 +2021,7 @@
 
 @media (max-width: 480px) {
   .gameTable {
-    width: 90%; /* Jeszcze większy procent na najmniejszych ekranach */
+    width: 90%;
     height: 90%;
     max-width: 380px;
     padding: 0.8rem;
@@ -2033,7 +2035,7 @@
   }
   
   .playerCardsArea {
-    gap: 0.2rem; /* Jeszcze mniejszy odstęp na małych ekranach */
+    gap: 0.2rem;
     min-height: 130px;
     padding: 0 0.3rem;
   }
@@ -2053,7 +2055,7 @@
 
   .cardColumn {
     width: min(45px, calc(6.5vw + 12px));
-    margin: 0 min(3px, 0.5vw); /* Zwiększony margines poziomy dla bardzo małych ekranów */
+    margin: 0 min(3px, 0.5vw);
   }
 
   .cardColumn[data-cards="5"] .cardWrapper:nth-child(1) { top: 0; }
@@ -2140,28 +2142,23 @@
 /* Dodatkowe styles dla bardzo małych ekranów */
 @media (max-width: 360px) and (max-height: 700px) {
   .gameTable {
-    /* Jeszcze mniejszy padding dla bardzo małych ekranów */
     padding: 0.3rem 0.15rem;
   }
   
   .buttonContainer {
-    /* Bardziej kompaktowe przyciski */
     gap: 0.5rem;
   }
   
   .actionButton {
-    /* Mniejsze przyciski */
     font-size: 0.65rem;
     padding: 0.35rem 0.75rem;
     min-width: 70px;
   }
   
-  /* Zmniejszenie górnego paska */
   .gameInfo {
     padding: 0.2rem;
   }
   
-  /* Zmniejszenie rozmiaru tekstu w górnym pasku */
   .gameStats, .pointsStats {
     font-size: 0.65rem;
   }
@@ -2170,22 +2167,18 @@
 /* Specjalne styles dla iPhone SE i podobnych bardzo małych telefonów */
 @media (max-width: 375px) and (max-height: 667px) {
   .playArea {
-    /* Większy margines dla kart, aby przyciski się zmieściły */
     margin-bottom: 1rem;
   }
   
   .selectedCards {
-    /* Przesunięcie kart wyżej */
     top: 5px;
   }
   
-  /* Dodatkowe zmniejszenie przycisków */
   .actionButton {
     font-size: 0.6rem;
     padding: 0.3rem 0.6rem;
   }
   
-  /* Usunięcie zbędnych marginesów */
   .playerCardsArea {
     margin-bottom: 2rem;
   }
@@ -2391,8 +2384,6 @@
 }
 
 @media (max-width: 600px) {
-  /* ... existing code ... */
-  
   .pointsStats {
     gap: 5px;
     padding: 5px 7px 0;
@@ -2404,8 +2395,6 @@
 }
 
 @media (max-width: 480px) {
-  /* ... existing code ... */
-  
   .pointsStats {
     gap: 3px;
     padding: 4px 6px 0;
@@ -2417,8 +2406,6 @@
 }
 
 @media (max-width: 360px) {
-  /* ... existing code ... */
-  
   .pointsStats {
     gap: 2px;
     flex-wrap: nowrap;
@@ -2571,7 +2558,7 @@
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 15px)); /* Dodane padding-bottom dla safe-area */
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 15px));
   margin-bottom: -2rem;
 }
 
@@ -2593,7 +2580,7 @@
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  gap: 0.3rem; /* Zmniejszony odstęp między kolumnami kart */
+  gap: 0.3rem;
   position: relative;
   width: 100%;
   padding: 0 0.5rem;
@@ -2603,11 +2590,11 @@
 
 @media (max-width: 480px) {
   .playerCardsArea {
-    gap: 0.2rem; /* Jeszcze mniejszy odstęp na małych ekranach */
+    gap: 0.2rem;
   }
   
   .selectedCardArea {
-    min-height: 180px; /* Mniejsza minimalna wysokość */
+    min-height: 180px;
   }
 }
 
@@ -2622,7 +2609,7 @@
   
   .playerCardsArea {
     min-height: 120px;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem; /* Zachowujemy 1rem marginesu, nawet na urządzeniach w trybie landscape */
   }
   
   .selectedCardArea {
