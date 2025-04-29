@@ -88,7 +88,7 @@
   min-height: calc(100vh - 80px); /* Stary sposób */
   min-height: calc(var(--vh, 1vh) * 100 - 80px); /* Nowy sposób z użyciem zmiennej --vh */
   padding-top: env(safe-area-inset-top, 20px); /* Dodanie paddingu na górze dla iOS */
-  padding-bottom: env(safe-area-inset-bottom, 10px); /* Dodanie paddingu na dole dla iOS */
+  padding-bottom: env(safe-area-inset-bottom, 25px); /* Zwiększony padding na dole dla iOS */
   overflow: hidden;
 }
 
@@ -155,6 +155,8 @@
   border-radius: 25px;
   padding: 1.5rem;
   padding-top: max(1.5rem, env(safe-area-inset-top, 20px)); /* Dodanie paddingu na górze */
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 20px)); /* Dodanie paddingu na dole */
+  margin-bottom: env(safe-area-inset-bottom, 15px); /* Dodany margines na dole dla systemowych przycisków */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -1203,11 +1205,9 @@
   display: flex;
   justify-content: center;
   gap: 1rem;
-  padding: 0.5rem;
-  margin: 0;
-  width: 100%;
-  background: transparent;
-  border-radius: 8px;
+  margin-top: 2rem;
+  padding-bottom: env(safe-area-inset-bottom, 15px); /* Dodane dla urządzeń z przyciskami systemowymi */
+  z-index: 10;
 }
 
 .actionButton {
@@ -2968,6 +2968,21 @@
   .houseGate .backToGamesButton {
     font-size: 0.9rem;
     padding: 0.6rem 1rem;
+  }
+}
+
+/* Dodatkowa obsługa dla iPhone'ów z home bar na dole */
+@supports (padding-bottom: constant(safe-area-inset-bottom)) or (padding-bottom: env(safe-area-inset-bottom)) {
+  .gameEndOverlay {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+  
+  .houseGate {
+    padding-bottom: env(safe-area-inset-bottom, 20px);
+  }
+  
+  .playerCardsArea {
+    margin-bottom: env(safe-area-inset-bottom, 15px);
   }
 }
 
