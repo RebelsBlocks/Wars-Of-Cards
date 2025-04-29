@@ -205,8 +205,8 @@
 }
 
 .cardWrapper {
-  width: min(80px, calc(10vw + 30px));
-  height: min(120px, calc(15vw + 45px));
+  width: min(60px, calc(7vw + 20px));
+  height: min(90px, calc(10.5vw + 30px));
   perspective: 1000px;
   transition: all 0.3s ease;
   flex-shrink: 0;
@@ -223,7 +223,7 @@
   height: 100%;
   background: url('/card_front.png') center center/cover;
   border-radius: min(8px, 1.5vw);
-  padding: min(0.5rem, 1vw);
+  padding: min(0.4rem, 0.8vw);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -252,36 +252,23 @@
   }
 
   .cardWrapper {
-    width: min(70px, calc(8vw + 25px));
-    height: min(105px, calc(12vw + 37.5px));
-  }
-
-  .cardsContainer:has(.cardWrapper:nth-child(3)) .cardWrapper {
-    width: min(60px, calc(7vw + 20px));
-    height: min(90px, calc(10.5vw + 30px));
-  }
-
-  .cardsContainer:has(.cardWrapper:nth-child(5)) .cardWrapper {
     width: min(50px, calc(6vw + 15px));
     height: min(75px, calc(9vw + 22.5px));
   }
 
   .cardFace {
     background: url('/card_front.png') center center/cover;
+    padding: 0.3rem 0.25rem;
   }
 }
 
 /* Adjust padding for smaller cards */
-.cardsContainer:has(.cardWrapper:nth-child(3)) .cardFace {
-  padding: 0.4rem 0.3rem;
-}
-
-.cardsContainer:has(.cardWrapper:nth-child(5)) .cardFace {
+.cardFace {
   padding: 0.3rem 0.25rem;
 }
 
 .cardValue {
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 700;
   text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
   display: inline-block;
@@ -290,7 +277,7 @@
 }
 
 .cardSuit {
-  font-size: 2rem;
+  font-size: 1.6rem;
   align-self: center;
   text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.5);
   line-height: 1;
@@ -973,32 +960,20 @@
 
 @media (min-width: 769px) {
   .cardWrapper {
-    width: 80px;
-    height: 120px;
-  }
-
-  /* 3-4 cards desktop */
-  .cardsContainer:has(.cardWrapper:nth-child(3)) .cardWrapper {
-    width: 70px;
-    height: 105px;
-  }
-
-  /* 5-6 cards desktop */
-  .cardsContainer:has(.cardWrapper:nth-child(5)) .cardWrapper {
     width: 60px;
     height: 90px;
   }
 
   .cardFace {
-    padding: 0.6rem;
+    padding: 0.4rem;
   }
 
   .cardValue {
-    font-size: 1.4rem;
+    font-size: 1.1rem;
   }
 
   .cardSuit {
-    font-size: 2.4rem;
+    font-size: 1.8rem;
   }
 }
 
@@ -1021,7 +996,12 @@
     padding: 1rem;
     box-shadow: none;
     min-height: auto;
-    height: calc(100vh - 40px);
+    height: auto;
+  }
+  
+  .cardWrapper {
+    width: 60px;
+    height: 90px;
   }
 }
 
@@ -1045,7 +1025,7 @@
     width: 100%;
     max-width: 800px;
     height: auto;
-    min-height: auto;
+    min-height: calc(80vh);
     margin: 0 auto;
     padding: 1rem;
     border-radius: 25px;
