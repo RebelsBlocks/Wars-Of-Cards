@@ -1,3 +1,11 @@
+/* Add environment safe area variables at the top of the file */
+:root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+}
+
 /* Style dla komunikatu o błędzie połączenia */
 .connectionError {
   display: flex;
@@ -78,18 +86,26 @@
 
 .gameContainer {
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  height: calc(var(--vh, 1vh) * 100);
+  position: relative;
+  background-image: linear-gradient(to bottom, #2c3e50, #1a1a2e);
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  position: relative;
-  touch-action: manipulation;
-  min-height: calc(100vh - 80px); /* Stary sposób */
-  min-height: calc(var(--vh, 1vh) * 100 - 80px); /* Nowy sposób z użyciem zmiennej --vh */
-  padding-top: env(safe-area-inset-top, 20px); /* Dodanie paddingu na górze dla iOS */
-  padding-bottom: env(safe-area-inset-bottom, 10px); /* Dodanie paddingu na dole dla iOS */
+  justify-content: center;
   overflow: hidden;
+  /* Add safe area insets */
+  padding-top: var(--safe-area-top);
+  padding-bottom: var(--safe-area-bottom);
+  padding-left: var(--safe-area-left);
+  padding-right: var(--safe-area-right);
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 /* Style dla urządzeń Xiaomi/MIUI wykrytych przez JavaScript */
@@ -147,17 +163,23 @@
 }
 
 .gameTable {
-  position: relative;
-  width: 95%;
-  max-width: 900px;
+  width: 100%;
   height: 100%;
-  background: url('/Profile_back.png') center center/cover;
-  border-radius: 25px;
-  padding: 1.5rem;
-  padding-top: max(1.5rem, env(safe-area-inset-top, 20px)); /* Dodanie paddingu na górze */
+  max-width: 1200px;
+  max-height: 800px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: space-between;
+  position: relative;
+  padding: 2rem;
+  /* Adjust padding to account for safe areas */
+  padding-top: max(2rem, var(--safe-area-top));
+  padding-bottom: max(2rem, var(--safe-area-bottom));
+  padding-left: max(2rem, var(--safe-area-left));
+  padding-right: max(2rem, var(--safe-area-right));
+  background: url('/Profile_back.png') center center/cover;
+  border-radius: 25px;
   margin: 0 auto;
   overflow: hidden;
 }
@@ -2969,5 +2991,205 @@
     font-size: 0.9rem;
     padding: 0.6rem 1rem;
   }
+}
+
+/* Improve mobile layout for very small devices */
+@media (max-width: 360px) {
+  .playerCardsArea {
+    margin-bottom: max(10px, var(--safe-area-bottom, 10px));
+  }
+
+  .cardWrapper {
+    width: 52px;
+    height: 75px;
+  }
+
+  .computerCards,
+  .playerCards {
+    min-height: 110px;
+  }
+  
+  .cardColumn {
+    width: 52px;
+    margin: 0 2px;
+  }
+  
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(1) { top: 0; }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(2) { top: min(12px, 1.8vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(3) { top: min(24px, 3.6vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(4) { top: min(36px, 5.4vw); }
+  .cardColumn[data-cards="5"] .cardWrapper:nth-child(5) { top: min(48px, 7.2vw); }
+  
+  .cardColumn[data-cards="5"] {
+    height: min(130px, 20vw);
+  }
+  
+  .cardColumn[data-cards="4"] {
+    height: min(120px, 18vw);
+  }
+  
+  .cardColumn[data-cards="3"] {
+    height: min(100px, 15vw);
+  }
+  
+  .cardColumn[data-cards="2"] {
+    height: min(80px, 12vw);
+  }
+  
+  .cardColumn[data-cards="1"] {
+    height: min(60px, 9vw);
+  }
+  
+  .selectedCards {
+    transform: scale(0.85);
+  }
+}
+
+/* New media query for iPhone SE and small form factor phones */
+@media (max-width: 375px) and (max-height: 667px) {
+  .gameTable {
+    padding: 1rem;
+    padding-top: max(1rem, var(--safe-area-top));
+    padding-bottom: max(1rem, var(--safe-area-bottom));
+  }
+  
+  .playerCardsArea {
+    margin-bottom: max(5px, var(--safe-area-bottom, 5px));
+    transform: scale(0.9);
+    transform-origin: bottom center;
+  }
+  
+  .ingameInfo {
+    margin-top: max(5px, var(--safe-area-top, 5px));
+    font-size: 0.8rem;
+  }
+  
+  .selectedCardArea {
+    margin: 5px 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Address notched phones (iPhone X and newer) */
+@supports (padding-top: env(safe-area-inset-top)) {
+  .gameContainer {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+  
+  .ingameInfo {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .playerCardsArea {
+    margin-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .houseGate {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+/* Fix for devices with hardware buttons at bottom (like Samsung) */
+@media screen and (max-height: 740px) {
+  .playerCardsArea {
+    margin-bottom: 15px;
+  }
+  
+  .cardColumn {
+    height: auto;
+    max-height: min(140px, 20vh);
+  }
+  
+  .cardColumn .cardWrapper {
+    transform: translateY(-5px);
+  }
+}
+
+/* Add support for mobile-device and notched-iphone classes */
+:root.mobile-device .gameContainer {
+  /* Ensure touch-friendly interface */
+  touch-action: manipulation;
+}
+
+:root.notched-iphone .gameContainer {
+  /* More aggressive padding for notched iPhones */
+  padding-top: env(safe-area-inset-top, 40px);
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+:root.notched-iphone .gameTable {
+  padding-top: max(1.5rem, env(safe-area-inset-top, 40px));
+  padding-bottom: max(1.5rem, env(safe-area-inset-bottom, 20px));
+}
+
+:root.notched-iphone .ingameInfo {
+  padding-top: env(safe-area-inset-top, 30px);
+}
+
+:root.notched-iphone .playerCardsArea {
+  margin-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+:root.mobile-device .cardColumn .cardWrapper:not(.disabled) {
+  /* Add tap highlight color for better feedback on touch */
+  -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Improve spacing on small Android phones */
+@media screen and (max-width: 360px) and (max-height: 740px) {
+  :root.mobile-device .gameTable {
+    padding: 1rem;
+    padding-top: max(1rem, env(safe-area-inset-top, 20px));
+    padding-bottom: max(0.5rem, env(safe-area-inset-bottom, 10px));
+  }
+  
+  :root.mobile-device .playerCardsArea {
+    transform: scale(0.9);
+    transform-origin: bottom center;
+    margin-bottom: env(safe-area-inset-bottom, 10px);
+  }
+  
+  :root.mobile-device .cardColumn[data-cards="5"] {
+    height: min(120px, 18vw);
+  }
+  
+  :root.mobile-device .selectedCardArea {
+    transform: scale(0.9);
+    margin: 5px 0;
+  }
+  
+  :root.mobile-device .ingameInfo {
+    transform: scale(0.95);
+    margin-top: env(safe-area-inset-top, 5px);
+  }
+}
+
+/* Specific fix for gesture navigation on Android */
+@media screen and (max-width: 393px) {
+  :root.mobile-device:not(.notched-iphone) .playerCardsArea {
+    margin-bottom: 15px; /* Add some space for gesture navigation */
+  }
+}
+
+/* Add styles for gesture navigation */
+:root.gesture-nav .playerCardsArea {
+  margin-bottom: var(--gesture-space, 20px);
+  padding-bottom: var(--safe-area-bottom, 10px);
+}
+
+:root.gesture-nav .gameTable {
+  padding-bottom: calc(var(--gesture-space, 20px) + var(--safe-area-bottom, 0px));
+}
+
+:root.gesture-nav.mobile-device .gameEndOverlay {
+  padding-bottom: var(--gesture-space, 20px);
+}
+
+:root.gesture-nav.mobile-device .houseGate {
+  padding-bottom: var(--gesture-space, 20px);
 }
 
