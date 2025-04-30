@@ -157,6 +157,14 @@ export function MainLayout({
           >
             <img src="/x.png" alt="x" />
           </a>
+          <a 
+            href="https://app.potlock.org/?tab=project&projectId=warsofcards.near" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={styles.xLink}
+          >
+            <img src="/potlock.png" alt="potlock" />
+          </a>
         </div>
       </div>
       
