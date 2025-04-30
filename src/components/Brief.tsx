@@ -237,6 +237,19 @@ interface SwapState {
   swapDirection: 'near_to_crans' | 'crans_to_near'; // direction of the swap
 }
 
+// Dodaj funkcję formatującą datę
+const formatMessageTime = (timestamp: Date) => {
+  return timestamp.toLocaleString('pl-PL', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  });
+};
+
 export function Brief() {
   // Add hooks
   const wallet = useNearWallet();
@@ -770,6 +783,11 @@ export function Brief() {
   }, []);
   
   const handleTextareaChange = (e: any) => {
+    if (!wallet.accountId) {
+      e.preventDefault();
+      wallet.connect();
+      return;
+    }
     setInputValue(e.target.value);
     if (e.target) {
       e.target.style.height = 'inherit';
@@ -778,6 +796,11 @@ export function Brief() {
   };
 
   const handleKeyDown = (e: any) => {
+    if (!wallet.accountId) {
+      e.preventDefault();
+      wallet.connect();
+      return;
+    }
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
@@ -837,6 +860,10 @@ export function Brief() {
   };
 
   const handleSendMessage = async () => {
+    if (!wallet.accountId) {
+      wallet.connect();
+      return;
+    }
     if (!inputValue.trim()) return;
     
     // Store message content and clear input immediately
@@ -1109,13 +1136,18 @@ Enable popups when prompted for seamless exchanges.`;
               >
                 <div className={styles.messageBox}>
                   <div className={styles.messageHeader}>
-                    <img 
-                      src={`https://i.near.social/magic/thumbnail/https://near.social/magic/img/account/${msg.role === 'user' ? wallet.accountId : 'warsofcards.near'}`}
-                      alt={msg.role === 'user' ? truncateWalletName(wallet.accountId) : 'Vanessa'}
-                      className={`${styles.authorAvatar} ${msg.role === 'user' && !wallet.accountId ? styles.authorAvatarBlurred : ''}`}
-                    />
-                    <span className={styles.messageSender}>
-                      {msg.role === 'user' ? truncateWalletName(wallet.accountId) : 'Vanessa'}
+                    <div className={styles.messageHeaderLeft}>
+                      <img 
+                        src={`https://i.near.social/magic/thumbnail/https://near.social/magic/img/account/${msg.role === 'user' ? wallet.accountId : 'warsofcards.near'}`}
+                        alt={msg.role === 'user' ? truncateWalletName(wallet.accountId) : 'Vanessa'}
+                        className={`${styles.authorAvatar} ${msg.role === 'user' && !wallet.accountId ? styles.authorAvatarBlurred : ''}`}
+                      />
+                      <span className={styles.messageSender}>
+                        {msg.role === 'user' ? truncateWalletName(wallet.accountId) : 'Vanessa'}
+                      </span>
+                    </div>
+                    <span className={styles.messageTimestamp}>
+                      {formatMessageTime(msg.timestamp)}
                     </span>
                   </div>
                   <div className={styles.messageContent}>
