@@ -100,6 +100,21 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  justify-content: space-between;
+}
+
+.messageHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.messageTimestamp {
+  font-size: 0.8rem;
+  color: rgba(237, 201, 81, 0.7);
+  margin-left: auto;
+  font-weight: 400;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .authorAvatar {
@@ -134,18 +149,34 @@
 .messageWrapper {
   display: flex;
   flex-direction: column;
-  width: fit-content;
-  max-width: 85%;
+  width: 100%;
   animation: fadeIn 0.3s ease-out;
-  margin: 0 8px;
+  margin: 0;
 }
 
 .userMessage {
   align-self: flex-end;
+  width: fit-content;
+  max-width: 85%;
+}
+
+.userMessage .messageWrapper {
+  width: fit-content;
 }
 
 .assistantMessage {
-  align-self: flex-start;
+  align-self: stretch;
+  width: 100%;
+}
+
+.assistantMessage .messageWrapper {
+  width: auto;
+  max-width: none;
+  margin: 0;
+}
+
+.assistantMessage .messageBox {
+  width: 100%;
 }
 
 .userMessage .messageContent {
