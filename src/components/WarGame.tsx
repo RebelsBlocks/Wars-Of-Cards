@@ -164,14 +164,6 @@ export const useWar = () => {
   return context;
 };
 
-// Loading spinner component for war game
-const LoadingSpinner = () => (
-  <div className={styles.loadingContainer}>
-    <div className={styles.loadingSpinner}></div>
-    <p className={styles.loadingText}>New War Order is coming...</p>
-  </div>
-);
-
 interface WarProviderProps {
   children: ReactNode;
   initialBalance?: number;
@@ -794,7 +786,16 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
   const [nearBalance, setNearBalance] = useState<string>("0");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [initialLoading, setInitialLoading] = useState(true); // Initial loading state
+  const [showLogoScreen, setShowLogoScreen] = useState(true);
+
+  useEffect(() => {
+    // Show logo for 1 second
+    const timer = setTimeout(() => {
+      setShowLogoScreen(false);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // Fetch CRANS balance
   async function fetchCRANSBalance(accountId: string) {
@@ -813,23 +814,9 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
     }
   }
 
-  // Initial loading effect
-  useEffect(() => {
-    // Simulate loading time for initial connections
-    const timer = setTimeout(() => {
-      setInitialLoading(false);
-    }, 1500); // Show loading for at least 1.5 seconds
-    
-    return () => clearTimeout(timer);
-  }, []);
-
   useEffect(() => {
     if (wallet.accountId) {
-      fetchCRANSBalance(wallet.accountId).then(balance => {
-        setNearBalance(balance);
-        // Keep loading until balance is fetched
-        setInitialLoading(false);
-      });
+      fetchCRANSBalance(wallet.accountId).then(setNearBalance);
     }
   }, [wallet.accountId]);
 
@@ -840,11 +827,6 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
       fetchCRANSBalance(wallet.accountId).then(setNearBalance);
     }
   }, [isGameComplete, wallet.accountId]);
-
-  // If still in initial loading state, show loading spinner
-  if (initialLoading) {
-    return <LoadingSpinner />;
-  }
 
   const handlePlaceBet = async () => {
     if (!wallet.accountId || isLoading) return;
@@ -958,8 +940,14 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
 
   return (
     <div className={styles.gameContainer}>
-      {initialLoading ? (
-        <LoadingSpinner />
+      {showLogoScreen ? (
+        <div className={styles.logoScreen}>
+          <img 
+            src="/logo_transparent.png" 
+            alt="Wars of Cards" 
+            className={styles.logoImage}
+          />
+        </div>
       ) : isConnected && showBetUI ? (
         <div className={styles.houseGate}>
           {wallet.accountId ? (
