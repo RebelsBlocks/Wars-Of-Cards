@@ -782,3 +782,49 @@ body.keyboard-visible .messagesContainer {
     --app-height: -webkit-fill-available;
   }
 }
+
+/* Fix for wallet selector modal - ensure it's always on top */
+.nws-modal-wrapper,
+.nws-modal,
+.nws-modal-container,
+.nws-modal-overlay,
+#near-wallet-selector-modal,
+.near-wallet-selector-modal-portal,
+.near-wallet-selector-modal-wrapper,
+.near-wallet-selector-modal-container,
+.near-wallet-selector-modal-overlay {
+  z-index: 9999999 !important;
+  position: fixed !important;
+}
+
+/* Fix position of the modal content */
+.nws-modal-wrapper .nws-modal,
+.near-wallet-selector-modal-wrapper .modal {
+  position: fixed !important;
+  z-index: 9999999 !important;
+}
+
+/* Ensure the overlay is full screen */
+.nws-modal-overlay,
+.near-wallet-selector-modal-overlay {
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Fix specifically for screens between 960px and 1260px where the issue occurs */
+@media (min-width: 960px) and (max-width: 1260px) {
+  .nws-modal-wrapper,
+  .nws-modal,
+  .nws-modal-container,
+  .nws-modal-overlay,
+  #near-wallet-selector-modal,
+  .near-wallet-selector-modal-portal,
+  .near-wallet-selector-modal-wrapper,
+  .near-wallet-selector-modal-container,
+  .near-wallet-selector-modal-overlay {
+    z-index: 9999999 !important;
+  }
+}
