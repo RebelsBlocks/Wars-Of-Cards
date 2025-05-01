@@ -231,16 +231,14 @@ img {
     font-size: 14px;
     padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-padding-bottom));
     padding-top: var(--safe-area-inset-top);
-    /* Force taller height to encourage browser address bar hiding */
-    height: 100.1vh; 
-    min-height: 100.1vh;
+    height: 100dvh;
     overflow: hidden;
     position: fixed;
     width: 100%;
     left: 0;
     top: 0;
     overscroll-behavior: none;
-    -webkit-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: none;
     touch-action: none;
   }
 
@@ -729,44 +727,39 @@ body.keyboard-visible .messagesContainer {
 
 /* Lepsze wsparcie dla viewportu mobilnego */
 @media (max-width: 960px) {
+  /* Zmienne dla viewportu mobilnego */
+  :root {
+    /* Bezpieczny obszar na dole, który dostosowuje się do urządzenia */
+    --safe-area-bottom: env(safe-area-inset-bottom, 15px);
+    /* Zmienna przechowująca wysokość viewportu */
+    --app-height: 100%;
+  }
+  
   html, body, #__next {
     /* Nieco większa wysokość wymusza przewijanie, co zachęca przeglądarkę
        do chowania pasków nawigacyjnych */
     height: 101vh;
     height: calc(var(--app-height) + 1px);
     /* Wymuś przewijanie */
-    overflow-y: auto;
+    overflow-y: auto !important;
     /* Zapobiegaj efektowi "bounce" */
     overscroll-behavior-y: none;
     /* Popraw płynność przewijania */
     -webkit-overflow-scrolling: touch;
   }
   
-  /* Advanced techniques to hide browser address bar on mobile */
-  html {
-    min-height: 101vh; /* Force minimal scroll */
-    height: 101vh; /* Slightly taller than viewport to force scrolling */
+  body:not(.wallet-selector-open) {
+    /* Ensure browser chrome can hide when not using wallet selector */
+    position: relative !important;
+    touch-action: pan-y !important;
   }
   
-  body {
-    /* Trigger minimal scrolling to hide address bars */
-    min-height: calc(var(--app-height) + 1px);
-    /* Add minimal scrolling */
-    height: calc(var(--app-height) + 1px);
-    position: relative;
-  }
-  
-  #__next {
-    /* Force scrolling */
-    min-height: calc(100vh + 1px);
-    padding-bottom: 1px; /* Force minimal scroll */
-  }
-  
-  /* Special handling for landscape orientation */
-  @media screen and (orientation: landscape) {
-    html, body, #__next {
-      height: calc(100svh + 1px); /* Use small viewport height unit for landscape */
-    }
+  /* Add slight padding at the bottom to encourage scrolling */
+  body::after {
+    content: '';
+    display: block;
+    height: 1px;
+    margin-bottom: 50px;
   }
   
   /* Dla wszystkich głównych kontenerów, dodaj padding na dole */
@@ -847,5 +840,37 @@ body.keyboard-visible .messagesContainer {
   .near-wallet-selector-modal-container,
   .near-wallet-selector-modal-overlay {
     z-index: 9999999 !important;
+  }
+  
+  /* Ensure these elements only have high z-index when wallet selector is open */
+  body:not(.wallet-selector-open) .nws-modal-wrapper,
+  body:not(.wallet-selector-open) .nws-modal-container,
+  body:not(.wallet-selector-open) .nws-modal-overlay,
+  body:not(.wallet-selector-open) #near-wallet-selector-modal,
+  body:not(.wallet-selector-open) .near-wallet-selector-modal-portal,
+  body:not(.wallet-selector-open) .near-wallet-selector-modal-wrapper,
+  body:not(.wallet-selector-open) .near-wallet-selector-modal-container,
+  body:not(.wallet-selector-open) .near-wallet-selector-modal-overlay {
+    display: none;
+  }
+}
+
+/* Fix for Brave mobile nav bar auto-hiding */
+@media (max-width: 960px) {
+  html, body, #__next {
+    height: 101vh; 
+    height: calc(var(--app-height) + 1px);
+    overflow-y: auto !important;
+    overscroll-behavior-y: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Only apply high z-index when the wallet selector is actually open */
+  .nws-modal-wrapper:not(.nws-modal-wrapper--active),
+  .nws-modal:not(.active),
+  .nws-modal-container:not(.active),
+  .nws-modal-overlay:not(.active) {
+    z-index: -1 !important;
+    display: none !important;
   }
 }
