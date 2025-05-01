@@ -7,8 +7,8 @@ import BN from 'bn.js';
 import { GestureAreaBuffer } from './GestureAreaBuffer';
 
 // Constants for betting
-const ENTRY_FEE = 4; // 4 CRANS
-const ENTRY_FEE_YOCTO = "4000000000000000000000000"; // 4 with 24 decimals
+const ENTRY_FEE = 210; // 210 CRANS
+const ENTRY_FEE_YOCTO = "210000000000000000000000000"; // 210 with 24 decimals
 
 // Helper function to format token amounts
 function formatTokenAmount(amount: string): string {
