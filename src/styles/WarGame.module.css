@@ -2946,6 +2946,7 @@ body.brave-browser .gameTable {
   }
 }
 
+/* Logo screen for initial loading */
 .logoScreen {
   position: absolute;
   top: 0;
@@ -2955,7 +2956,7 @@ body.brave-browser .gameTable {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.9);
+  background-color: rgba(0, 0, 0, 0);
   z-index: 1000;
 }
 
