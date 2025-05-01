@@ -786,14 +786,13 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
   const [nearBalance, setNearBalance] = useState<string>("0");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showLogoScreen, setShowLogoScreen] = useState(true);
+  const [showLogoScreen, setShowLogoScreen] = useState<boolean>(true);
 
+  // Show logo for 1 second
   useEffect(() => {
-    // Show logo for 1 second
     const timer = setTimeout(() => {
       setShowLogoScreen(false);
     }, 1000);
-    
     return () => clearTimeout(timer);
   }, []);
 
