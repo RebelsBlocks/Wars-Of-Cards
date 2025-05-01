@@ -792,7 +792,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowLogoScreen(false);
-    }, 1000);
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
