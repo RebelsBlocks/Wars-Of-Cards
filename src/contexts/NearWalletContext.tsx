@@ -139,6 +139,25 @@ function NearWalletProviderComponent({ children }: Props) {
           description: 'Please select a wallet to play Wars of Cards'
         });
 
+        // Add event listeners to handle modal open/close for CSS targeting
+        // Use a MutationObserver to detect when the modal is shown/hidden
+        const observer = new MutationObserver((mutations) => {
+          for (const mutation of mutations) {
+            if (mutation.type === 'childList') {
+              // Check if modal was added to DOM
+              const modalElement = document.querySelector('.nws-modal-wrapper');
+              if (modalElement) {
+                document.body.classList.add('wallet-selector-open');
+              } else {
+                document.body.classList.remove('wallet-selector-open');
+              }
+            }
+          }
+        });
+        
+        // Start observing the document body for changes
+        observer.observe(document.body, { childList: true, subtree: true });
+
         const state = selector.store.getState();
         console.log('Initial wallet state:', state);
         
