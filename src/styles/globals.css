@@ -725,14 +725,6 @@ body.keyboard-visible .messagesContainer {
   }
 }
 
-/* Zmienne dla lepszego wsparcia viewportu mobilnego */
-:root {
-  /* Bezpieczny obszar na dole, który dostosowuje się do urządzenia */
-  --safe-area-bottom: env(safe-area-inset-bottom, 15px);
-  /* Zmienna przechowująca wysokość viewportu */
-  --app-height: 100%;
-}
-
 /* Lepsze wsparcie dla viewportu mobilnego */
 @media (max-width: 960px) {
   html, body, #__next {
@@ -772,6 +764,31 @@ body.keyboard-visible .messagesContainer {
   .sidebar, 
   .gameWrapper {
     padding-bottom: calc(env(safe-area-inset-bottom, 15px) + 10px);
+  }
+}
+
+/* Brave-specific fixes for mobile UI elements hiding during scroll */
+@media (max-width: 960px) {
+  .brave-browser html, 
+  .brave-browser body, 
+  .brave-browser #__next {
+    height: 102vh !important;
+    min-height: 102vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    position: relative !important;
+  }
+  
+  .brave-browser .content,
+  .brave-browser .messagesContainer {
+    min-height: 102vh;
+    padding-bottom: calc(20px + var(--safe-area-bottom) + 80px) !important;
+  }
+  
+  .brave-browser .mainContainer {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    height: 102vh !important;
   }
 }
 
