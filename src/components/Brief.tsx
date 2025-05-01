@@ -376,7 +376,7 @@ export function Brief() {
         setMessages([{
           id: '1',
           role: 'assistant',
-          content: "I'm Vanessa, your dedicated platform guide. I'm here to help you navigate our services and maximize your experience. \n\nFor optimal performance, use Google Chrome for the smoothest gameplay experience. \n\nReady to log in and get started?",
+          content: "I'm Vanessa, your dedicated platform guide. I'm here to help you navigate our services and maximize your experience. \n\nFor optimal performance, use Google Chrome for the smoothest gameplay experience. Also, make sure to turn off VPN to avoid any issues. \n\nReady to log in and get started?",
           timestamp: new Date()
         }]);
       }
