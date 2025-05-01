@@ -231,14 +231,16 @@ img {
     font-size: 14px;
     padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-padding-bottom));
     padding-top: var(--safe-area-inset-top);
-    height: 100dvh;
+    /* Force taller height to encourage browser address bar hiding */
+    height: 100.1vh; 
+    min-height: 100.1vh;
     overflow: hidden;
     position: fixed;
     width: 100%;
     left: 0;
     top: 0;
     overscroll-behavior: none;
-    -webkit-overflow-scrolling: none;
+    -webkit-overflow-scrolling: touch;
     touch-action: none;
   }
 
@@ -725,14 +727,6 @@ body.keyboard-visible .messagesContainer {
   }
 }
 
-/* Zmienne dla lepszego wsparcia viewportu mobilnego */
-:root {
-  /* Bezpieczny obszar na dole, który dostosowuje się do urządzenia */
-  --safe-area-bottom: env(safe-area-inset-bottom, 15px);
-  /* Zmienna przechowująca wysokość viewportu */
-  --app-height: 100%;
-}
-
 /* Lepsze wsparcie dla viewportu mobilnego */
 @media (max-width: 960px) {
   html, body, #__next {
@@ -746,6 +740,33 @@ body.keyboard-visible .messagesContainer {
     overscroll-behavior-y: none;
     /* Popraw płynność przewijania */
     -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Advanced techniques to hide browser address bar on mobile */
+  html {
+    min-height: 101vh; /* Force minimal scroll */
+    height: 101vh; /* Slightly taller than viewport to force scrolling */
+  }
+  
+  body {
+    /* Trigger minimal scrolling to hide address bars */
+    min-height: calc(var(--app-height) + 1px);
+    /* Add minimal scrolling */
+    height: calc(var(--app-height) + 1px);
+    position: relative;
+  }
+  
+  #__next {
+    /* Force scrolling */
+    min-height: calc(100vh + 1px);
+    padding-bottom: 1px; /* Force minimal scroll */
+  }
+  
+  /* Special handling for landscape orientation */
+  @media screen and (orientation: landscape) {
+    html, body, #__next {
+      height: calc(100svh + 1px); /* Use small viewport height unit for landscape */
+    }
   }
   
   /* Dla wszystkich głównych kontenerów, dodaj padding na dole */
