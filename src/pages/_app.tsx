@@ -86,28 +86,70 @@ function App({ Component, pageProps }: AppPropsWithLayout): React.ReactElement {
     window.addEventListener('resize', setAppHeight);
     window.addEventListener('orientationchange', setAppHeight);
 
-    // Dodaj minimalne przewijanie do dokumentu, aby zachęcić przeglądarkę 
-    // do ukrycia pasków nawigacyjnych
+    // Improved function to encourage browsers to hide their address bars
     function triggerScroll() {
-      // Delikatnie przewiń stronę w dół i z powrotem
-      // co symuluje gest użytkownika i zachęca przeglądarkę do ukrycia paska
-      setTimeout(() => {
+      if (window.innerWidth <= 960) { // Only on mobile devices
+        // Try multiple techniques to hide the address bar
+        
+        // Technique 1: Simple scroll to 1px and back
         window.scrollTo(0, 1);
+        
+        // Technique 2: Delayed scroll sequence with multiple attempts
         setTimeout(() => {
-          window.scrollTo(0, 0);
-        }, 100);
-      }, 500);
+          window.scrollTo(0, 1);
+          
+          // Sometimes browsers need a moment to react
+          setTimeout(() => {
+            window.scrollTo(0, 0);
+            setTimeout(() => window.scrollTo(0, 1), 50);
+          }, 100);
+        }, 300);
+        
+        // Technique 3: Create temporary overflow and scroll
+        const tempDiv = document.createElement('div');
+        tempDiv.style.height = '101vh';
+        tempDiv.style.width = '1px';
+        tempDiv.style.position = 'absolute';
+        tempDiv.style.top = '0';
+        tempDiv.style.left = '0';
+        tempDiv.style.pointerEvents = 'none';
+        tempDiv.style.opacity = '0';
+        document.body.appendChild(tempDiv);
+        
+        // Remove the temporary element after scrolling
+        setTimeout(() => {
+          window.scrollTo(0, 1);
+          setTimeout(() => {
+            document.body.removeChild(tempDiv);
+          }, 400);
+        }, 200);
+      }
     }
 
     // Wyzwól przewijanie przy starcie i przy zmianie orientacji
     triggerScroll();
+    
+    // Try again after a short delay to catch situations where the page isn't fully loaded
+    setTimeout(triggerScroll, 1000);
+    
+    // Add listeners for events that might allow hiding the address bar
     window.addEventListener('orientationchange', () => {
       setTimeout(triggerScroll, 300);
+    });
+    
+    window.addEventListener('resize', () => {
+      setTimeout(triggerScroll, 100);
+    });
+    
+    // Try once more after page is fully loaded
+    window.addEventListener('load', () => {
+      setTimeout(triggerScroll, 500);
     });
 
     return () => {
       window.removeEventListener('resize', setAppHeight);
       window.removeEventListener('orientationchange', setAppHeight);
+      window.removeEventListener('load', () => {});
     };
   }, []);
 
@@ -121,7 +163,19 @@ function App({ Component, pageProps }: AppPropsWithLayout): React.ReactElement {
         React.createElement('link', { rel: 'icon', href: '/logo_transparent.png' }),
         React.createElement('meta', { 
           name: 'viewport', 
-          content: 'width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no'
+          content: 'width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no, minimal-ui'
+        }),
+        React.createElement('meta', {
+          name: 'apple-mobile-web-app-capable',
+          content: 'yes'
+        }),
+        React.createElement('meta', {
+          name: 'mobile-web-app-capable',
+          content: 'yes'
+        }),
+        React.createElement('meta', {
+          name: 'apple-mobile-web-app-status-bar-style',
+          content: 'black-translucent'
         })
       ),
       React.createElement(ImagePreloader),
