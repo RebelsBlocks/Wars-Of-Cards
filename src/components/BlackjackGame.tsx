@@ -515,16 +515,6 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [balance, setBalance] = useState<string>("0");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showLogoScreen, setShowLogoScreen] = useState(true);
-
-  useEffect(() => {
-    // Show logo for 1 second
-    const timer = setTimeout(() => {
-      setShowLogoScreen(false);
-    }, 1000);
-    
-    return () => clearTimeout(timer);
-  }, []);
 
   // Add CSS variable for safe area inset
   useEffect(() => {
@@ -617,17 +607,7 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   );
 
   // Render betting screen
-  if (showLogoScreen) {
-    return (
-      <div className={styles.logoScreen}>
-        <img 
-          src="/SECONDLOGO.png" 
-          alt="Wars of Cards" 
-          className={styles.logoImage}
-        />
-      </div>
-    );
-  } else if (gameState === 'WAITING_FOR_BET') {
+  if (gameState === 'WAITING_FOR_BET') {
     return (
       <div className={styles.betContainer}>
         {wallet.accountId ? (
