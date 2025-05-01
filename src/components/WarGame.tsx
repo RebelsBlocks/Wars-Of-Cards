@@ -947,296 +947,302 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
             className={styles.logoImage}
           />
         </div>
-      ) : isConnected && showBetUI ? (
-        <div className={styles.houseGate}>
-          {wallet.accountId ? (
-            <>
-              <div className={styles.balanceDisplay}>
-                <span>Balance: {nearBalance}</span>
-                <button 
-                  className={styles.refreshButton}
-                  onClick={() => wallet.accountId && fetchCRANSBalance(wallet.accountId).then(setNearBalance)}
-                  title="Refresh balance"
-                >
-                  <svg 
-                    className={styles.refreshIcon}
-                    width="20" 
-                    height="20" 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
+      ) : isConnected ? (
+        showBetUI ? (
+          <div className={styles.houseGate}>
+            {wallet.accountId ? (
+              <>
+                <div className={styles.balanceDisplay}>
+                  <span>Balance: {nearBalance}</span>
+                  <button 
+                    className={styles.refreshButton}
+                    onClick={() => wallet.accountId && fetchCRANSBalance(wallet.accountId).then(setNearBalance)}
+                    title="Refresh balance"
                   >
-                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
-                  </svg>
+                    <svg 
+                      className={styles.refreshIcon}
+                      width="20" 
+                      height="20" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="2" 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                    >
+                      <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+                    </svg>
+                  </button>
+                </div>
+                <div className={styles.betDisplay}>
+                  {ENTRY_FEE} CRANS
+                </div>
+                <button
+                  className={styles.placeBetButton}
+                  onClick={handlePlaceBet}
+                  disabled={!hasEnoughBalance || isLoading}
+                >
+                  {isLoading ? 'Processing...' : 'Enter Game'}
                 </button>
+                {!hasEnoughBalance && (
+                  <div className={styles.errorMessage}>
+                    Insufficient CRANS balance. You need at least {ENTRY_FEE} CRANS to play.
+                  </div>
+                )}
+                {error && (
+                  <div className={styles.errorMessage}>
+                    {error}
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className={styles.connectWalletMessage}>
+                Please connect your NEAR wallet to play
               </div>
-              <div className={styles.betDisplay}>
-                {ENTRY_FEE} CRANS
-              </div>
-              <button
-                className={styles.placeBetButton}
-                onClick={handlePlaceBet}
-                disabled={!hasEnoughBalance || isLoading}
-              >
-                {isLoading ? 'Processing...' : 'Enter Game'}
-              </button>
-              {!hasEnoughBalance && (
-                <div className={styles.errorMessage}>
-                  Insufficient CRANS balance. You need at least {ENTRY_FEE} CRANS to play.
-                </div>
-              )}
-              {error && (
-                <div className={styles.errorMessage}>
-                  {error}
-                </div>
-              )}
-            </>
-          ) : (
-            <div className={styles.connectWalletMessage}>
-              Please connect your NEAR wallet to play
-            </div>
-          )}
-          <button className={styles.backToGamesButton} onClick={onBack}>
-            ← BACK TO GAMES
-          </button>
-        </div>
-      ) : isConnected && (
-        <div className={styles.gameTable}>
-          <div className={styles.ingameInfo}>
-            <span className={styles.timerInfo}>{formatTime(timeLeft)}</span>
-            <div className={styles.pointsStats}>
-              <span>Dealer - {computerScore}</span>
-              <span>|</span>
-              <span>{playerScore} - {playerId ? (playerId.length > 21 ? 
-                `${playerId.split('.')[0].substring(0, 3)}...${playerId.split('.')[0].substring(playerId.split('.')[0].length - 3)}.near` 
-                : playerId) : 'Player'}</span>
-            </div>
+            )}
+            <button className={styles.backToGamesButton} onClick={onBack}>
+              ← BACK TO GAMES
+            </button>
           </div>
-          
-          <div className={styles.playArea}>
-            {/* Kontener dla animacji punktów */}
-            <div className={styles.pointsAnimationContainer}>
-              {pointsAnimation.computer && (
-                <div className={`${styles.pointsAnimation} ${styles.computerPoints}`}>
-                  +{pointsAnimation.computer}
-                </div>
-              )}
-              {pointsAnimation.player && (
-                <div className={`${styles.pointsAnimation} ${styles.playerPoints}`}>
-                  +{pointsAnimation.player}
-                </div>
-              )}
+        ) : (
+          <div className={styles.gameTable}>
+            <div className={styles.ingameInfo}>
+              <span className={styles.timerInfo}>{formatTime(timeLeft)}</span>
+              <div className={styles.pointsStats}>
+                <span>Dealer - {computerScore}</span>
+                <span>|</span>
+                <span>{playerScore} - {playerId ? (playerId.length > 21 ? 
+                  `${playerId.split('.')[0].substring(0, 3)}...${playerId.split('.')[0].substring(playerId.split('.')[0].length - 3)}.near` 
+                  : playerId) : 'Player'}</span>
+              </div>
             </div>
-
-            <div className={styles.selectedCardArea}>
-              {/* Dodanie talii kart wojennych */}
-              <div className={styles.warDeckContainer}>
-                {deckCards.length > 0 ? (
-                  <>
-                    <div className={styles.warDeck}>
-                      {[...Array(Math.min(5, deckCards.length))].map((_, index) => (
-                        <Card
-                          key={`deck-card-${index}`}
-                          suit="spades"
-                          rank="2"
-                          value={2}
-                          showFace={false}
-                          className={styles.cardWrapper}
-                          style={{
-                            position: 'absolute',
-                            top: `min(${index * 2}px, ${index * 0.5}vw)`,
-                            left: `min(${index * 2}px, ${index * 0.5}vw)`,
-                            zIndex: index
-                          }}
-                        />
-                      ))}
-                    </div>
-                    <div className={styles.warDeckCounter}>
-                      {deckCards.length} cards
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className={`${styles.warDeck} ${styles.emptyDeck}`}>
-                      <div className={styles.emptyDeckPlaceholder} />
-                    </div>
-                    <div className={styles.warDeckCounter}>
-                      No cards left
-                    </div>
-                  </>
+            
+            <div className={styles.playArea}>
+              {/* Kontener dla animacji punktów */}
+              <div className={styles.pointsAnimationContainer}>
+                {pointsAnimation.computer && (
+                  <div className={`${styles.pointsAnimation} ${styles.computerPoints}`}>
+                    +{pointsAnimation.computer}
+                  </div>
+                )}
+                {pointsAnimation.player && (
+                  <div className={`${styles.pointsAnimation} ${styles.playerPoints}`}>
+                    +{pointsAnimation.player}
+                  </div>
                 )}
               </div>
-              {bonusCard && isFirstRound && (
-                <div className={styles.bonusCardContainer}>
-                  <Card 
-                    suit={bonusCard.suit}
-                    rank={bonusCard.rank}
-                    value={bonusCard.value}
-                    isJoker={bonusCard.isJoker}
-                    showFace={false}
-                    className={styles.cardWrapper}
-                  />
-                  {showExtraCardAnimation && (
-                    <div className={styles.extraCardStatus}>
-                      EXTRA CARD!
-                    </div>
-                  )}
-                </div>
-              )}
-              <div className={styles.selectedCards}>
-                <div className={styles.computerCards}>
-                  {selectedComputerCard && (
-                    <div className={styles.cardLabel}>Dealer</div>
-                  )}
-                  {selectedComputerCard && (
-                    <Card
-                      suit={selectedComputerCard.suit}
-                      rank={selectedComputerCard.rank}
-                      value={selectedComputerCard.value}
-                      isJoker={selectedComputerCard.isJoker}
-                      isSelected={true}
-                      isWinner={roundWinner === 'computer'}
-                      showFace={true}
-                      className={styles.cardWrapper}
-                      style={{ zIndex: 1 }}
-                    />
-                  )}
-                  {warComputerCards.map((card, index) => (
-                    <Card 
-                      key={`war-computer-${index}`}
-                      suit={card.suit}
-                      rank={card.rank}
-                      value={card.value}
-                      isJoker={card.isJoker}
-                      isSelected={true}
-                      isWinner={roundWinner === 'computer'}
-                      showFace={true}
-                      className={styles.cardWrapper}
-                      style={{ 
-                        position: 'absolute',
-                        top: `min(${(index + 1) * 30}px, ${(index + 1) * 5}vw)`,
-                        zIndex: 2
-                      }}
-                    />
-                  ))}
-                </div>
-                <div className={styles.playerCards}>
-                  {selectedPlayerCard && (
-                    <div className={styles.cardLabel}>Player</div>
-                  )}
-                  {selectedPlayerCard && (
-                    <Card
-                      suit={selectedPlayerCard.suit}
-                      rank={selectedPlayerCard.rank}
-                      value={selectedPlayerCard.value}
-                      isJoker={selectedPlayerCard.isJoker}
-                      isSelected={true}
-                      isWinner={roundWinner === 'player'}
-                      showFace={true}
-                      className={styles.cardWrapper}
-                      style={{ zIndex: 1 }}
-                    />
-                  )}
-                  {warPlayerCards.map((card, index) => (
-                    <Card 
-                      key={`war-player-${index}`}
-                      suit={card.suit}
-                      rank={card.rank}
-                      value={card.value}
-                      isJoker={card.isJoker}
-                      isSelected={true}
-                      isWinner={roundWinner === 'player'}
-                      showFace={true}
-                      className={styles.cardWrapper}
-                      style={{ 
-                        position: 'absolute',
-                        top: `min(${(index + 1) * 30}px, ${(index + 1) * 5}vw)`,
-                        zIndex: 2
-                      }}
-                    />
-                  ))}
-                </div>
-              </div>
-              {showWarAnimation && (
-                <div className={styles.warStatus}>
-                  WAR!
-                </div>
-              )}
-              {showTwistAnimation && (
-                <div className={styles.twistStatus}>
-                  TWIST!
-                </div>
-              )}
-            </div>
 
-            <div className={styles.playerCardsArea}>
-              {[5, 5, 4, 3, 2, 1].map((columnCards, columnIndex) => (
-                <div 
-                  key={`column-${columnIndex}`} 
-                  className={styles.cardColumn}
-                  data-cards={columnCards}
-                >
-                  {Array.from({ length: columnCards }).map((_, cardIndex) => {
-                    const cardArrayIndex = columnIndex === 0 
-                      ? cardIndex 
-                      : [5, 5, 4, 3, 2, 1].slice(0, columnIndex).reduce((sum, count) => sum + count, 0) + cardIndex;
-                    const card = playerCards[cardArrayIndex];
-                    
-                    return card && (
+              <div className={styles.selectedCardArea}>
+                {/* Dodanie talii kart wojennych */}
+                <div className={styles.warDeckContainer}>
+                  {deckCards.length > 0 ? (
+                    <>
+                      <div className={styles.warDeck}>
+                        {[...Array(Math.min(5, deckCards.length))].map((_, index) => (
+                          <Card
+                            key={`deck-card-${index}`}
+                            suit="spades"
+                            rank="2"
+                            value={2}
+                            showFace={false}
+                            className={styles.cardWrapper}
+                            style={{
+                              position: 'absolute',
+                              top: `min(${index * 2}px, ${index * 0.5}vw)`,
+                              left: `min(${index * 2}px, ${index * 0.5}vw)`,
+                              zIndex: index
+                            }}
+                          />
+                        ))}
+                      </div>
+                      <div className={styles.warDeckCounter}>
+                        {deckCards.length} cards
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className={`${styles.warDeck} ${styles.emptyDeck}`}>
+                        <div className={styles.emptyDeckPlaceholder} />
+                      </div>
+                      <div className={styles.warDeckCounter}>
+                        No cards left
+                      </div>
+                    </>
+                  )}
+                </div>
+                {bonusCard && isFirstRound && (
+                  <div className={styles.bonusCardContainer}>
+                    <Card 
+                      suit={bonusCard.suit}
+                      rank={bonusCard.rank}
+                      value={bonusCard.value}
+                      isJoker={bonusCard.isJoker}
+                      showFace={false}
+                      className={styles.cardWrapper}
+                    />
+                    {showExtraCardAnimation && (
+                      <div className={styles.extraCardStatus}>
+                        EXTRA CARD!
+                      </div>
+                    )}
+                  </div>
+                )}
+                <div className={styles.selectedCards}>
+                  <div className={styles.computerCards}>
+                    {selectedComputerCard && (
+                      <div className={styles.cardLabel}>Dealer</div>
+                    )}
+                    {selectedComputerCard && (
                       <Card
-                        key={`player-card-${cardArrayIndex}`}
+                        suit={selectedComputerCard.suit}
+                        rank={selectedComputerCard.rank}
+                        value={selectedComputerCard.value}
+                        isJoker={selectedComputerCard.isJoker}
+                        isSelected={true}
+                        isWinner={roundWinner === 'computer'}
+                        showFace={true}
+                        className={styles.cardWrapper}
+                        style={{ zIndex: 1 }}
+                      />
+                    )}
+                    {warComputerCards.map((card, index) => (
+                      <Card 
+                        key={`war-computer-${index}`}
                         suit={card.suit}
                         rank={card.rank}
                         value={card.value}
                         isJoker={card.isJoker}
-                        showFace={false}
-                        disabled={isRoundActive || timeLeft <= 0 || isGameComplete}
-                        onClick={() => handleCardSelection(cardArrayIndex)}
-                        className={`${styles.playerCard} ${(isRoundActive || timeLeft <= 0 || isGameComplete) ? styles.disabled : ''}`}
+                        isSelected={true}
+                        isWinner={roundWinner === 'computer'}
+                        showFace={true}
+                        className={styles.cardWrapper}
                         style={{ 
                           position: 'absolute',
-                          top: `min(${cardIndex * 30}px, ${cardIndex * 5}vw)`
+                          top: `min(${(index + 1) * 30}px, ${(index + 1) * 5}vw)`,
+                          zIndex: 2
                         }}
                       />
-                    );
-                  })}
+                    ))}
+                  </div>
+                  <div className={styles.playerCards}>
+                    {selectedPlayerCard && (
+                      <div className={styles.cardLabel}>Player</div>
+                    )}
+                    {selectedPlayerCard && (
+                      <Card
+                        suit={selectedPlayerCard.suit}
+                        rank={selectedPlayerCard.rank}
+                        value={selectedPlayerCard.value}
+                        isJoker={selectedPlayerCard.isJoker}
+                        isSelected={true}
+                        isWinner={roundWinner === 'player'}
+                        showFace={true}
+                        className={styles.cardWrapper}
+                        style={{ zIndex: 1 }}
+                      />
+                    )}
+                    {warPlayerCards.map((card, index) => (
+                      <Card 
+                        key={`war-player-${index}`}
+                        suit={card.suit}
+                        rank={card.rank}
+                        value={card.value}
+                        isJoker={card.isJoker}
+                        isSelected={true}
+                        isWinner={roundWinner === 'player'}
+                        showFace={true}
+                        className={styles.cardWrapper}
+                        style={{ 
+                          position: 'absolute',
+                          top: `min(${(index + 1) * 30}px, ${(index + 1) * 5}vw)`,
+                          zIndex: 2
+                        }}
+                      />
+                    ))}
+                  </div>
                 </div>
-              ))}
-            </div>
-          </div>
+                {showWarAnimation && (
+                  <div className={styles.warStatus}>
+                    WAR!
+                  </div>
+                )}
+                {showTwistAnimation && (
+                  <div className={styles.twistStatus}>
+                    TWIST!
+                  </div>
+                )}
+              </div>
 
-          {isGameComplete && (
-            <div className={styles.gameEndOverlay}>
-              {/* Przy końcu czasu zawsze pokazuj obrazek YOU_LOST_THE_WAR */}
-              {timeLeft === 0 || playerScore <= computerScore ? (
-                <img 
-                  src="/YOU_LOST_THE_WAR.png" 
-                  alt="You Lost!" 
-                  className={styles.warResultImage}
-                />
-              ) : (
-                <img 
-                  src="/YOU_WON_THE_WAR.png" 
-                  alt="You Won!" 
-                  className={styles.warResultImage}
-                />
-              )}
-              <button className={styles.playAgainButton} onClick={handlePlayAgain}>
-                Play Again
-              </button>
-              {playerScore > computerScore && timeLeft > 0 && (
-                <div className={styles.rewardMessage}>
-                  Reward has been paid to your wallet
-                </div>
-              )}
+              <div className={styles.playerCardsArea}>
+                {[5, 5, 4, 3, 2, 1].map((columnCards, columnIndex) => (
+                  <div 
+                    key={`column-${columnIndex}`} 
+                    className={styles.cardColumn}
+                    data-cards={columnCards}
+                  >
+                    {Array.from({ length: columnCards }).map((_, cardIndex) => {
+                      const cardArrayIndex = columnIndex === 0 
+                        ? cardIndex 
+                        : [5, 5, 4, 3, 2, 1].slice(0, columnIndex).reduce((sum, count) => sum + count, 0) + cardIndex;
+                      const card = playerCards[cardArrayIndex];
+                      
+                      return card && (
+                        <Card
+                          key={`player-card-${cardArrayIndex}`}
+                          suit={card.suit}
+                          rank={card.rank}
+                          value={card.value}
+                          isJoker={card.isJoker}
+                          showFace={false}
+                          disabled={isRoundActive || timeLeft <= 0 || isGameComplete}
+                          onClick={() => handleCardSelection(cardArrayIndex)}
+                          className={`${styles.playerCard} ${(isRoundActive || timeLeft <= 0 || isGameComplete) ? styles.disabled : ''}`}
+                          style={{ 
+                            position: 'absolute',
+                            top: `min(${cardIndex * 30}px, ${cardIndex * 5}vw)`
+                          }}
+                        />
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
             </div>
-          )}
-          
-          {/* Dodanie komponentu GestureAreaBuffer */}
-          <GestureAreaBuffer />
+
+            {isGameComplete && (
+              <div className={styles.gameEndOverlay}>
+                {/* Przy końcu czasu zawsze pokazuj obrazek YOU_LOST_THE_WAR */}
+                {timeLeft === 0 || playerScore <= computerScore ? (
+                  <img 
+                    src="/YOU_LOST_THE_WAR.png" 
+                    alt="You Lost!" 
+                    className={styles.warResultImage}
+                  />
+                ) : (
+                  <img 
+                    src="/YOU_WON_THE_WAR.png" 
+                    alt="You Won!" 
+                    className={styles.warResultImage}
+                  />
+                )}
+                <button className={styles.playAgainButton} onClick={handlePlayAgain}>
+                  Play Again
+                </button>
+                {playerScore > computerScore && timeLeft > 0 && (
+                  <div className={styles.rewardMessage}>
+                    Reward has been paid to your wallet
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Dodanie komponentu GestureAreaBuffer */}
+            <GestureAreaBuffer />
+          </div>
+        )
+      ) : (
+        <div className={styles.connectWalletMessage}>
+          Please wait, connecting to game server...
         </div>
       )}
       {/* Dodanie GestureAreaBuffer na poziomie głównego kontenera */}
