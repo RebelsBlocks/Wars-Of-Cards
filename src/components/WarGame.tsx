@@ -92,7 +92,7 @@ interface GameState {
   balance: number;
   currentBet: number;
   showBetUI: boolean;
-  pointsToAdd: {player: number, computer: number};
+  pointsToAdd: {player: number | null, computer: number | null};
   lastActionTime?: number;
   lastUpdateTime?: number;
   shouldClearCards?: boolean;
@@ -105,6 +105,7 @@ interface GameState {
   rewardError?: string;
   finalWinner?: 'player' | 'computer' | 'draw';
   gameEndReason?: 'win' | 'loss' | 'giveUp' | 'timeUp';
+  isComputerTurn?: boolean;
 }
 
 interface WarContextType {
@@ -133,7 +134,7 @@ interface WarContextType {
   balance: number;
   currentBet: number;
   showBetUI: boolean;
-  pointsToAdd: {player: number, computer: number};
+  pointsToAdd: {player: number | null, computer: number | null};
   selectPlayerCard: (cardIndex: number) => void;
   handleChipClick: (amount: number) => void;
   formatTime: (seconds: number) => string;
@@ -152,6 +153,9 @@ interface WarContextType {
   handlePlayAgain: () => void;
   gameEndReason?: 'win' | 'loss' | 'giveUp' | 'timeUp';
   placeBet: (amount: number) => void;
+  isComputerTurn?: boolean;
+  triggerComputerFirstSelect: () => void;
+  showGameEndOverlay: boolean;
 }
 
 const WarContext = createContext<WarContextType | undefined>(undefined);
@@ -199,7 +203,7 @@ export const WarProvider: React.FC<WarProviderProps> = ({
   const [balance, setBalance] = useState<number>(initialBalance);
   const [currentBet, setCurrentBet] = useState<number>(100);
   const [showBetUI, setShowBetUI] = useState<boolean>(true);
-  const [pointsToAdd, setPointsToAdd] = useState<{player: number, computer: number}>({player: 0, computer: 0});
+  const [pointsToAdd, setPointsToAdd] = useState<{player: number | null, computer: number | null}>({player: null, computer: null});
   const [isAnimatingPoints, setIsAnimatingPoints] = useState(false);
   const [pointsAnimation, setPointsAnimation] = useState<{player: number | null; computer: number | null}>({
     player: null,
@@ -210,6 +214,8 @@ export const WarProvider: React.FC<WarProviderProps> = ({
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [gameEndReason, setGameEndReason] = useState<'win' | 'loss' | 'giveUp' | 'timeUp' | undefined>(undefined);
+  const [isComputerTurn, setIsComputerTurn] = useState<boolean>(false);
+  const [showGameEndOverlay, setShowGameEndOverlay] = useState<boolean>(false);
 
   const wallet = useNearWallet();
 
@@ -266,6 +272,9 @@ export const WarProvider: React.FC<WarProviderProps> = ({
       // Zaktualizuj wyniki końcowe
       setPlayerScore(gameState.playerScore);
       setComputerScore(gameState.computerScore);
+
+      // Nie pokazujemy od razu ekranu końcowego
+      setShowGameEndOverlay(false);
       
       return; // Wczesny return, aby uniknąć niepotrzebnych aktualizacji
     }
@@ -304,6 +313,11 @@ export const WarProvider: React.FC<WarProviderProps> = ({
     
     if (gameState.showExtraCardAnimation !== undefined) {
       setShowExtraCardAnimation(gameState.showExtraCardAnimation);
+    }
+    
+    // Dodajemy obsługę isComputerTurn
+    if (gameState.isComputerTurn !== undefined) {
+      setIsComputerTurn(gameState.isComputerTurn);
     }
     
     // gameEndReason jest już obsługiwany w ścieżce isGameComplete=true powyżej
@@ -348,6 +362,7 @@ export const WarProvider: React.FC<WarProviderProps> = ({
       case 'COMPUTER_CARD_SELECTED':
         if (data.computerCards) setComputerCards(data.computerCards);
         if (data.selectedComputerCard) setSelectedComputerCard(data.selectedComputerCard);
+        setIsComputerTurn(false);
         break;
         
       case 'GAME_STARTED':
@@ -359,6 +374,7 @@ export const WarProvider: React.FC<WarProviderProps> = ({
         if (data.deckCards) setDeckCards(data.deckCards);
         if (data.bonusCard) setBonusCard(data.bonusCard);
         if (data.showBetUI !== undefined) setShowBetUI(data.showBetUI);
+        if (data.isComputerTurn !== undefined) setIsComputerTurn(data.isComputerTurn);
         break;
         
       case 'WAR_START':
@@ -423,6 +439,7 @@ export const WarProvider: React.FC<WarProviderProps> = ({
         if (data.isGameStarted !== undefined) setIsGameStarted(data.isGameStarted);
         if (data.bonusCard !== undefined) setBonusCard(data.bonusCard);
         if (data.isFirstRound !== undefined) setIsFirstRound(data.isFirstRound);
+        if (data.isComputerTurn !== undefined) setIsComputerTurn(data.isComputerTurn);
         setShowBetUI(false); // Upewnij się, że showBetUI pozostaje false podczas gry
         break;
         
@@ -482,6 +499,7 @@ export const WarProvider: React.FC<WarProviderProps> = ({
         if (data.pointsToAdd !== undefined) setPointsToAdd(data.pointsToAdd);
         if (data.pointsAnimation !== undefined) setPointsAnimation(data.pointsAnimation);
         if (data.showExtraCardAnimation !== undefined) setShowExtraCardAnimation(data.showExtraCardAnimation);
+        if (data.isComputerTurn !== undefined) setIsComputerTurn(data.isComputerTurn);
     }
   };
 
@@ -583,7 +601,7 @@ export const WarProvider: React.FC<WarProviderProps> = ({
     setBonusCard(null);
     setIsFirstRound(true);
     setPointsAnimation({player: null, computer: null});
-    setPointsToAdd({player: 0, computer: 0});
+    setPointsToAdd({player: null, computer: null});
     setGameEndReason(undefined);
     
     // Explicitly request server to reset the game
@@ -601,6 +619,11 @@ export const WarProvider: React.FC<WarProviderProps> = ({
   };
 
   const selectPlayerCard = (cardIndex: number) => {
+    // Jeśli jest kolej komputera, gracz nie może wybrać karty
+    if (isComputerTurn) {
+      return;
+    }
+    
     if (!isGameStarted || isRoundActive) {
       return;
     }
@@ -618,6 +641,41 @@ export const WarProvider: React.FC<WarProviderProps> = ({
     setShowBetUI(false); // Upewnij się, że ekran zakładów jest ukryty podczas gry
   };
 
+  // Modyfikuję funkcję wyboru karty przez gracza, aby sprawdzała czas i czyja jest kolej
+  const handleCardSelection = (cardIndex: number) => {
+    // Sprawdź czy to nie jest kolej komputera
+    if (isComputerTurn) {
+      return;
+    }
+    
+    // Sprawdź czy czas się nie skończył
+    if (timeLeft <= 0) {
+      return;
+    }
+    
+    // Wywołaj oryginalną funkcję wyboru karty
+    selectPlayerCard(cardIndex);
+  };
+
+  // W WarProvider przed contextValue dodaję metodę triggerComputerFirstSelect
+  const triggerComputerFirstSelect = () => {
+    if (isComputerTurn && isRoundActive === false && isGameStarted) {
+      warService.computerSelectFirstCard();
+    }
+  };
+  
+  // Użyjemy useEffect, aby automatycznie wywoływać tę metodę, gdy jest kolej komputera
+  useEffect(() => {
+    if (isGameStarted && isComputerTurn && !isRoundActive && !isGameComplete) {
+      // Dodaj małe opóźnienie dla lepszego wrażenia gry
+      const timer = setTimeout(() => {
+        triggerComputerFirstSelect();
+      }, 500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isGameStarted, isComputerTurn, isRoundActive, isGameComplete]);
+  
   const contextValue: WarContextType = {
     playerCards,
     computerCards,
@@ -659,8 +717,29 @@ export const WarProvider: React.FC<WarProviderProps> = ({
     connectionError,
     handlePlayAgain,
     gameEndReason,
-    placeBet
+    placeBet,
+    isComputerTurn,
+    triggerComputerFirstSelect,
+    showGameEndOverlay
   };
+
+  // Dodajemy efekt, który będzie kontrolował pokazywanie ekranu końcowego
+  useEffect(() => {
+    if (isGameComplete && !showGameEndOverlay && 
+        !selectedPlayerCard && !selectedComputerCard && 
+        !showWarAnimation && !showTwistAnimation && 
+        warPlayerCards.length === 0 && warComputerCards.length === 0 &&
+        !pointsAnimation.player && !pointsAnimation.computer) {
+      // Opóźnij pokazanie ekranu końcowego o 1.5 sekundy po zniknięciu kart i zakończeniu wszystkich animacji
+      const timer = setTimeout(() => {
+        setShowGameEndOverlay(true);
+      }, 1500);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [isGameComplete, selectedPlayerCard, selectedComputerCard, showGameEndOverlay, 
+      showWarAnimation, showTwistAnimation, warPlayerCards, warComputerCards, 
+      pointsAnimation.player, pointsAnimation.computer]);
 
   return (
     <WarContext.Provider value={{
@@ -780,7 +859,10 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
     connectionError,
     handlePlayAgain,
     gameEndReason,
-    placeBet
+    placeBet,
+    isComputerTurn,
+    triggerComputerFirstSelect,
+    showGameEndOverlay
   } = warContext;
 
   const [nearBalance, setNearBalance] = useState<string>("0");
@@ -948,7 +1030,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
           />
         </div>
       ) : isConnected ? (
-        showBetUI ? (
+        showBetUI && !isGameComplete ? (
           <div className={styles.houseGate}>
             {wallet.accountId ? (
               <>
@@ -986,7 +1068,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                 </button>
                 {!hasEnoughBalance && (
                   <div className={styles.errorMessage}>
-                    Insufficient CRANS balance. You need at least {ENTRY_FEE} CRANS to play.
+                    Chat with Vanessa to get {ENTRY_FEE} CRANS.
                   </div>
                 )}
                 {error && (
@@ -1015,17 +1097,18 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                   `${playerId.split('.')[0].substring(0, 3)}...${playerId.split('.')[0].substring(playerId.split('.')[0].length - 3)}.near` 
                   : playerId) : 'Player'}</span>
               </div>
+              
             </div>
             
             <div className={styles.playArea}>
               {/* Kontener dla animacji punktów */}
               <div className={styles.pointsAnimationContainer}>
-                {pointsAnimation.computer && (
+                {pointsAnimation.computer !== null && pointsAnimation.computer > 0 && (
                   <div className={`${styles.pointsAnimation} ${styles.computerPoints}`}>
                     +{pointsAnimation.computer}
                   </div>
                 )}
-                {pointsAnimation.player && (
+                {pointsAnimation.player !== null && pointsAnimation.player > 0 && (
                   <div className={`${styles.pointsAnimation} ${styles.playerPoints}`}>
                     +{pointsAnimation.player}
                   </div>
@@ -1186,6 +1269,11 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                         : [5, 5, 4, 3, 2, 1].slice(0, columnIndex).reduce((sum, count) => sum + count, 0) + cardIndex;
                       const card = playerCards[cardArrayIndex];
                       
+                      // Określamy, czy karta ma być odkryta
+                      // Losowo wybieramy 10 kart do pokazania (tylko na frontendzie)
+                      // Używamy stałej wartości cardArrayIndex jako seed dla determinizmu
+                      const shouldShowFace = cardArrayIndex % 2 === 0; // Pokazujemy co drugą kartę
+                      
                       return card && (
                         <Card
                           key={`player-card-${cardArrayIndex}`}
@@ -1193,10 +1281,10 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                           rank={card.rank}
                           value={card.value}
                           isJoker={card.isJoker}
-                          showFace={false}
-                          disabled={isRoundActive || timeLeft <= 0 || isGameComplete}
+                          showFace={shouldShowFace} // Używamy shouldShowFace zamiast zawsze false
+                          disabled={isRoundActive || timeLeft <= 0 || isGameComplete || isComputerTurn}
                           onClick={() => handleCardSelection(cardArrayIndex)}
-                          className={`${styles.playerCard} ${(isRoundActive || timeLeft <= 0 || isGameComplete) ? styles.disabled : ''}`}
+                          className={`${styles.playerCard} ${(isRoundActive || timeLeft <= 0 || isGameComplete || isComputerTurn) ? styles.disabled : ''}`}
                           style={{ 
                             position: 'absolute',
                             top: `min(${cardIndex * 30}px, ${cardIndex * 5}vw)`
@@ -1209,7 +1297,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
               </div>
             </div>
 
-            {isGameComplete && (
+            {isGameComplete && showGameEndOverlay && (
               <div className={styles.gameEndOverlay}>
                 {/* Przy końcu czasu zawsze pokazuj obrazek YOU_LOST_THE_WAR */}
                 {timeLeft === 0 || playerScore <= computerScore ? (
