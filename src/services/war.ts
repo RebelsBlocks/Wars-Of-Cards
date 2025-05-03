@@ -57,6 +57,7 @@ export interface GameState {
   rewardSent?: boolean;
   rewardError?: string;
   finalWinner?: 'player' | 'computer' | 'draw';
+  isComputerTurn?: boolean;
 }
 
 // Interfejs dla callbacków stanu gry
@@ -221,6 +222,15 @@ class WarService {
     }
     
     this.socket.emit('select_card', cardIndex);
+  }
+
+  // Metoda wyboru pierwszej karty przez komputer
+  computerSelectFirstCard(): void {
+    if (!this.socket) {
+      return;
+    }
+    
+    this.socket.emit('computer_select_first');
   }
 
   // Metoda postawienia zakładu
