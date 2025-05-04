@@ -15,7 +15,8 @@ const imagesToPreload = [
   '/Brief.png',
   '/Profile.png',
   '/newwarorder.png',
-  '/blackjack.png'
+  '/blackjack.png',
+  '/mobilethemelogo.png'
 ];
 
 const ImagePreloader = () => {
