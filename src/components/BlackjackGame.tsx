@@ -515,6 +515,15 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [balance, setBalance] = useState<string>("0");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showLogoScreen, setShowLogoScreen] = useState<boolean>(true);
+
+  // Show logo for 2 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowLogoScreen(false);
+    }, 2000);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Add CSS variable for safe area inset
   useEffect(() => {
@@ -606,125 +615,129 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     (playerScore === 21 && dealerScore !== 21) // Player has blackjack
   );
 
-  // Render betting screen
-  if (gameState === 'WAITING_FOR_BET') {
-    return (
-      <div className={styles.betContainer}>
-        {wallet.accountId ? (
-          <>
-            <div className={styles.balanceDisplay}>
-              <span>Balance: {balance}</span>
-              <button 
-                className={styles.refreshButton}
-                onClick={() => wallet.accountId && fetchCRANSBalance(wallet.accountId).then(setBalance)}
-                title="Refresh balance"
-              >
-                <svg 
-                  className={styles.refreshIcon}
-                  width="20" 
-                  height="20" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                >
-                  <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
-                </svg>
-              </button>
-            </div>
-            <div className={styles.betDisplay}>
-              {ENTRY_FEE} CRANS
-            </div>
-            <button
-              className={styles.placeBetButton}
-              onClick={handlePlaceBet}
-              disabled={!hasEnoughBalance || isLoading}
-            >
-              {isLoading ? 'Processing...' : 'Enter Game'}
-            </button>
-            {!hasEnoughBalance && (
-              <div className={styles.errorMessage}>
-                Insufficient CRANS balance. You need at least {ENTRY_FEE} CRANS to play.
-              </div>
-            )}
-            {error && (
-              <div className={styles.errorMessage}>
-                {error}
-              </div>
-            )}
-          </>
-        ) : (
-          <div className={styles.connectWalletMessage}>
-            Please connect your NEAR wallet to play
-          </div>
-        )}
-        <button className={styles.backToGamesButton} onClick={onBack}>
-          ← Back to Games
-        </button>
-        <GestureAreaBuffer />
-      </div>
-    );
-  }
-
-  // Render game table
   return (
     <div className={styles.gameContainer}>
-      <div className={styles.gameTable}>
-        <div className={styles.dealerArea}>
-          <div className={styles.scoreDisplay}>
-            Dealer Score: {dealerHand.filter(card => !card.hidden).length > 0 ? dealerScore : '0'}
-          </div>
-          <div className={styles.cardsContainer}>
-            {dealerHand.map((card, index) => (
-              <Card key={`dealer-${index}`} card={card} animationDelay={index * 100} />
-            ))}
-          </div>
+      {showLogoScreen ? (
+        <div className={styles.logoScreen}>
+          <img 
+            src="/blackjack.png" 
+            alt="Blackjack" 
+            className={styles.logoImage}
+          />
         </div>
-        
-        {/* Pokazujemy message tylko gdy gra nie jest zakończona */}
-        {gameState !== 'GAME_ENDED' && (
-          <div className={styles.messageDisplay}>
-            {message}
-          </div>
-        )}
-        
-        <div className={styles.playerSection}>
-          <div className={styles.cardsContainer}>
-            {playerHand.map((card, index) => (
-              <Card key={`player-${index}`} card={card} animationDelay={index * 100} />
-            ))}
-          </div>
-          <div className={styles.scoreDisplay}>
-            Your Score: {playerHand.length > 0 ? playerScore : '0'}
-          </div>
-        </div>
-
-        <GameControls onBack={onBack} />
-
-        {gameState === 'GAME_ENDED' && (
-          <div className={`${styles.gameEndOverlay} ${hasPlayerWon ? styles.win : styles.lose}`}>
-            <div className={styles.gameEndContent}>
-              <img 
-                src={hasPlayerWon ? '/YOU_WON_THE_WAR.png' : '/YOU_LOST_THE_WAR.png'} 
-                alt={hasPlayerWon ? 'You Won!' : 'You Lost!'} 
-                className={styles.warResultImage}
-              />
-              <div className={styles.gameEndActions}>
-                <button className={styles.playAgainButton} onClick={resetGame}>
-                  Play Again
+      ) : gameState === 'WAITING_FOR_BET' ? (
+        <div className={styles.betContainer}>
+          {wallet.accountId ? (
+            <>
+              <div className={styles.balanceDisplay}>
+                <span>Balance: {balance}</span>
+                <button 
+                  className={styles.refreshButton}
+                  onClick={() => wallet.accountId && fetchCRANSBalance(wallet.accountId).then(setBalance)}
+                  title="Refresh balance"
+                >
+                  <svg 
+                    className={styles.refreshIcon}
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+                  </svg>
                 </button>
-                {hasPlayerWon && (
-                  <div className={styles.rewardMessage}>
-                    Reward has been paid to your wallet
-                  </div>
-                )}
               </div>
+              <div className={styles.betDisplay}>
+                {ENTRY_FEE} CRANS
+              </div>
+              <button
+                className={styles.placeBetButton}
+                onClick={handlePlaceBet}
+                disabled={!hasEnoughBalance || isLoading}
+              >
+                {isLoading ? 'Processing...' : 'Enter Game'}
+              </button>
+              {!hasEnoughBalance && (
+                <div className={styles.errorMessage}>
+                  Chat with Vanessa to get {ENTRY_FEE} CRANS.
+                </div>
+              )}
+              {error && (
+                <div className={styles.errorMessage}>
+                  {error}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className={styles.connectWalletMessage}>
+              Please connect your NEAR wallet to play
+            </div>
+          )}
+          <button className={styles.backToGamesButton} onClick={onBack}>
+            ← Back to Games
+          </button>
+          <GestureAreaBuffer />
+        </div>
+      ) : (
+        <div className={styles.gameTable}>
+          <div className={styles.dealerArea}>
+            <div className={styles.scoreDisplay}>
+              Dealer Score: {dealerHand.filter(card => !card.hidden).length > 0 ? dealerScore : '0'}
+            </div>
+            <div className={styles.cardsContainer}>
+              {dealerHand.map((card, index) => (
+                <Card key={`dealer-${index}`} card={card} animationDelay={index * 100} />
+              ))}
             </div>
           </div>
-        )}
-      </div>
+          
+          {/* Pokazujemy message tylko gdy gra nie jest zakończona */}
+          {gameState !== 'GAME_ENDED' && (
+            <div className={styles.messageDisplay}>
+              {message}
+            </div>
+          )}
+          
+          <div className={styles.playerSection}>
+            <div className={styles.cardsContainer}>
+              {playerHand.map((card, index) => (
+                <Card key={`player-${index}`} card={card} animationDelay={index * 100} />
+              ))}
+            </div>
+            <div className={styles.scoreDisplay}>
+              Your Score: {playerHand.length > 0 ? playerScore : '0'}
+            </div>
+          </div>
+
+          <GameControls onBack={onBack} />
+
+          {gameState === 'GAME_ENDED' && (
+            <div className={`${styles.gameEndOverlay} ${hasPlayerWon ? styles.win : styles.lose}`}>
+              <div className={styles.gameEndContent}>
+                <img 
+                  src={hasPlayerWon ? '/YOU_WON_THE_WAR.png' : '/YOU_LOST_THE_WAR.png'} 
+                  alt={hasPlayerWon ? 'You Won!' : 'You Lost!'} 
+                  className={styles.warResultImage}
+                />
+                <div className={styles.gameEndActions}>
+                  <button className={styles.playAgainButton} onClick={resetGame}>
+                    Play Again
+                  </button>
+                  {hasPlayerWon && (
+                    <div className={styles.rewardMessage}>
+                      Reward has been paid to your wallet
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
       <GestureAreaBuffer />
     </div>
   );
