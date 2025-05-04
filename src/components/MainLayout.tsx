@@ -162,8 +162,9 @@ export function MainLayout({
             target="_blank" 
             rel="noopener noreferrer"
             className={styles.xLink}
+            style={{ textDecoration: 'none' }}
           >
-            <img src="/potlock.png" alt="potlock" />
+            <span style={{ fontSize: "1.5rem", cursor: 'pointer' }}>🫕</span>
           </a>
         </div>
       </div>
