@@ -603,6 +603,8 @@ export const WarProvider: React.FC<WarProviderProps> = ({
     setPointsAnimation({player: null, computer: null});
     setPointsToAdd({player: null, computer: null});
     setGameEndReason(undefined);
+    // Reset the game end overlay flag
+    setShowGameEndOverlay(false);
     
     // Explicitly request server to reset the game
     warService.resetGame();
@@ -725,7 +727,7 @@ export const WarProvider: React.FC<WarProviderProps> = ({
 
   // Dodajemy efekt, który będzie kontrolował pokazywanie ekranu końcowego
   useEffect(() => {
-    if (isGameComplete && !showGameEndOverlay && 
+    if (isGameComplete && !showGameEndOverlay && !showBetUI &&
         !selectedPlayerCard && !selectedComputerCard && 
         !showWarAnimation && !showTwistAnimation && 
         warPlayerCards.length === 0 && warComputerCards.length === 0 &&
@@ -739,7 +741,7 @@ export const WarProvider: React.FC<WarProviderProps> = ({
     }
   }, [isGameComplete, selectedPlayerCard, selectedComputerCard, showGameEndOverlay, 
       showWarAnimation, showTwistAnimation, warPlayerCards, warComputerCards, 
-      pointsAnimation.player, pointsAnimation.computer]);
+      pointsAnimation.player, pointsAnimation.computer, showBetUI]);
 
   return (
     <WarContext.Provider value={{
@@ -1024,8 +1026,8 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
       {showLogoScreen ? (
         <div className={styles.logoScreen}>
           <img 
-            src="/logo_transparent.png" 
-            alt="Wars of Cards" 
+            src="/newwarorder.png" 
+            alt="New War Order" 
             className={styles.logoImage}
           />
         </div>
