@@ -3,6 +3,7 @@ import { useNearWallet } from '@/contexts/NearWalletContext';
 import styles from '../styles/Play.module.css';
 import { BlackjackProvider, BlackjackGame } from './BlackjackGame';
 import { WarProvider, WarGame } from './WarGame';
+import { GestureAreaBuffer } from './GestureAreaBuffer';
 
 interface PlayProps {
   gameMode: string | null;
@@ -30,6 +31,7 @@ export function Play({ gameMode, setGameMode }: PlayProps) {
         <BlackjackProvider>
           <BlackjackGame onBack={handleBack} />
         </BlackjackProvider>
+        <GestureAreaBuffer />
       </div>
     );
   }
@@ -40,6 +42,7 @@ export function Play({ gameMode, setGameMode }: PlayProps) {
         <WarProvider>
           <WarGame onBack={handleBack} />
         </WarProvider>
+        <GestureAreaBuffer />
       </div>
     );
   }
@@ -79,6 +82,7 @@ export function Play({ gameMode, setGameMode }: PlayProps) {
           </button>
         </div>
       </div>
+      <GestureAreaBuffer />
     </div>
   );
 } 
