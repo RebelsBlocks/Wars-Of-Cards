@@ -1190,4 +1190,35 @@
   100% {
     box-shadow: 0 0 0 rgba(0, 255, 0, 0.4);
   }
+}
+
+/* Logo screen for initial loading */
+.logoScreen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0);
+  z-index: 1000;
+}
+
+.logoImage {
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  animation: fadeIn 0.5s ease-in-out;
+  border-radius: 12px;
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  background: rgba(var(--felt-green-dark), 0.85);
+  padding: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 } 
