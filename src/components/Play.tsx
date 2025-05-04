@@ -50,7 +50,7 @@ export function Play({ gameMode, setGameMode }: PlayProps) {
   return (
     <div className={styles.container}>
       <div className={styles.gameModes}>
-        <div className={styles.gameMode}>
+        <div className={styles.gameMode} onClick={handleStartBlackjack}>
           <div className={styles.blackjackImageContainer}>
             <img 
               src="/blackjack.png" 
@@ -66,7 +66,7 @@ export function Play({ gameMode, setGameMode }: PlayProps) {
           </button>
         </div>
 
-        <div className={styles.gameMode}>
+        <div className={styles.gameMode} onClick={handleStartWar}>
           <div className={styles.warOrderImageContainer}>
             <img 
               src="/newwarorder.png" 
