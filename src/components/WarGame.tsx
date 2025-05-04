@@ -605,6 +605,13 @@ export const WarProvider: React.FC<WarProviderProps> = ({
     setGameEndReason(undefined);
     // Reset the game end overlay flag
     setShowGameEndOverlay(false);
+    // Reset isRoundActive flag to ensure we're not in an active round
+    setIsRoundActive(false);
+    // Reset war-related flags
+    setIsWarActive(false);
+    setShowWarAnimation(false);
+    setShowTwistAnimation(false);
+    setRoundWinner(null);
     
     // Explicitly request server to reset the game
     warService.resetGame();
@@ -1032,7 +1039,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
           />
         </div>
       ) : isConnected ? (
-        showBetUI && !isGameComplete ? (
+        showBetUI ? (
           <div className={styles.houseGate}>
             {wallet.accountId ? (
               <>
