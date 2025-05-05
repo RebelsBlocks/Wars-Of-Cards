@@ -34,8 +34,8 @@ function formatTokenAmount(amount: string): string {
 }
 
 // Typy dla komponentu Card
-type Suit = 'hearts' | 'diamonds' | 'clubs' | 'spades' | 'joker';
-type Rank = '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'J' | 'Q' | 'K' | 'A' | 'JOKER';
+type Suit = 'hearts' | 'diamonds' | 'clubs' | 'spades' | 'joker' | 'hidden';
+type Rank = '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' | '10' | 'J' | 'Q' | 'K' | 'A' | 'JOKER' | 'hidden';
 
 interface CardProps {
   suit: Suit;
@@ -792,7 +792,10 @@ const Card: React.FC<CardProps> = ({
   const isRed = suit === 'hearts' || suit === 'diamonds';
   const colorClass = isRed ? styles.red : styles.black;
 
-  if (!showFace) {
+  // Pokazujemy rewers karty, jeśli:
+  // - showFace=false (explicite żądanie rewersu) LUB
+  // - suit='hidden' (karta jest ukryta na poziomie backendu)
+  if (!showFace || suit === 'hidden') {
     return (
       <div 
         className={`${styles.cardWrapper} ${disabled ? styles.disabled : ''}`}
@@ -1278,11 +1281,6 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                         : [5, 5, 4, 3, 2, 1].slice(0, columnIndex).reduce((sum, count) => sum + count, 0) + cardIndex;
                       const card = playerCards[cardArrayIndex];
                       
-                      // Określamy, czy karta ma być odkryta
-                      // Losowo wybieramy 10 kart do pokazania (tylko na frontendzie)
-                      // Używamy stałej wartości cardArrayIndex jako seed dla determinizmu
-                      const shouldShowFace = cardArrayIndex % 2 === 0; // Pokazujemy co drugą kartę
-                      
                       return card && (
                         <Card
                           key={`player-card-${cardArrayIndex}`}
@@ -1290,7 +1288,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                           rank={card.rank}
                           value={card.value}
                           isJoker={card.isJoker}
-                          showFace={shouldShowFace} // Używamy shouldShowFace zamiast zawsze false
+                          showFace={card.suit !== 'hidden'}
                           disabled={isRoundActive || timeLeft <= 0 || isGameComplete || isComputerTurn}
                           onClick={() => handleCardSelection(cardArrayIndex)}
                           className={`${styles.playerCard} ${(isRoundActive || timeLeft <= 0 || isGameComplete || isComputerTurn) ? styles.disabled : ''}`}
