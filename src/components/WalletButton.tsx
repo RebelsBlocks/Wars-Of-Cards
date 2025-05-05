@@ -46,7 +46,6 @@ export function WalletButton({ showDisconnect = false }: WalletButtonProps) {
         className={styles.menuItem}
         onClick={handleConnect}
         style={{ 
-          backgroundImage: "url('/Profile_back.png')",
           justifyContent: 'center',
           opacity: isProcessing ? 0.7 : 1,
           cursor: isProcessing ? 'not-allowed' : 'pointer'
