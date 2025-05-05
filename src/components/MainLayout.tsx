@@ -150,21 +150,21 @@ export function MainLayout({
             <img src="/telegram.png" alt="telegram" />
           </a>
           <a 
-            href="https://x.com/rebelsblocks" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className={styles.xLink}
-          >
-            <img src="/x.png" alt="x" />
-          </a>
-          <a 
             href="https://app.potlock.org/?tab=project&projectId=warsofcards.near" 
             target="_blank" 
             rel="noopener noreferrer"
             className={styles.xLink}
             style={{ textDecoration: 'none' }}
           >
-            <span style={{ fontSize: "1.5rem", cursor: 'pointer' }}>🫕</span>
+            <span style={{ fontSize: "1.15rem", cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>🫕</span>
+          </a>
+          <a 
+            href="https://x.com/rebelsblocks" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className={styles.xLink}
+          >
+            <img src="/x.png" alt="x" />
           </a>
         </div>
       </div>
