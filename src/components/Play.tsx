@@ -49,7 +49,7 @@ export function Play({ gameMode, setGameMode }: PlayProps) {
 
   return (
     <div className={styles.container}>
-      <div className={styles.gameModes}>
+      <div className={`${styles.gameModes} ${styles.safeAreaBottomPadding}`}>
         <div className={styles.gameMode} onClick={handleStartBlackjack}>
           <div className={styles.blackjackImageContainer}>
             <img 
