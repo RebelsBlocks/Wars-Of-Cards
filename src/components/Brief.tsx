@@ -731,15 +731,18 @@ export function Brief() {
       // Get response content
       const responseContent = await findBestResponse(topicId, wallet.accountId, wallet);
       
-      // Add bot response
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: responseContent,
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, botMessage]);
+      // Only add bot response if it's not null
+      if (responseContent !== null) {
+        // Add bot response
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: responseContent,
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, botMessage]);
+      }
       setIsLoading(false);
     } catch (error) {
       console.error('Error processing topic:', error);
@@ -800,15 +803,18 @@ export function Brief() {
       // Find appropriate response from predefined answers
       const botResponse = await findBestResponse(messageContent, wallet.accountId, wallet);
       
-      // Add bot response with animation
-      const botMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: botResponse,
-        timestamp: new Date()
-      };
-      
-      setMessages(prev => [...prev, botMessage]);
+      // Only add bot response if it's not null
+      if (botResponse !== null) {
+        // Add bot response with animation
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: botResponse,
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, botMessage]);
+      }
     } catch (error) {
       console.error('Error processing message:', error);
       
@@ -825,7 +831,7 @@ export function Brief() {
   };
 
   // Modify findBestResponse to use new state management
-  async function findBestResponse(input: string, accountId: string | null, wallet: any): Promise<string> {
+  async function findBestResponse(input: string, accountId: string | null, wallet: any): Promise<string | null> {
     input = input.toLowerCase();
     
     // Helper function to check if input matches small talk patterns
@@ -949,7 +955,7 @@ export function Brief() {
     }
     
     // Define keywords to detect in user messages
-    const keywordHandlers: Record<string, () => Promise<string>> = {
+    const keywordHandlers: Record<string, () => Promise<string | null>> = {
       'balance': async () => {
         if (!accountId) {
           return "🔒 Please connect your wallet first to check your balances.\n\nYou can do this by clicking the 'Log In' button above.";
@@ -1265,8 +1271,8 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
         }
       }, 100);
       
-      // Return empty string since the actual response will come from handleNearCransStep or handleCransNearStep
-      return "";
+      // Return null to prevent adding empty message bubble
+      return null;
     }
 
     // Check for exact matches in regular responses
