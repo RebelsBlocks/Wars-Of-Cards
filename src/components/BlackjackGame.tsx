@@ -211,45 +211,40 @@ export const BlackjackProvider: React.FC<BlackjackProviderProps> = ({ children }
     if (!wallet.accountId || gameState !== 'PLAYER_TURN') return;
 
     try {
-      // Zamiast natychmiast zmieniać stan, ustawiamy flagę ładowania
-      setMessage("Drawing card...");
-      
-      const result = await blackjackService.hit(wallet.accountId);
-      
-      // Najpierw aktualizujemy rękę gracza i pokazujemy nową kartę
-      setPlayerHand(result.playerHand);
-      
-      // Dłuższa pauza aby karta była w pełni widoczna przed aktualizacją wyniku
-      // Card animation takes ~300ms + transition time
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      setPlayerScore(result.playerScore);
-      
-      // Usuwamy dodatkową pauzę przed sprawdzeniem wyniku gdy gracz ma 21
-      if (result.playerScore === 21) {
-        // Natychmiast aktualizujemy stan gry bez dodatkowej pauzy
-        setDealerHand(result.dealerHand);
-        setDealerScore(result.dealerScore);
-        setGameState('GAME_ENDED');
-        setMessage(''); // Usuwamy komunikat tekstowy
-      } else if (result.playerScore > 21) {
-        // Usuwamy komunikat tekstowy Bust!
+        setMessage("Drawing card...");
         
-        // Pauza aby gracz mógł zobaczyć zmiany
-        await new Promise(resolve => setTimeout(resolve, 800));
+        const result = await blackjackService.hit(wallet.accountId);
         
-        setDealerHand(result.dealerHand);
-        setDealerScore(result.dealerScore);
-        setGameState('GAME_ENDED');
-        setMessage(''); // Usuwamy komunikat tekstowy
-      } else {
-        setGameState('PLAYER_TURN');
-        setMessage('Your turn! Hit or Stand?');
-      }
+        // Najpierw aktualizujemy rękę gracza i pokazujemy nową kartę
+        setPlayerHand(result.playerHand);
+        
+        // Pauza na animację karty
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        setPlayerScore(result.playerScore);
+        
+        if (result.playerScore === 21) {
+            // Natychmiast aktualizujemy stan gry w backendzie dla bezpieczeństwa
+            setGameState('GAME_ENDED');
+            // Nie aktualizujemy kart i wyniku dealera - gracz automatycznie wygrywa
+            // Pokazujemy komunikat "Perfect 21!" przez 2 sekundy
+            // Overlay z wygraną pojawi się po 2 sekundach dzięki useEffect
+            setMessage('Perfect 21!');
+            
+        } else if (result.playerScore > 21) {
+            await new Promise(resolve => setTimeout(resolve, 800));
+            setDealerHand(result.dealerHand);
+            setDealerScore(result.dealerScore);
+            setGameState('GAME_ENDED');
+            setMessage('');
+        } else {
+            setGameState('PLAYER_TURN');
+            setMessage('Your turn! Hit or Stand?');
+        }
     } catch (error) {
-      console.error('Failed to hit:', error);
-      setMessage('Error hitting');
-      setGameState('PLAYER_TURN');
+        console.error('Failed to hit:', error);
+        setMessage('Error hitting');
+        setGameState('PLAYER_TURN');
     }
   };
 
@@ -516,6 +511,20 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showLogoScreen, setShowLogoScreen] = useState<boolean>(true);
+  const [showEndGameOverlay, setShowEndGameOverlay] = useState(false);
+
+  // Efekt dla opóźnienia pokazywania komunikatu końcowego
+  useEffect(() => {
+    if (gameState === 'GAME_ENDED') {
+      const timer = setTimeout(() => {
+        setShowEndGameOverlay(true);
+      }, 2000); // 2 sekundy opóźnienia
+
+      return () => clearTimeout(timer);
+    } else {
+      setShowEndGameOverlay(false);
+    }
+  }, [gameState]);
 
   // Show logo for 2 seconds
   useEffect(() => {
@@ -695,8 +704,7 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             </div>
           </div>
           
-          {/* Pokazujemy message tylko gdy gra nie jest zakończona */}
-          {gameState !== 'GAME_ENDED' && (
+          {(gameState !== 'GAME_ENDED' || !showEndGameOverlay) && (
             <div className={styles.messageDisplay}>
               {message}
             </div>
@@ -713,9 +721,11 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             </div>
           </div>
 
-          <GameControls onBack={onBack} />
+          {(gameState !== 'GAME_ENDED' || !showEndGameOverlay) && (
+            <GameControls onBack={onBack} />
+          )}
 
-          {gameState === 'GAME_ENDED' && (
+          {gameState === 'GAME_ENDED' && showEndGameOverlay && (
             <div className={`${styles.gameEndOverlay} ${hasPlayerWon ? styles.win : styles.lose}`}>
               <div className={styles.gameEndContent}>
                 <img 
