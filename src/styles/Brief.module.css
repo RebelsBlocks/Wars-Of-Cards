@@ -406,6 +406,30 @@
   transform: scale(0.98);
 }
 
+/* Blinking login button */
+.loginButton {
+  animation: blinkingButton 2s infinite;
+  background-color: rgba(var(--gold-accent), 0.4);
+  border: 2px solid rgba(var(--gold-accent), 0.7);
+  font-weight: 600;
+}
+
+@keyframes blinkingButton {
+  0% {
+    background-color: rgba(var(--gold-accent), 0.4);
+    border-color: rgba(var(--gold-accent), 0.7);
+  }
+  50% {
+    background-color: rgba(var(--card-orange), 0.5);
+    border-color: rgba(var(--card-orange), 0.8);
+    box-shadow: 0 0 15px rgba(var(--gold-accent), 0.4);
+  }
+  100% {
+    background-color: rgba(var(--gold-accent), 0.4);
+    border-color: rgba(var(--gold-accent), 0.7);
+  }
+}
+
 /* Keep just one animation with this name */
 @keyframes messageAppear {
   to {
