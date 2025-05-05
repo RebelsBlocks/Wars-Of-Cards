@@ -404,9 +404,11 @@
 .socialLinks {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 20px;
   padding: 15px;
   margin: 15px;
+  margin-top: auto;
 }
 
 .socialLinks a {
@@ -679,6 +681,11 @@
   .socialLinks a {
     width: 20px;
     height: 20px;
+  }
+
+  /* Specjalny styl dla emoji Potlock, aby utrzymać proporcje w wersji mobilnej */
+  .socialLinks a span {
+    font-size: 1.6rem !important;
   }
 
   .walletBtn button {
