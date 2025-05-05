@@ -96,6 +96,7 @@
   font-size: 1.4rem;
   line-height: 1.6;
   margin: 24px 0;
+  user-select: text;
 }
 
 .socialInteractions {
@@ -293,6 +294,7 @@
   background: rgba(var(--felt-green-dark), 0.3);
   border-radius: 8px;
   border: 1px solid rgba(var(--gold-accent), 0.1);
+  user-select: text;
 }
 
 .commentHeader {
@@ -850,12 +852,34 @@
   padding: 16px;
   font-size: 1.4rem;
   line-height: 1.8;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  user-select: text;
+}
+
+.postText a {
+  word-break: break-all;
+  overflow-wrap: break-word;
+  display: inline-block;
+  max-width: 100%;
+  user-select: text;
 }
 
 .commentContent {
   font-size: 1.2rem;
   line-height: 1.6;
   margin-top: 0.75rem;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  user-select: text;
+}
+
+.commentContent a {
+  word-break: break-all;
+  overflow-wrap: break-word;
+  display: inline-block;
+  max-width: 100%;
+  user-select: text;
 }
 
 .communityMessagesTitle {
