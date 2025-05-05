@@ -1256,13 +1256,6 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
     if (input === 'yes' && swapState.currentStep !== 'done' && swapState.isSwapInitiated && !swapState.isSwapConfirmed) {
       updateSwapState({ isSwapConfirmed: true });
       
-      // Array of flirty Vanessa messages
-      const flirtyMessages = [
-         "Ready when you are. Let's proceed with your trade.",
-         "Excellent choice. Processing your swap now...",
-         "Transaction initiated. Preparing your exchange..."
-      ];
-      
       // Trigger the swap process immediately
       setTimeout(() => {
         if (swapState.swapDirection === 'near_to_crans') {
@@ -1272,8 +1265,8 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
         }
       }, 100);
       
-      // Select a random message
-      return flirtyMessages[Math.floor(Math.random() * flirtyMessages.length)];
+      // Return empty string since the actual response will come from handleNearCransStep or handleCransNearStep
+      return "";
     }
 
     // Check for exact matches in regular responses
