@@ -165,35 +165,18 @@
 }
 
 .messageDisplay {
-  color: rgba(255, 215, 0, 0.9);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
   padding: 0.8rem 1.5rem;
-  font-size: 1.3rem;
+  border-radius: 8px;
+  font-size: 1.2rem;
   text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   margin: 1rem 0;
   min-height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
-  text-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.4),
-    0 0 10px rgba(255, 215, 0, 0.2);
-  font-weight: 500;
-  letter-spacing: 1.2px;
-  font-family: 'Playfair Display', serif;
-  text-transform: uppercase;
-  position: relative;
-  animation: messageFloat 0.5s ease-out;
-}
-
-@keyframes messageFloat {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 .scoreDisplay {
@@ -1238,4 +1221,42 @@
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+.buyCransButton {
+  background: rgba(var(--gold-accent, 255, 215, 0), 0.15);
+  border: 1px solid rgba(var(--gold-accent, 255, 215, 0), 0.3);
+  color: rgb(var(--gold-accent, 255, 215, 0));
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 1rem;
+  font-weight: 500;
+  width: 100%;
+  max-width: 300px;
+}
+
+.buyCransButton:hover {
+  background: rgba(var(--gold-accent, 255, 215, 0), 0.25);
+  border-color: rgba(var(--gold-accent, 255, 215, 0), 0.5);
+}
+
+.buyCransButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.infoMessage {
+  color: rgba(var(--gold-accent), 1);
+  background: rgba(var(--gold-accent), 0.1);
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin: 10px 0;
+  font-size: 14px;
+  text-align: center;
+  max-width: 350px;
+  width: 100%;
 } 
