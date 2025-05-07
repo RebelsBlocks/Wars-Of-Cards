@@ -689,16 +689,31 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
       setBalance(formatTokenAmount(cransBalance));
       setNearBalance(formatTokenAmount(rawNearBalance));
       
-      // Calculate how much NEAR is needed for 210 CRANS
+      // Calculate how much CRANS is needed
+      const currentCransBN = new BN(cransBalance);
+      const entryFeeBN = new BN(ENTRY_FEE_YOCTO);
+      
+      // If current balance is enough, don't need to calculate
+      if (currentCransBN.gte(entryFeeBN)) {
+        setNearAmount("0");
+        return;
+      }
+      
+      // Calculate how many CRANS are missing
+      const missingCransBN = entryFeeBN.sub(currentCransBN);
+      
+      // Get exchange rate - how many CRANS per 1 NEAR
       const nearAmountInYocto = new BN("1000000000000000000000000"); // 1 NEAR in yocto
       const exchangeResult = await getSwapReturn(nearAmountInYocto.toString(), true);
-      
-      // Calculate how many NEAR needed for 210 CRANS (with 10% slippage)
       const cransPerNear = new BN(exchangeResult);
-      const cransNeeded = new BN("210000000000000000000000000");
       
-      // NEAR needed = (210 CRANS * 1.10) / (CRANS per 1 NEAR)
-      const nearNeededWithSlippage = cransNeeded.mul(new BN(110)).div(new BN(100)).mul(new BN(nearAmountInYocto)).div(cransPerNear);
+      // Calculate how many NEAR needed for missing CRANS (with 10% slippage)
+      // NEAR needed = (missing CRANS * 1.10) / (CRANS per 1 NEAR)
+      const nearNeededWithSlippage = missingCransBN
+        .mul(new BN(110))
+        .div(new BN(100))
+        .mul(new BN(nearAmountInYocto))
+        .div(cransPerNear);
       
       setNearAmount(formatTokenAmount(nearNeededWithSlippage.toString()));
       
@@ -806,16 +821,31 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         });
       }
       
-      // Calculate how much NEAR to wrap
+      // Calculate how many CRANS are missing
+      const cransBalance = await fetchCRANSBalance(wallet.accountId);
+      const currentCransBN = new BN(cransBalance);
+      const entryFeeBN = new BN(ENTRY_FEE_YOCTO);
+      
+      // If current balance is enough, don't need to swap
+      if (currentCransBN.gte(entryFeeBN)) {
+        setSwapLoading(false);
+        return;
+      }
+      
+      // Calculate missing CRANS
+      const missingCransBN = entryFeeBN.sub(currentCransBN);
+      
+      // Get exchange rate - how many CRANS per 1 NEAR
       const nearAmountInYocto = new BN("1000000000000000000000000"); // 1 NEAR in yocto
       const exchangeResult = await getSwapReturn(nearAmountInYocto.toString(), true);
-      
-      // Calculate how many NEAR needed for 210 CRANS (with 10% slippage)
       const cransPerNear = new BN(exchangeResult);
-      const cransNeeded = new BN("210000000000000000000000000");
       
-      // NEAR needed = (210 CRANS * 1.10) / (CRANS per 1 NEAR)
-      const nearNeededWithSlippage = cransNeeded.mul(new BN(110)).div(new BN(100)).mul(new BN(nearAmountInYocto)).div(cransPerNear);
+      // Calculate NEAR needed with 10% slippage
+      const nearNeededWithSlippage = missingCransBN
+        .mul(new BN(110))
+        .div(new BN(100))
+        .mul(new BN(nearAmountInYocto))
+        .div(cransPerNear);
       
       // Add wrap near transaction
       transactions.push({
@@ -833,7 +863,7 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         args: {
           receiver_id: 'v2.ref-finance.near',
           amount: nearNeededWithSlippage.toString(),
-          msg: prepareSwapMsg(nearNeededWithSlippage.toString(), true, cransNeeded.toString())
+          msg: prepareSwapMsg(nearNeededWithSlippage.toString(), true, missingCransBN.toString())
         },
         gas: '180000000000000',
         deposit: '1'
@@ -928,14 +958,14 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
               {!hasEnoughBalance && (
                 <>
                   <div className={styles.errorMessage}>
-                    Buy {ENTRY_FEE} CRANS to play!
+                    You need {ENTRY_FEE} CRANS to play! (Missing {(parseFloat(ENTRY_FEE.toString()) - parseFloat(balance) > 0) ? (parseFloat(ENTRY_FEE.toString()) - parseFloat(balance)).toFixed(2) : 0} CRANS)
                   </div>
                   <button
                     className={styles.buyCransButton}
                     onClick={handleBuyCrans}
                     disabled={swapLoading}
                   >
-                    {swapLoading ? 'Processing...' : `Buy ${ENTRY_FEE} CRANS for ~${nearAmount}Ⓝ`}
+                    {swapLoading ? 'Processing...' : `Buy missing CRANS for ~${nearAmount}Ⓝ`}
                   </button>
                 </>
               )}
