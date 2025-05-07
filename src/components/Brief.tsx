@@ -32,7 +32,7 @@ const predefinedResponses: Record<string, string> = {
   
   'help': 'Allow pop-ups in your browser and for the smoothest gameplay, use Chrome browser. Also, make sure to turn off VPN to avoid any issues.\n\nFor First-time Blockchain Users: \nThink of NEAR as your digital wallet and identity in one that\'s significantly faster and cheaper than traditional systems, powering the Wars of Cards gaming experience with high-speed transactions, minimal fees, and full ownership of your digital assets.\n\nEssential Requirements:\n- NEAR account - Connect or create instantly through Meteor Wallet\n- NEAR tokens - Available on Binance, Coinbase, and major exchanges\n- CRANS tokens - Exchange your NEAR tokens with me directly\n\nAcquiring CRANS:\n- Use "Swap" and follow the commands to convert your NEAR tokens instantly\n- Win additional tokens through our games\n- Earn through community participation and events\n\nToken Usage:\n- Blackjack: 210 CRANS entry with 378 CRANS potential win\n- New War Order: 420 CRANS entry with 756 CRANS potential win\n- All wins pay 180% of your original stake\n- Sell your earned tokens with me directly or hold them!',
   
-  'swap': 'Your current holdings:\nNEAR: {near_balance} Ⓝ\nCRANS: {crans_balance} CRANS\n\nSwap commands:\n- "5 near to crans" - Purchase CRANS using 5 NEAR\n- "0.5 crans to near" - Convert 0.5 CRANS back to NEAR\n\nIMPORTANT: You must allow popups for successful transactions.\nFirst-time transactions may fail if popups are blocked.\nEnable popups when prompted for seamless exchanges.',
+  'swap': 'Your current holdings:\nNEAR: {near_balance} Ⓝ\nCRANS: {crans_balance} CRANS\n\nSwap commands:\n- "buy 1 crans" \n- "sell 1 crans" \n- "6.9 near to crans" \n\nIMPORTANT: You must allow popups for successful transactions.\nFirst-time transactions may fail if popups are blocked.\nEnable popups when prompted for seamless exchanges.',
   
   'balance': '💰 Here are your current balances:\n\nNEAR Balance: {near_balance} Ⓝ\nCRANS Balance: {crans_balance} CRANS',
   
@@ -722,8 +722,8 @@ export function Brief() {
       }
     }
 
-    // Add topicId to used topics list (except for 'help' which should always be available)
-    if (topicId !== 'help') {
+    // Add topicId to used topics list (except for 'help' and 'swap' which should always be available)
+    if (topicId !== 'help' && topicId !== 'swap') {
       setUsedTopics(prev => [...prev, topicId]);
     }
 
@@ -821,8 +821,8 @@ export function Brief() {
         lowercaseMessage.includes(topic.id.toLowerCase())
       );
       
-      // Add to used topics if a match was found (except for 'help')
-      if (matchedTopic && matchedTopic.id !== 'help') {
+      // Add to used topics if a match was found (except for 'help' and 'swap')
+      if (matchedTopic && matchedTopic.id !== 'help' && matchedTopic.id !== 'swap') {
         setUsedTopics(prev => [...prev, matchedTopic.id]);
       }
       
@@ -1018,8 +1018,9 @@ NEAR: ${nearBalance} Ⓝ
 CRANS: ${cransBalance} CRANS
 
 Swap commands:
-- "5 near to crans" - Purchase CRANS using 5 NEAR
-- "0.5 crans to near" - Convert 0.5 CRANS back to NEAR
+- buy 1 crans
+- sell 1 crans
+- 6.9 near to crans 
 
 IMPORTANT: You must allow popups for successful transactions. First-time transactions will fail if pop-ups are blocked.`;
         } catch (error) {
@@ -1065,7 +1066,7 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
           'how to swap', 'how to exchange', 'how to convert',
           'change near to crans', 'change crans to near',
           'let\'s swap', 'want to swap', 'need to swap', 'need tokens',
-          'get crans', 'buy crans', 'sell crans', 'exchange near',
+          'get crans', 'exchange near',
           
           // New buying/selling related phrases
           'buy tokens', 'purchase tokens', 'sell tokens', 'buy some tokens',
@@ -1082,7 +1083,12 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
           'purchase coins', 'purchase some coins', 'get coins', 'get some coins',
           'trade coins', 'convert coins', 'exchange coins', 'want to buy coins',
           'want to sell coins', 'need coins', 'need some coins', 'let\'s buy coins',
-          'how to buy coins', 'how to sell coins'
+          'how to buy coins', 'how to sell coins',
+          
+          // Dodane nowe wzorce rozpoznające nowe komendy
+          'buy crans command', 'sell crans command', 'quick buy', 'quick sell', 
+          'shortcut to buy', 'shortcut to sell', 'fastest way to buy', 'fastest way to sell',
+          'simple buy', 'simple sell', 'command for buying', 'command for selling'
         ],
         
         'help': [
@@ -1148,8 +1154,6 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
               (intention === 'swap' && 
                (/buy.*token/.test(normalizedInput) || 
                 /sell.*token/.test(normalizedInput) ||
-                /buy.*crans/.test(normalizedInput) ||
-                /sell.*near/.test(normalizedInput) ||
                 /purchase.*token/.test(normalizedInput) ||
                 /get.*token/.test(normalizedInput) ||
                 /want.*buy/.test(normalizedInput) ||
@@ -1193,7 +1197,7 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
     }
     
     // Handle topic names in lowercase
-    const lowercaseInput = input.toLowerCase();
+    const lowercaseInput = input.toLowerCase().trim();
     const matchedTopic = mainTopics.find(topic => 
       topic.label.toLowerCase() === lowercaseInput || 
       topic.id.toLowerCase() === lowercaseInput
@@ -1203,9 +1207,146 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
       return predefinedResponses[matchedTopic.id] || `💫 Let me tell you about ${matchedTopic.label}...`;
     }
 
-    // Handle swap commands (e.g., "5 near to crans")
-    const swapMatch = input.match(/^(\d+\.?\d*)\s+(near|crans)\s+to\s+(near|crans)$/i);
-    if (swapMatch) {
+    // Simple command parsing instead of complex regex
+    
+    // Handle buy [amount] crans command - case insensitive for both the command and token name
+    const buyMatch = /^buy\s+(\d*\.?\d+)?\s*crans$/i.exec(lowercaseInput);
+    
+    // Handle sell [amount] crans command - case insensitive for both the command and token name
+    const sellMatch = /^sell\s+(\d*\.?\d+)\s*crans$/i.exec(lowercaseInput);
+    
+    // Legacy handlers for backward compatibility - case insensitive for both command and token names
+    const swapMatch = /^(\d*\.?\d+)\s+(near|crans)\s+to\s+(near|crans)$/i.exec(lowercaseInput);
+    
+    // Debug logging
+    console.log("Processing input:", lowercaseInput);
+    console.log("Buy match:", buyMatch);
+    console.log("Sell match:", sellMatch);
+    console.log("Swap match:", swapMatch);
+    
+    if (buyMatch) {
+      if (!accountId) {
+        return "Please connect your wallet first to use the buy feature.";
+      }
+      
+      try {
+        // If user specifies an amount of CRANS to buy
+        if (buyMatch[1]) {
+          const cransAmount = parseFloat(buyMatch[1]);
+          const cransInYocto = new Big(cransAmount).mul(new Big(10).pow(24)).toFixed(0);
+          
+          // Calculate how much NEAR is needed to buy this amount of CRANS
+          // We need to query the reverse direction (CRANS → NEAR) to get the required NEAR
+          const nearNeededYocto = await getSwapReturn(cransInYocto, false);
+          
+          // Add 1% slippage to account for price movements
+          const nearNeededWithSlippage = new Big(nearNeededYocto).mul(1.01).round(0, Big.roundUp).toFixed(0);
+          const nearNeededAmount = new Big(nearNeededWithSlippage).div(new Big(10).pow(24)).toFixed(4);
+          
+          // Check user's balance
+          const balance = await fetchNearBalance(accountId, wallet);
+          
+          if (new Big(balance).lt(nearNeededAmount)) {
+            return `Insufficient NEAR balance. You have ${balance} NEAR, but need approximately ${nearNeededAmount} NEAR to buy ${cransAmount} CRANS.`;
+          }
+          
+          // Initialize swap state for buying specific CRANS amount
+          setSwapState({
+            currentStep: 'check storage',
+            amount: nearNeededWithSlippage,
+            displayAmount: nearNeededAmount,
+            expectedReturn: cransInYocto,
+            minAmountOut: new Big(cransInYocto).mul(0.99).round(0, Big.roundDown).toString(), // 1% slippage allowed
+            isProcessing: false,
+            hasStorageBalance: false,
+            isSwapInitiated: true,
+            isSwapConfirmed: false,
+            swapDirection: 'near_to_crans',
+            quickSwapQuotes: []
+          });
+          
+          return `To buy ${cransAmount} CRANS, you need approximately ${nearNeededAmount} NEAR. Would you like to proceed with the purchase? Type 'yes' to confirm.`;
+        } else {
+          // Default to 2 NEAR if no amount specified
+          const defaultNearAmount = 2;
+          const amountInYocto = new Big(defaultNearAmount).mul(new Big(10).pow(24)).toFixed(0);
+          
+          // Get expected return amount
+          const expectedReturn = await getSwapReturn(amountInYocto, true);
+          const formattedReturn = new Big(expectedReturn).div(new Big(10).pow(24)).toFixed(2);
+          
+          // Check user's balance
+          const balance = await fetchNearBalance(accountId, wallet);
+          
+          if (new Big(balance).lt(defaultNearAmount)) {
+            return `Insufficient NEAR balance. You have ${balance} NEAR, but need ${defaultNearAmount} NEAR to proceed.`;
+          }
+          
+          // Initialize swap state for default NEAR amount
+          setSwapState({
+            currentStep: 'check storage',
+            amount: amountInYocto,
+            displayAmount: defaultNearAmount.toString(),
+            expectedReturn,
+            minAmountOut: new Big(expectedReturn).mul(0.99).round(0, Big.roundDown).toString(),
+            isProcessing: false,
+            hasStorageBalance: false,
+            isSwapInitiated: true,
+            isSwapConfirmed: false,
+            swapDirection: 'near_to_crans',
+            quickSwapQuotes: []
+          });
+          
+          return `You will receive approximately ${formattedReturn} CRANS for ${defaultNearAmount} NEAR. Would you like to proceed with the purchase? Type 'yes' to confirm.`;
+        }
+      } catch (error) {
+        console.error('Error preparing buy CRANS:', error);
+        return "I encountered an error preparing your purchase. Please try again in a moment.";
+      }
+    } else if (sellMatch) {
+      if (!accountId) {
+        return "Please connect your wallet first to use the sell feature.";
+      }
+      
+      try {
+        const amountStr = sellMatch[1];
+        const amount = parseFloat(amountStr);
+        
+        // Convert amount to yoctoCRANS (24 decimals)
+        const amountInYocto = new Big(amount).mul(new Big(10).pow(24)).toFixed(0);
+        
+        // Get expected return amount
+        const expectedReturn = await getSwapReturn(amountInYocto, false);
+        const formattedReturn = new Big(expectedReturn).div(new Big(10).pow(24)).toFixed(2);
+
+        // Check user's balance
+        const cransBalance = await fetchCransBalance(accountId, wallet);
+
+        if (new Big(cransBalance).lt(amount)) {
+          return `Insufficient CRANS balance. You have ${cransBalance} CRANS, but tried to sell ${amount} CRANS.`;
+        }
+
+        // Initialize swap state for CRANS to NEAR
+        setSwapState({
+          currentStep: 'buy near',  // Step for CRANS to NEAR flow
+          amount: amountInYocto,
+          displayAmount: amount.toString(),
+          expectedReturn,
+          minAmountOut: new Big(expectedReturn).mul(0.99).round(0, Big.roundDown).toString(),
+          isProcessing: false,
+          hasStorageBalance: true,  // We don't need to check storage for CRANS to NEAR
+          isSwapInitiated: true,
+          isSwapConfirmed: false,
+          swapDirection: 'crans_to_near',
+          quickSwapQuotes: []
+        });
+
+        return `You will receive approximately ${formattedReturn} NEAR for ${amount} CRANS. Would you like to proceed with the sale? Type 'yes' to confirm.`;
+      } catch (error) {
+        console.error('Error preparing sell CRANS:', error);
+        return "I encountered an error preparing your sale. Please try again in a moment.";
+      }
+    } else if (swapMatch) {
       if (!accountId) {
         return "Please connect your wallet first to use the swap feature.";
       }
@@ -1294,8 +1435,8 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
       }
     }
 
-    // Handle swap confirmation
-    if (input === 'yes' && swapState.currentStep !== 'done' && swapState.isSwapInitiated && !swapState.isSwapConfirmed) {
+    // Handle swap confirmation - case insensitive for "yes"
+    if (/^yes$/i.test(input) && swapState.currentStep !== 'done' && swapState.isSwapInitiated && !swapState.isSwapConfirmed) {
       updateSwapState({ isSwapConfirmed: true });
       
       // Trigger the swap process immediately
@@ -1309,6 +1450,26 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
       
       // Return null to prevent adding empty message bubble
       return null;
+    }
+    
+    // Handle swap cancellation - case insensitive for "no"/"nie"
+    if (/^(no|nie)$/i.test(input) && swapState.currentStep !== 'done' && swapState.isSwapInitiated && !swapState.isSwapConfirmed) {
+      // Reset swap state
+      setSwapState({
+        currentStep: 'check storage',
+        amount: '0',
+        displayAmount: '0',
+        expectedReturn: '0',
+        minAmountOut: '0',
+        isProcessing: false,
+        hasStorageBalance: false,
+        isSwapInitiated: false,
+        isSwapConfirmed: false,
+        swapDirection: 'near_to_crans',
+        quickSwapQuotes: []
+      });
+      
+      return "Transaction cancelled. Is there anything else I can help you with?";
     }
 
     // Check for exact matches in regular responses
