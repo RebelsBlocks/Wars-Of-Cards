@@ -6,7 +6,7 @@ import { Messages } from './Messages';
 import { Play } from './Play';
 
 export function AppController() {
-  const [activeView, setActiveView] = useState<MenuItem>('money');
+  const [activeView, setActiveView] = useState<MenuItem>('play');
   const [gameMode, setGameMode] = useState<string | null>(null);
 
   const handleMenuItemClick = (menuItem: MenuItem) => {
@@ -27,7 +27,7 @@ export function AppController() {
       case 'play':
         return <Play gameMode={gameMode} setGameMode={setGameMode} />;
       default:
-        return <Messages />;
+        return <Play gameMode={gameMode} setGameMode={setGameMode} />;
     }
   })();
 
