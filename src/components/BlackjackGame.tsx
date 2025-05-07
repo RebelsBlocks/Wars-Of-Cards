@@ -715,7 +715,13 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         .mul(new BN(nearAmountInYocto))
         .div(cransPerNear);
       
-      setNearAmount(formatTokenAmount(nearNeededWithSlippage.toString()));
+      // Ensure minimum amount (0.01 NEAR) for very small transactions
+      const minAmount = new BN("10000000000000000000000"); // 0.01 NEAR
+      
+      // Use the larger of calculated amount or min amount
+      const finalAmount = nearNeededWithSlippage.lt(minAmount) ? minAmount : nearNeededWithSlippage;
+      
+      setNearAmount(formatTokenAmount(finalAmount.toString()));
       
     } catch (error) {
       console.error("Error fetching balances:", error);
@@ -847,13 +853,19 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         .mul(new BN(nearAmountInYocto))
         .div(cransPerNear);
       
+      // Ensure minimum amount (0.01 NEAR) for very small transactions
+      const minAmount = new BN("10000000000000000000000"); // 0.01 NEAR
+      
+      // Use the larger of calculated amount or min amount
+      const finalAmount = nearNeededWithSlippage.lt(minAmount) ? minAmount : nearNeededWithSlippage;
+      
       // Add wrap near transaction
       transactions.push({
         contractId: TOKENS.NEAR,
         methodName: 'near_deposit',
         args: {},
         gas: '50000000000000',
-        deposit: nearNeededWithSlippage.toString()
+        deposit: finalAmount.toString()
       });
       
       // Add token swap transaction
@@ -862,8 +874,8 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         methodName: 'ft_transfer_call',
         args: {
           receiver_id: 'v2.ref-finance.near',
-          amount: nearNeededWithSlippage.toString(),
-          msg: prepareSwapMsg(nearNeededWithSlippage.toString(), true, missingCransBN.toString())
+          amount: finalAmount.toString(),
+          msg: prepareSwapMsg(finalAmount.toString(), true, missingCransBN.toString())
         },
         gas: '180000000000000',
         deposit: '1'
