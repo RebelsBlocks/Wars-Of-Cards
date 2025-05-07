@@ -243,11 +243,11 @@ export const BlackjackProvider: React.FC<BlackjackProviderProps> = ({ children }
       
       // Usuwamy dodatkową pauzę przed sprawdzeniem wyniku gdy gracz ma 21
       if (result.playerScore === 21) {
-        // Natychmiast aktualizujemy stan gry bez dodatkowej pauzy
-        setDealerHand(result.dealerHand);
-        setDealerScore(result.dealerScore);
+        // Natychmiast aktualizujemy stan gry w backendzie dla bezpieczeństwa
         setGameState('GAME_ENDED');
-        setMessage(''); // Usuwamy komunikat tekstowy
+        // Nie aktualizujemy kart i wyniku dealera - gracz automatycznie wygrywa
+        // Pokazujemy komunikat "Perfect 21!" przez 2 sekundy
+        setMessage('Perfect 21!');
       } else if (result.playerScore > 21) {
         // Usuwamy komunikat tekstowy Bust!
         
@@ -641,6 +641,20 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const [showLogoScreen, setShowLogoScreen] = useState<boolean>(true);
   const [swapLoading, setSwapLoading] = useState(false);
   const [nearAmount, setNearAmount] = useState<string>("0");
+  const [showEndGameOverlay, setShowEndGameOverlay] = useState(false);
+
+  // Efekt dla opóźnienia pokazywania komunikatu końcowego
+  useEffect(() => {
+    if (gameState === 'GAME_ENDED') {
+      const timer = setTimeout(() => {
+        setShowEndGameOverlay(true);
+      }, 2000); // 2 sekundy opóźnienia
+
+      return () => clearTimeout(timer);
+    } else {
+      setShowEndGameOverlay(false);
+    }
+  }, [gameState]);
 
   // Show logo for 2 seconds
   useEffect(() => {
@@ -959,8 +973,8 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             </div>
           </div>
           
-          {/* Pokazujemy message tylko gdy gra nie jest zakończona */}
-          {gameState !== 'GAME_ENDED' && (
+          {/* Pokazujemy message tylko gdy gra nie jest zakończona lub nie pokazujemy overlaya */}
+          {(gameState !== 'GAME_ENDED' || !showEndGameOverlay) && (
             <div className={styles.messageDisplay}>
               {message}
             </div>
@@ -977,9 +991,12 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             </div>
           </div>
 
-          <GameControls onBack={onBack} />
+          {/* Only show controls if not in end game state or overlay is not shown */}
+          {(gameState !== 'GAME_ENDED' || !showEndGameOverlay) && (
+            <GameControls onBack={onBack} />
+          )}
 
-          {gameState === 'GAME_ENDED' && (
+          {gameState === 'GAME_ENDED' && showEndGameOverlay && (
             <div className={`${styles.gameEndOverlay} ${hasPlayerWon ? styles.win : styles.lose}`}>
               <div className={styles.gameEndContent}>
                 <img 
