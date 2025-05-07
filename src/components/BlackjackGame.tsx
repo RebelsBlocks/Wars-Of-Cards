@@ -5,10 +5,26 @@ import { useNearWallet } from '@/contexts/NearWalletContext';
 import { NETWORK_CONFIG } from '@/contexts/NearWalletContext';
 import BN from 'bn.js';
 import { GestureAreaBuffer } from './GestureAreaBuffer';
+import { providers } from 'near-api-js';
 
 // Constants for betting
 const ENTRY_FEE = 210; // 210 CRANS
 const ENTRY_FEE_YOCTO = "210000000000000000000000000"; // 210 with 24 decimals
+
+// Add swap-related constants (similar to Brief.tsx)
+const POOLS = {
+  CRANS_NEAR: 5423,      // CRANS/NEAR pool
+};
+
+const TOKENS = {
+  CRANS: NETWORK_CONFIG.cransContractId,
+  NEAR: "wrap.near",
+};
+
+const TOKEN_DECIMALS = {
+  [TOKENS.CRANS]: 24,    // CRANS has 24 decimals
+  [TOKENS.NEAR]: 24,     // NEAR has 24 decimals
+};
 
 // Helper function to format token amounts
 function formatTokenAmount(amount: string): string {
@@ -211,40 +227,45 @@ export const BlackjackProvider: React.FC<BlackjackProviderProps> = ({ children }
     if (!wallet.accountId || gameState !== 'PLAYER_TURN') return;
 
     try {
-        setMessage("Drawing card...");
+      // Zamiast natychmiast zmieniać stan, ustawiamy flagę ładowania
+      setMessage("Drawing card...");
+      
+      const result = await blackjackService.hit(wallet.accountId);
+      
+      // Najpierw aktualizujemy rękę gracza i pokazujemy nową kartę
+      setPlayerHand(result.playerHand);
+      
+      // Dłuższa pauza aby karta była w pełni widoczna przed aktualizacją wyniku
+      // Card animation takes ~300ms + transition time
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setPlayerScore(result.playerScore);
+      
+      // Usuwamy dodatkową pauzę przed sprawdzeniem wyniku gdy gracz ma 21
+      if (result.playerScore === 21) {
+        // Natychmiast aktualizujemy stan gry bez dodatkowej pauzy
+        setDealerHand(result.dealerHand);
+        setDealerScore(result.dealerScore);
+        setGameState('GAME_ENDED');
+        setMessage(''); // Usuwamy komunikat tekstowy
+      } else if (result.playerScore > 21) {
+        // Usuwamy komunikat tekstowy Bust!
         
-        const result = await blackjackService.hit(wallet.accountId);
+        // Pauza aby gracz mógł zobaczyć zmiany
+        await new Promise(resolve => setTimeout(resolve, 800));
         
-        // Najpierw aktualizujemy rękę gracza i pokazujemy nową kartę
-        setPlayerHand(result.playerHand);
-        
-        // Pauza na animację karty
-        await new Promise(resolve => setTimeout(resolve, 500));
-        
-        setPlayerScore(result.playerScore);
-        
-        if (result.playerScore === 21) {
-            // Natychmiast aktualizujemy stan gry w backendzie dla bezpieczeństwa
-            setGameState('GAME_ENDED');
-            // Nie aktualizujemy kart i wyniku dealera - gracz automatycznie wygrywa
-            // Pokazujemy komunikat "Perfect 21!" przez 2 sekundy
-            // Overlay z wygraną pojawi się po 2 sekundach dzięki useEffect
-            setMessage('Perfect 21!');
-            
-        } else if (result.playerScore > 21) {
-            await new Promise(resolve => setTimeout(resolve, 800));
-            setDealerHand(result.dealerHand);
-            setDealerScore(result.dealerScore);
-            setGameState('GAME_ENDED');
-            setMessage('');
-        } else {
-            setGameState('PLAYER_TURN');
-            setMessage('Your turn! Hit or Stand?');
-        }
-    } catch (error) {
-        console.error('Failed to hit:', error);
-        setMessage('Error hitting');
+        setDealerHand(result.dealerHand);
+        setDealerScore(result.dealerScore);
+        setGameState('GAME_ENDED');
+        setMessage(''); // Usuwamy komunikat tekstowy
+      } else {
         setGameState('PLAYER_TURN');
+        setMessage('Your turn! Hit or Stand?');
+      }
+    } catch (error) {
+      console.error('Failed to hit:', error);
+      setMessage('Error hitting');
+      setGameState('PLAYER_TURN');
     }
   };
 
@@ -491,6 +512,112 @@ interface BlackjackGameProps {
   onBack: () => void;
 }
 
+// Function to get token exchange rate (from Brief.tsx)
+async function getSwapReturn(amountIn: string, isNearToCrans: boolean): Promise<string> {
+  try {
+    const provider = new providers.JsonRpcProvider({ url: 'https://free.rpc.fastnear.com' }) as any;
+    const args = {
+      pool_id: POOLS.CRANS_NEAR,
+      token_in: isNearToCrans ? TOKENS.NEAR : TOKENS.CRANS,
+      token_out: isNearToCrans ? TOKENS.CRANS : TOKENS.NEAR,
+      amount_in: amountIn
+    };
+    
+    const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64');
+    
+    const response: any = await provider.query({
+      request_type: 'call_function',
+      account_id: 'v2.ref-finance.near',
+      method_name: 'get_return',
+      args_base64,
+      finality: 'final'
+    });
+    
+    if (response && response.result) {
+      const resultBytes = Buffer.from(response.result);
+      const resultText = new TextDecoder().decode(resultBytes);
+      return JSON.parse(resultText);
+    }
+    
+    return "0";
+  } catch (error) {
+    console.error('Error in getSwapReturn:', error);
+    return "0";
+  }
+}
+
+// Function to prepare swap transaction message (from Brief.tsx)
+function prepareSwapMsg(amount: string, isNearToCrans: boolean, expectedReturn: string) {
+  const formattedReturn = new BN(expectedReturn).mul(new BN(95)).div(new BN(100)).toString();
+    
+  return JSON.stringify({
+    force: 0,
+    actions: [{
+      pool_id: POOLS.CRANS_NEAR,
+      token_in: isNearToCrans ? TOKENS.NEAR : TOKENS.CRANS,
+      token_out: isNearToCrans ? TOKENS.CRANS : TOKENS.NEAR,
+      amount_in: amount,
+      min_amount_out: formattedReturn
+    }]
+  });
+}
+
+// Add storage balance checking functions (from Brief.tsx)
+async function checkWrapNearStorageBalance(accountId: string, wallet: any): Promise<boolean> {
+  try {
+    if (!wallet.selector) return false;
+    
+    const result = await wallet.viewFunction({
+      contractId: TOKENS.NEAR,
+      methodName: "storage_balance_of",
+      args: { account_id: accountId }
+    });
+
+    return result && result.total === "1250000000000000000000";
+  } catch (error) {
+    console.error("Error checking wrap.near storage balance:", error);
+    return false;
+  }
+}
+
+async function checkCransStorageBalance(accountId: string, wallet: any): Promise<boolean> {
+  try {
+    if (!wallet.selector) return false;
+    
+    const result = await wallet.viewFunction({
+      contractId: TOKENS.CRANS,
+      methodName: "storage_balance_of",
+      args: { account_id: accountId }
+    });
+
+    return result && result.total === "1250000000000000000000";
+  } catch (error) {
+    console.error("Error checking CRANS storage balance:", error);
+    return false;
+  }
+}
+
+async function fetchNearBalance(accountId: string, wallet: any): Promise<string> {
+  try {
+    if (!wallet.selector) return "0";
+    
+    const provider = new providers.JsonRpcProvider({ url: NETWORK_CONFIG.nodeUrl }) as any;
+    const account = await provider.query({
+      request_type: 'view_account',
+      account_id: accountId,
+      finality: 'final'
+    });
+
+    if (account.amount) {
+      return account.amount;
+    }
+    return "0";
+  } catch (error) {
+    console.error("Error fetching NEAR balance:", error);
+    return "0";
+  }
+}
+
 // Blackjack Game Component (Main Component)
 export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   const wallet = useNearWallet();
@@ -508,23 +635,12 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
   } = useBlackjack();
 
   const [balance, setBalance] = useState<string>("0");
+  const [nearBalance, setNearBalance] = useState<string>("0");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showLogoScreen, setShowLogoScreen] = useState<boolean>(true);
-  const [showEndGameOverlay, setShowEndGameOverlay] = useState(false);
-
-  // Efekt dla opóźnienia pokazywania komunikatu końcowego
-  useEffect(() => {
-    if (gameState === 'GAME_ENDED') {
-      const timer = setTimeout(() => {
-        setShowEndGameOverlay(true);
-      }, 2000); // 2 sekundy opóźnienia
-
-      return () => clearTimeout(timer);
-    } else {
-      setShowEndGameOverlay(false);
-    }
-  }, [gameState]);
+  const [swapLoading, setSwapLoading] = useState(false);
+  const [nearAmount, setNearAmount] = useState<string>("0");
 
   // Show logo for 2 seconds
   useEffect(() => {
@@ -546,6 +662,37 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     return () => window.removeEventListener('resize', updateSafeAreaInsets);
   }, []);
 
+  // Fetch CRANS and NEAR balances
+  async function fetchBalances(accountId: string) {
+    if (!wallet.selector) return;
+    
+    try {
+      const [cransBalance, rawNearBalance] = await Promise.all([
+        fetchCRANSBalance(accountId),
+        fetchNearBalance(accountId, wallet)
+      ]);
+      
+      setBalance(formatTokenAmount(cransBalance));
+      setNearBalance(formatTokenAmount(rawNearBalance));
+      
+      // Calculate how much NEAR is needed for 210 CRANS
+      const nearAmountInYocto = new BN("1000000000000000000000000"); // 1 NEAR in yocto
+      const exchangeResult = await getSwapReturn(nearAmountInYocto.toString(), true);
+      
+      // Calculate how many NEAR needed for 210 CRANS (with 10% slippage)
+      const cransPerNear = new BN(exchangeResult);
+      const cransNeeded = new BN("210000000000000000000000000");
+      
+      // NEAR needed = (210 CRANS * 1.10) / (CRANS per 1 NEAR)
+      const nearNeededWithSlippage = cransNeeded.mul(new BN(110)).div(new BN(100)).mul(new BN(nearAmountInYocto)).div(cransPerNear);
+      
+      setNearAmount(formatTokenAmount(nearNeededWithSlippage.toString()));
+      
+    } catch (error) {
+      console.error("Error fetching balances:", error);
+    }
+  }
+
   // Fetch CRANS balance
   async function fetchCRANSBalance(accountId: string) {
     try {
@@ -557,7 +704,7 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         args: { account_id: accountId }
       });
 
-      return formatTokenAmount(result);
+      return result;
     } catch (error) {
       console.error("Error fetching CRANS balance:", error);
       return "0";
@@ -566,7 +713,7 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
 
   useEffect(() => {
     if (wallet.accountId) {
-      fetchCRANSBalance(wallet.accountId).then(setBalance);
+      fetchBalances(wallet.accountId);
     }
   }, [wallet.accountId]);
 
@@ -594,7 +741,7 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         try {
           await startGame(); // This will handle state changes and game creation
           // Fetch updated balance in background
-          fetchCRANSBalance(wallet.accountId).then(setBalance);
+          fetchCRANSBalance(wallet.accountId).then(result => setBalance(formatTokenAmount(result)));
         } catch (error) {
           console.error('Failed to start game:', error);
           setError('Failed to start game. Please try again.');
@@ -609,15 +756,109 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
     }
   };
 
+  // New function to handle buying CRANS
+  const handleBuyCrans = async () => {
+    if (!wallet.accountId || swapLoading) return;
+    
+    setSwapLoading(true);
+    setError(null);
+    
+    try {
+      // Check storage needs
+      const hasWrapStorage = await checkWrapNearStorageBalance(wallet.accountId, wallet);
+      const hasCransStorage = await checkCransStorageBalance(wallet.accountId, wallet);
+      
+      // Prepare transactions based on storage needs
+      const transactions = [];
+      
+      // Add storage deposit transactions if needed
+      if (!hasWrapStorage) {
+        transactions.push({
+          contractId: TOKENS.NEAR,
+          methodName: 'storage_deposit',
+          args: {},
+          gas: '30000000000000',
+          deposit: '1250000000000000000000'
+        });
+      }
+      
+      if (!hasCransStorage) {
+        transactions.push({
+          contractId: TOKENS.CRANS,
+          methodName: 'storage_deposit',
+          args: {},
+          gas: '30000000000000',
+          deposit: '1250000000000000000000'
+        });
+      }
+      
+      // Calculate how much NEAR to wrap
+      const nearAmountInYocto = new BN("1000000000000000000000000"); // 1 NEAR in yocto
+      const exchangeResult = await getSwapReturn(nearAmountInYocto.toString(), true);
+      
+      // Calculate how many NEAR needed for 210 CRANS (with 10% slippage)
+      const cransPerNear = new BN(exchangeResult);
+      const cransNeeded = new BN("210000000000000000000000000");
+      
+      // NEAR needed = (210 CRANS * 1.10) / (CRANS per 1 NEAR)
+      const nearNeededWithSlippage = cransNeeded.mul(new BN(110)).div(new BN(100)).mul(new BN(nearAmountInYocto)).div(cransPerNear);
+      
+      // Add wrap near transaction
+      transactions.push({
+        contractId: TOKENS.NEAR,
+        methodName: 'near_deposit',
+        args: {},
+        gas: '50000000000000',
+        deposit: nearNeededWithSlippage.toString()
+      });
+      
+      // Add token swap transaction
+      transactions.push({
+        contractId: TOKENS.NEAR,
+        methodName: 'ft_transfer_call',
+        args: {
+          receiver_id: 'v2.ref-finance.near',
+          amount: nearNeededWithSlippage.toString(),
+          msg: prepareSwapMsg(nearNeededWithSlippage.toString(), true, cransNeeded.toString())
+        },
+        gas: '180000000000000',
+        deposit: '1'
+      });
+      
+      // Execute all transactions
+      const result = await wallet.executeTransactions(transactions, {
+        callbackUrl: window.location.href
+      });
+      
+      // After successful swap, update balances
+      if (result) {
+        await fetchBalances(wallet.accountId);
+        
+        // Dodatkowe odświeżenie salda po 1 sekundzie dla pewności
+        setTimeout(() => {
+          if (wallet.accountId) {
+            fetchBalances(wallet.accountId);
+          }
+        }, 1000);
+      }
+    } catch (error) {
+      console.error("Failed to buy CRANS:", error);
+      setError("Failed to buy CRANS. Please try again.");
+    } finally {
+      setSwapLoading(false);
+    }
+  };
+
   // Dodajemy też aktualizację balansu po zakończeniu gry
   useEffect(() => {
     if (gameState === 'GAME_ENDED' && wallet.accountId) {
       // Aktualizujemy balans w tle po zakończeniu gry
-      fetchCRANSBalance(wallet.accountId).then(setBalance);
+      fetchCRANSBalance(wallet.accountId).then(result => setBalance(formatTokenAmount(result)));
     }
   }, [gameState, wallet.accountId]);
 
   const hasEnoughBalance = parseFloat(balance) >= ENTRY_FEE;
+  const hasSurplusBalance = parseFloat(balance) > ENTRY_FEE * 2; // Jeśli ma więcej niż podwójną kwotę wejściową
   const hasPlayerWon = gameState === 'GAME_ENDED' && (
     (dealerScore > 21 && playerScore <= 21) || // Dealer busts
     (playerScore <= 21 && dealerScore <= 21 && playerScore > dealerScore) || // Player has higher score
@@ -642,7 +883,7 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                 <span>Balance: {balance}</span>
                 <button 
                   className={styles.refreshButton}
-                  onClick={() => wallet.accountId && fetchCRANSBalance(wallet.accountId).then(setBalance)}
+                  onClick={() => wallet.accountId && fetchBalances(wallet.accountId)}
                   title="Refresh balance"
                 >
                   <svg 
@@ -671,8 +912,22 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
                 {isLoading ? 'Processing...' : 'Enter Game'}
               </button>
               {!hasEnoughBalance && (
-                <div className={styles.errorMessage}>
-                  Chat with Vanessa to get {ENTRY_FEE} CRANS.
+                <>
+                  <div className={styles.errorMessage}>
+                    Buy {ENTRY_FEE} CRANS to play!
+                  </div>
+                  <button
+                    className={styles.buyCransButton}
+                    onClick={handleBuyCrans}
+                    disabled={swapLoading}
+                  >
+                    {swapLoading ? 'Processing...' : `Buy ${ENTRY_FEE} CRANS for ~${nearAmount}Ⓝ`}
+                  </button>
+                </>
+              )}
+              {hasEnoughBalance && hasSurplusBalance && (
+                <div className={styles.infoMessage}>
+                  Chat with Vanessa to sell CRANS.
                 </div>
               )}
               {error && (
@@ -704,7 +959,8 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             </div>
           </div>
           
-          {(gameState !== 'GAME_ENDED' || !showEndGameOverlay) && (
+          {/* Pokazujemy message tylko gdy gra nie jest zakończona */}
+          {gameState !== 'GAME_ENDED' && (
             <div className={styles.messageDisplay}>
               {message}
             </div>
@@ -721,11 +977,9 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
             </div>
           </div>
 
-          {(gameState !== 'GAME_ENDED' || !showEndGameOverlay) && (
-            <GameControls onBack={onBack} />
-          )}
+          <GameControls onBack={onBack} />
 
-          {gameState === 'GAME_ENDED' && showEndGameOverlay && (
+          {gameState === 'GAME_ENDED' && (
             <div className={`${styles.gameEndOverlay} ${hasPlayerWon ? styles.win : styles.lose}`}>
               <div className={styles.gameEndContent}>
                 <img 
