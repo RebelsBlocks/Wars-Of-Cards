@@ -58,6 +58,9 @@ const mainTopics = [
   { id: 'help', label: 'Help' }
 ];
 
+// Define quick swap options
+const QUICK_SWAP_AMOUNTS = [2, 3, 5];
+
 // Add helper function for wallet name truncation
 function truncateWalletName(accountId: string | null): string {
   if (!accountId) return 'Stranger';
@@ -231,6 +234,14 @@ type NearCransStep = 'check storage' | 'wrap near' | 'buy crans' | 'done';
 // Define steps for CRANS to NEAR swap process
 type CransNearStep = 'buy near' | 'unwrap near' | 'done';
 
+// Interface for quick swap button quote
+interface QuickSwapQuote {
+  nearAmount: number;
+  cransAmount: string;
+  isLoading: boolean;
+  insufficient: boolean;
+}
+
 // State interface for swap processes
 interface SwapState {
   currentStep: NearCransStep | CransNearStep;
@@ -244,6 +255,8 @@ interface SwapState {
   isSwapInitiated: boolean; // whether swap process has been initiated by user
   isSwapConfirmed: boolean; // whether user has confirmed the swap
   swapDirection: 'near_to_crans' | 'crans_to_near'; // direction of the swap
+  showQuickSwapButtons?: boolean; // whether to show quick swap buttons
+  quickSwapQuotes: QuickSwapQuote[]; // quotes for quick swap buttons
 }
 
 // Dodaj funkcję formatującą datę
@@ -284,9 +297,12 @@ export function Brief() {
     minAmountOut: '0',
     isProcessing: false,
     hasStorageBalance: false,
+    lastTxHash: undefined,
     isSwapInitiated: false,
     isSwapConfirmed: false,
-    swapDirection: 'near_to_crans'
+    swapDirection: 'near_to_crans',
+    showQuickSwapButtons: false,
+    quickSwapQuotes: []
   });
 
   // Add more comprehensive error handling
@@ -329,7 +345,8 @@ export function Brief() {
           hasStorageBalance: false,
           isSwapInitiated: false,
           isSwapConfirmed: false,
-          swapDirection: 'near_to_crans'
+          swapDirection: 'near_to_crans',
+          quickSwapQuotes: []
         });
       }
       return true;
@@ -353,7 +370,8 @@ export function Brief() {
       hasStorageBalance: false,
       isSwapInitiated: false,
       isSwapConfirmed: false,
-      swapDirection: 'near_to_crans'
+      swapDirection: 'near_to_crans',
+      quickSwapQuotes: []
     });
   }, []);
 
@@ -487,7 +505,8 @@ export function Brief() {
             hasStorageBalance: false,
             isSwapInitiated: false,
             isSwapConfirmed: false,
-            swapDirection: 'near_to_crans'
+            swapDirection: 'near_to_crans',
+            quickSwapQuotes: []
           });
           break;
         }
@@ -622,7 +641,8 @@ export function Brief() {
             hasStorageBalance: false,
             isSwapInitiated: false,
             isSwapConfirmed: false,
-            swapDirection: 'near_to_crans'
+            swapDirection: 'near_to_crans',
+            quickSwapQuotes: []
           });
           break;
         }
@@ -727,6 +747,12 @@ export function Brief() {
       
       // Add typing indicator with animation and delay before response
       await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate typing time
+      
+      // Special handling for swap topic - fetch quick swap quotes
+      if (topicId === 'swap' && wallet.accountId) {
+        // Set state to show quick swap buttons and start fetching quotes
+        await fetchQuickSwapQuotes();
+      }
       
       // Get response content
       const responseContent = await findBestResponse(topicId, wallet.accountId, wallet);
@@ -984,6 +1010,9 @@ export function Brief() {
             fetchCransBalance(accountId, wallet)
           ]);
           
+          // Start fetching quotes in the background
+          fetchQuickSwapQuotes();
+          
           return `Your current holdings:
 NEAR: ${nearBalance} Ⓝ
 CRANS: ${cransBalance} CRANS
@@ -1144,6 +1173,11 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
       // For swap and balance intencje, use handlers instead of predefined responses
       // to properly fill in placeholders with actual values
       if (intention === 'swap' && keywordHandlers['swap']) {
+        // Set showQuickSwapButtons to true when swap is mentioned
+        setSwapState(prev => ({
+          ...prev,
+          showQuickSwapButtons: true
+        }));
         return await keywordHandlers['swap']();
       } else if (intention === 'balance' && keywordHandlers['balance']) {
         return await keywordHandlers['balance']();
@@ -1211,7 +1245,8 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
             hasStorageBalance: false,
             isSwapInitiated: true,
             isSwapConfirmed: false,
-            swapDirection: 'near_to_crans'
+            swapDirection: 'near_to_crans',
+            quickSwapQuotes: []
           });
 
           return `You will receive approximately ${formattedReturn} CRANS for ${amount} NEAR. Would you like to proceed with the swap? Type 'yes' to confirm.`;
@@ -1247,7 +1282,8 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
             hasStorageBalance: true,  // We don't need to check storage for CRANS to NEAR
             isSwapInitiated: true,
             isSwapConfirmed: false,
-            swapDirection: 'crans_to_near'
+            swapDirection: 'crans_to_near',
+            quickSwapQuotes: []
           });
 
           return `You will receive approximately ${formattedReturn} NEAR for ${amount} CRANS. Would you like to proceed with the swap? Type 'yes' to confirm.`;
@@ -1289,6 +1325,260 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
     return "I didn't catch that. I can assist with:\n\n- Game access and rules\n- NEAR/CRANS exchanges\n- Community features\n- Blockchain information\n\nWhat specific help do you need?";
   }
 
+  // Function to fetch quotes for quick swap buttons
+  const fetchQuickSwapQuotes = React.useCallback(async () => {
+    if (!wallet.accountId) return;
+    
+    // Initialize empty quotes with loading state
+    const initialQuotes = QUICK_SWAP_AMOUNTS.map(amount => ({
+      nearAmount: amount,
+      cransAmount: 'Loading...',
+      isLoading: true,
+      insufficient: false
+    }));
+    
+    setSwapState(prev => ({
+      ...prev,
+      quickSwapQuotes: initialQuotes,
+      showQuickSwapButtons: true
+    }));
+    
+    try {
+      // Fetch balance first to check if user has enough NEAR
+      const nearBalance = await fetchNearBalance(wallet.accountId, wallet);
+      const nearBalanceNumber = parseFloat(nearBalance);
+      
+      // Fetch quotes for each amount in parallel
+      const quotesPromises = QUICK_SWAP_AMOUNTS.map(async (amount) => {
+        try {
+          // Always calculate the expected rate regardless of balance
+          const amountInYocto = new Big(amount).mul(new Big(10).pow(24)).toFixed(0);
+          const expectedReturn = await getSwapReturn(amountInYocto, true);
+          const formattedReturn = new Big(expectedReturn).div(new Big(10).pow(24)).toFixed(2);
+          
+          // Check if user has enough balance
+          const hasEnoughBalance = nearBalanceNumber >= amount;
+          
+          return {
+            nearAmount: amount,
+            cransAmount: formattedReturn,
+            isLoading: false,
+            insufficient: !hasEnoughBalance
+          };
+        } catch (error) {
+          console.error(`Error fetching quote for ${amount} NEAR:`, error);
+          return {
+            nearAmount: amount,
+            cransAmount: 'Error',
+            isLoading: false,
+            insufficient: false
+          };
+        }
+      });
+      
+      // Wait for all quotes to be fetched
+      const quotes = await Promise.all(quotesPromises);
+      
+      // Update state with quotes
+      setSwapState(prev => ({
+        ...prev,
+        quickSwapQuotes: quotes
+      }));
+      
+    } catch (error) {
+      console.error('Error fetching quick swap quotes:', error);
+      
+      // Set error state for all quotes
+      const errorQuotes = QUICK_SWAP_AMOUNTS.map(amount => ({
+        nearAmount: amount,
+        cransAmount: 'Error',
+        isLoading: false,
+        insufficient: false
+      }));
+      
+      setSwapState(prev => ({
+        ...prev,
+        quickSwapQuotes: errorQuotes
+      }));
+    }
+  }, [wallet.accountId, wallet]);
+
+  // Handler for quick swap button click
+  const handleQuickSwapClick = React.useCallback(async (nearAmount: number) => {
+    if (!wallet.accountId || swapState.isProcessing) return;
+    
+    try {
+      // Start processing
+      setSwapState(prev => ({
+        ...prev,
+        isProcessing: true
+      }));
+      
+      // Convert to yoctoNEAR
+      const amountInYocto = new Big(nearAmount).mul(new Big(10).pow(24)).toFixed(0);
+      
+      // Get expected return amount
+      const expectedReturn = await getSwapReturn(amountInYocto, true);
+      const formattedReturn = new Big(expectedReturn).div(new Big(10).pow(24)).toFixed(2);
+      
+      // Check user's balance
+      const balance = await fetchNearBalance(wallet.accountId, wallet);
+      
+      if (new Big(balance).lt(nearAmount)) {
+        setMessages(prev => [...prev, {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: `Insufficient NEAR balance. You have ${balance} NEAR, but tried to swap ${nearAmount} NEAR.`,
+          timestamp: new Date()
+        }]);
+        
+        setSwapState(prev => ({
+          ...prev,
+          isProcessing: false
+        }));
+        
+        return;
+      }
+      
+      // Add message to chat
+      setMessages(prev => [...prev, {
+        id: Date.now().toString(),
+        role: 'user',
+        content: `${nearAmount} near to crans`,
+        timestamp: new Date()
+      }]);
+      
+      setMessages(prev => [...prev, {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: `Preparing to swap ${nearAmount} NEAR for approximately ${formattedReturn} CRANS...`,
+        timestamp: new Date()
+      }]);
+      
+      // Check storage balances
+      const hasWrapStorage = await checkWrapNearStorageBalance(wallet.accountId, wallet);
+      const hasCransStorage = await checkCransStorageBalance(wallet.accountId, wallet);
+      
+      // Prepare transactions based on storage needs
+      const transactions = [];
+      let transactionDescription = [];
+      
+      // Add storage deposit transactions if needed
+      if (!hasWrapStorage) {
+        transactions.push({
+          contractId: TOKENS.NEAR,
+          methodName: 'storage_deposit',
+          args: {},
+          gas: '30000000000000',
+          deposit: '1250000000000000000000'
+        });
+        
+        transactionDescription.push("initialize wrapped NEAR storage");
+      }
+      
+      if (!hasCransStorage) {
+        transactions.push({
+          contractId: TOKENS.CRANS,
+          methodName: 'storage_deposit',
+          args: {},
+          gas: '30000000000000',
+          deposit: '1250000000000000000000'
+        });
+        
+        transactionDescription.push("initialize CRANS token storage");
+      }
+      
+      // Add wrap near and token swap transactions
+      transactions.push({
+        contractId: TOKENS.NEAR,
+        methodName: 'near_deposit',
+        args: {},
+        gas: '50000000000000',
+        deposit: amountInYocto
+      });
+      
+      transactionDescription.push("wrap your NEAR tokens");
+      
+      // Calculate minimum amount out with 1% slippage tolerance
+      const minAmountOut = new Big(expectedReturn).mul(0.99).round(0, Big.roundDown).toString();
+      
+      transactions.push({
+        contractId: TOKENS.NEAR,
+        methodName: 'ft_transfer_call',
+        args: {
+          receiver_id: 'v2.ref-finance.near',
+          amount: amountInYocto,
+          msg: prepareSwapMsg(amountInYocto, true, minAmountOut)
+        },
+        gas: '180000000000000',
+        deposit: '1'
+      });
+      
+      transactionDescription.push("exchange for CRANS tokens");
+      
+      try {
+        // Create a nice human-readable explanation
+        const transactionDescriptionText = transactionDescription.length > 1 
+          ? transactionDescription.slice(0, -1).join(", ") + ", and " + transactionDescription.slice(-1)
+          : transactionDescription[0];
+        
+        // Add explanation message
+        setMessages(prev => [...prev, {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: `Perfect! With one click, I'll ${transactionDescriptionText}. You'll only need to approve once in your wallet.`,
+          timestamp: new Date()
+        }]);
+        
+        // Execute all transactions
+        const result = await wallet.executeTransactions(transactions, {
+          callbackUrl: window.location.href
+        });
+        
+        // After all transactions are done
+        setSwapState(prev => ({
+          ...prev,
+          currentStep: 'done',
+          isProcessing: false,
+          isSwapInitiated: false,
+          showQuickSwapButtons: false
+        }));
+        
+        setMessages(prev => [...prev, {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: "Transaction complete! You now have CRANS tokens and can play Wars of Cards.\n\nIs there anything else you'd like to know?",
+          timestamp: new Date()
+        }]);
+        
+      } catch (error: any) {
+        if (handleWalletError(error)) {
+          setSwapState(prev => ({
+            ...prev,
+            isProcessing: false
+          }));
+          return;
+        }
+        throw error;
+      }
+      
+    } catch (error) {
+      console.error('Error processing quick swap:', error);
+      
+      setMessages(prev => [...prev, {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: "I encountered an error processing your swap. Please try again in a moment.",
+        timestamp: new Date()
+      }]);
+      
+      setSwapState(prev => ({
+        ...prev,
+        isProcessing: false
+      }));
+    }
+  }, [wallet, swapState.isProcessing, handleWalletError, setMessages]);
+
   return (
     <div className={styles.container}>
       <div className={styles.chatContainer}>
@@ -1316,6 +1606,34 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
                     </span>
                   </div>
                   <div className={styles.messageContent}>
+                    {/* Add quick swap buttons before swap message content for more prominent placement */}
+                    {msg.role === 'assistant' && 
+                     msg.content.includes('Swap commands:') &&
+                     swapState.showQuickSwapButtons &&
+                     wallet.accountId && 
+                     swapState.quickSwapQuotes.length > 0 && (
+                      <div className={styles.quickSwapButtonsContainer}>
+                        {swapState.quickSwapQuotes.map((quote) => (
+                          <button
+                            key={quote.nearAmount}
+                            className={styles.quickSwapButton}
+                            onClick={() => handleQuickSwapClick(quote.nearAmount)}
+                            disabled={quote.isLoading || quote.cransAmount === 'Error' || swapState.isProcessing || quote.insufficient}
+                          >
+                            <span className={styles.nearAmount}>{quote.nearAmount} NEAR</span>
+                            <span className={styles.cransAmount}>
+                              {quote.isLoading 
+                                ? 'Loading...' 
+                                : quote.cransAmount === 'Error'
+                                  ? 'Error'
+                                  : `${quote.cransAmount} CRANS`
+                              }
+                            </span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    
                     {msg.role === 'user' ? (
                       msg.content.split('\n').map((line, i) => (
                         <span key={i}>
