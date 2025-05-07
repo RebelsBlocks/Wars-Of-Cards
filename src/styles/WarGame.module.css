@@ -2998,3 +2998,46 @@ body.brave-browser .gameTable {
   100% { opacity: 0.7; }
 }
 
+/* Add style for Buy CRANS button */
+.buyCransButton {
+  background-color: rgba(var(--gold-accent), 0.1);
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  color: rgba(var(--gold-accent), 1);
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin: 10px 0;
+  font-weight: 500;
+  width: 100%;
+  max-width: 350px;
+}
+
+.buyCransButton:hover:not(:disabled) {
+  background-color: rgba(var(--gold-accent), 0.2);
+  border-color: rgba(var(--gold-accent), 0.5);
+}
+
+.buyCransButton:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.buyCransButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Add style for info message */
+.infoMessage {
+  color: rgba(var(--gold-accent), 1);
+  background: rgba(var(--gold-accent), 0.1);
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  border-radius: 8px;
+  padding: 10px 15px;
+  margin: 10px 0;
+  font-size: 14px;
+  text-align: center;
+  max-width: 350px;
+  width: 100%;
+}
