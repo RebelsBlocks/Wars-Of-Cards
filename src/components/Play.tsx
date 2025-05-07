@@ -12,12 +12,21 @@ interface PlayProps {
 
 export function Play({ gameMode, setGameMode }: PlayProps) {
   const wallet = useNearWallet();
+  const { accountId, connect } = wallet;
 
   const handleStartWar = () => {
+    if (!accountId) {
+      connect();
+      return;
+    }
     setGameMode('war');
   };
 
   const handleStartBlackjack = () => {
+    if (!accountId) {
+      connect();
+      return;
+    }
     setGameMode('blackjack');
   };
 
@@ -26,6 +35,30 @@ export function Play({ gameMode, setGameMode }: PlayProps) {
   };
 
   if (gameMode === 'blackjack') {
+    // Only allow playing if logged in
+    if (!accountId) {
+      return (
+        <div className={styles.container}>
+          <div className={styles.loginRequired}>
+            <h2>Login Required</h2>
+            <p>Please connect your NEAR wallet to play Blackjack</p>
+            <button 
+              className={styles.playButton}
+              onClick={connect}
+            >
+              Connect Wallet
+            </button>
+            <button 
+              className={`${styles.playButton} ${styles.backButton}`}
+              onClick={handleBack}
+            >
+              Back
+            </button>
+          </div>
+          <GestureAreaBuffer />
+        </div>
+      );
+    }
     return (
       <div className={styles.gameWrapper}>
         <BlackjackProvider>
@@ -37,6 +70,30 @@ export function Play({ gameMode, setGameMode }: PlayProps) {
   }
 
   if (gameMode === 'war') {
+    // Only allow playing if logged in
+    if (!accountId) {
+      return (
+        <div className={styles.container}>
+          <div className={styles.loginRequired}>
+            <h2>Login Required</h2>
+            <p>Please connect your NEAR wallet to play War</p>
+            <button 
+              className={styles.playButton}
+              onClick={connect}
+            >
+              Connect Wallet
+            </button>
+            <button 
+              className={`${styles.playButton} ${styles.backButton}`}
+              onClick={handleBack}
+            >
+              Back
+            </button>
+          </div>
+          <GestureAreaBuffer />
+        </div>
+      );
+    }
     return (
       <div className={styles.gameWrapper}>
         <WarProvider>
@@ -62,7 +119,7 @@ export function Play({ gameMode, setGameMode }: PlayProps) {
             className={styles.playButton}
             onClick={handleStartBlackjack}
           >
-            Play
+            {accountId ? 'Play' : 'Log In to Play'}
           </button>
         </div>
 
@@ -78,7 +135,7 @@ export function Play({ gameMode, setGameMode }: PlayProps) {
             className={styles.playButton}
             onClick={handleStartWar}
           >
-            Play
+            {accountId ? 'Play' : 'Log In to Play'}
           </button>
         </div>
       </div>
