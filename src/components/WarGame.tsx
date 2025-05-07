@@ -1000,7 +1000,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
       if (response && response.result) {
         const resultBytes = Buffer.from(response.result);
         const resultText = new TextDecoder().decode(resultBytes);
-        return JSON.parse(resultText).amount || "0";
+        return JSON.parse(resultText);
       }
       
       return "0";
@@ -1062,26 +1062,46 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
         });
       }
       
-      // Calculate how much NEAR to wrap
+      // Calculate how many CRANS are missing
+      const cransBalance = await fetchCRANSBalance(wallet.accountId);
+      const currentCransBN = new BN(cransBalance);
+      const entryFeeBN = new BN(ENTRY_FEE_YOCTO);
+      
+      // If current balance is enough, don't need to swap
+      if (currentCransBN.gte(entryFeeBN)) {
+        setSwapLoading(false);
+        return;
+      }
+      
+      // Calculate missing CRANS
+      const missingCransBN = entryFeeBN.sub(currentCransBN);
+      
+      // Get exchange rate - how many CRANS per 1 NEAR
       const nearAmountInYocto = new BN("1000000000000000000000000"); // 1 NEAR in yocto
       const exchangeResult = await getSwapReturn(nearAmountInYocto.toString(), true);
       
-      // Definiujemy wartość cransNeeded
-      const cransNeeded = new BN(ENTRY_FEE_YOCTO);
-      
-      // Wartość domyślna, używana gdy nie można obliczyć prawidłowej wartości
+      // Calculate NEAR needed with 10% slippage
       let nearNeededWithSlippage;
       
       if (exchangeResult && exchangeResult !== "0") {
-        // Calculate how many NEAR needed for 420 CRANS (with 10% slippage)
         const cransPerNear = new BN(exchangeResult);
         
-        // NEAR needed = (420 CRANS * 1.10) / (CRANS per 1 NEAR)
-        nearNeededWithSlippage = cransNeeded.mul(new BN(110)).div(new BN(100)).mul(new BN(nearAmountInYocto)).div(cransPerNear);
+        // NEAR needed = (missing CRANS * 1.10) / (CRANS per 1 NEAR)
+        nearNeededWithSlippage = missingCransBN
+          .mul(new BN(110))
+          .div(new BN(100))
+          .mul(new BN(nearAmountInYocto))
+          .div(cransPerNear);
       } else {
-        // Jeśli nie udało się obliczyć kursu, używamy domyślnej wartości 0.5 NEAR
-        nearNeededWithSlippage = new BN("500000000000000000000000"); // 0.5 NEAR
+        // Fallback to minimum amount if exchange rate not available
+        nearNeededWithSlippage = new BN("10000000000000000000000"); // 0.01 NEAR
       }
+      
+      // Ensure minimum amount (0.01 NEAR) for very small transactions
+      const minAmount = new BN("10000000000000000000000"); // 0.01 NEAR
+      
+      // Use the larger of calculated amount or min amount
+      const finalAmount = nearNeededWithSlippage.lt(minAmount) ? minAmount : nearNeededWithSlippage;
       
       // Add wrap near transaction
       transactions.push({
@@ -1089,7 +1109,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
         methodName: 'near_deposit',
         args: {},
         gas: '50000000000000',
-        deposit: nearNeededWithSlippage.toString()
+        deposit: finalAmount.toString()
       });
       
       // Add token swap transaction
@@ -1098,8 +1118,8 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
         methodName: 'ft_transfer_call',
         args: {
           receiver_id: 'v2.ref-finance.near',
-          amount: nearNeededWithSlippage.toString(),
-          msg: prepareSwapMsg(nearNeededWithSlippage.toString(), true, cransNeeded.toString())
+          amount: finalAmount.toString(),
+          msg: prepareSwapMsg(finalAmount.toString(), true, missingCransBN.toString())
         },
         gas: '180000000000000',
         deposit: '1'
@@ -1137,29 +1157,50 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
       const cransBalance = await fetchCRANSBalance(accountId);
       setNearBalance(formatTokenAmount(cransBalance));
       
-      // Calculate how much NEAR is needed for 420 CRANS
+      // Calculate how much CRANS is needed
+      const currentCransBN = new BN(cransBalance);
+      const entryFeeBN = new BN(ENTRY_FEE_YOCTO);
+      
+      // If current balance is enough, don't need to calculate
+      if (currentCransBN.gte(entryFeeBN)) {
+        setNearAmount("0");
+        return;
+      }
+      
+      // Calculate how many CRANS are missing
+      const missingCransBN = entryFeeBN.sub(currentCransBN);
+      
+      // Get exchange rate - how many CRANS per 1 NEAR
       const nearAmountInYocto = new BN("1000000000000000000000000"); // 1 NEAR in yocto
       const exchangeResult = await getSwapReturn(nearAmountInYocto.toString(), true);
       
       // Tylko jeśli exchangeResult jest niepuste
       if (exchangeResult && exchangeResult !== "0") {
-        // Calculate how many NEAR needed for 420 CRANS (with 10% slippage)
+        // Calculate how many NEAR needed for missing CRANS (with 10% slippage)
         const cransPerNear = new BN(exchangeResult);
-        const cransNeeded = new BN(ENTRY_FEE_YOCTO);
         
-        // NEAR needed = (420 CRANS * 1.10) / (CRANS per 1 NEAR)
-        const nearNeededWithSlippage = cransNeeded.mul(new BN(110)).div(new BN(100)).mul(new BN(nearAmountInYocto)).div(cransPerNear);
+        // NEAR needed = (missing CRANS * 1.10) / (CRANS per 1 NEAR)
+        const nearNeededWithSlippage = missingCransBN
+          .mul(new BN(110))
+          .div(new BN(100))
+          .mul(new BN(nearAmountInYocto))
+          .div(cransPerNear);
         
-        setNearAmount(formatTokenAmount(nearNeededWithSlippage.toString()));
+        // Ensure minimum amount (0.01 NEAR) for very small transactions
+        const minAmount = new BN("10000000000000000000000"); // 0.01 NEAR
+        
+        // Use the larger of calculated amount or min amount
+        const finalAmount = nearNeededWithSlippage.lt(minAmount) ? minAmount : nearNeededWithSlippage;
+        
+        setNearAmount(formatTokenAmount(finalAmount.toString()));
       } else {
-        // Ustaw domyślną wartość, jeśli nie udało się pobrać kursu wymiany
-        setNearAmount("0.5");
+        // Ustaw minimalną wartość, jeśli nie udało się pobrać kursu wymiany
+        setNearAmount("0.01");
       }
-      
     } catch (error) {
       console.error("Error fetching balances:", error);
-      // Ustaw domyślną wartość w przypadku błędu
-      setNearAmount("0.5");
+      // Ustaw minimalną wartość w przypadku błędu
+      setNearAmount("0.01");
     }
   }
 
@@ -1330,14 +1371,14 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                 {!hasEnoughBalance && (
                   <>
                     <div className={styles.errorMessage}>
-                      Buy {ENTRY_FEE} CRANS to play!
+                      You need {ENTRY_FEE} CRANS to play! (Missing {(parseFloat(ENTRY_FEE.toString()) - parseFloat(nearBalance) > 0) ? (parseFloat(ENTRY_FEE.toString()) - parseFloat(nearBalance)).toFixed(2) : 0} CRANS)
                     </div>
                     <button
                       className={styles.buyCransButton}
                       onClick={handleBuyCrans}
                       disabled={swapLoading}
                     >
-                      {swapLoading ? 'Processing...' : `Buy ${ENTRY_FEE} CRANS (${nearAmount} NEAR)`}
+                      {swapLoading ? 'Processing...' : `Buy missing CRANS for ~${nearAmount}Ⓝ`}
                     </button>
                   </>
                 )}
