@@ -1215,6 +1215,9 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
     // Handle sell [amount] crans command - case insensitive for both the command and token name
     const sellMatch = /^sell\s+(\d*\.?\d+)\s*crans$/i.exec(lowercaseInput);
     
+    // Special command to sell all CRANS
+    const sellAllCransMatch = /^sell\s+crans$/i.exec(lowercaseInput);
+    
     // Legacy handlers for backward compatibility - case insensitive for both command and token names
     const swapMatch = /^(\d*\.?\d+)\s+(near|crans)\s+to\s+(near|crans)$/i.exec(lowercaseInput);
     
@@ -1222,6 +1225,7 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
     console.log("Processing input:", lowercaseInput);
     console.log("Buy match:", buyMatch);
     console.log("Sell match:", sellMatch);
+    console.log("Sell all CRANS match:", sellAllCransMatch);
     console.log("Swap match:", swapMatch);
     
     if (buyMatch) {
@@ -1302,6 +1306,47 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
       } catch (error) {
         console.error('Error preparing buy CRANS:', error);
         return "I encountered an error preparing your purchase. Please try again in a moment.";
+      }
+    } else if (sellAllCransMatch) {
+      if (!accountId) {
+        return "Please connect your wallet first to use the sell feature.";
+      }
+      
+      try {
+        // Fetch user's current CRANS balance
+        const cransBalance = await fetchCransBalance(accountId, wallet);
+        const cransBalanceFloat = parseFloat(cransBalance);
+        
+        if (cransBalanceFloat <= 0) {
+          return "You don't have any CRANS to sell. You need to buy some first.";
+        }
+        
+        // Convert amount to yoctoCRANS (24 decimals)
+        const amountInYocto = new Big(cransBalanceFloat).mul(new Big(10).pow(24)).toFixed(0);
+        
+        // Get expected return amount
+        const expectedReturn = await getSwapReturn(amountInYocto, false);
+        const formattedReturn = new Big(expectedReturn).div(new Big(10).pow(24)).toFixed(2);
+
+        // Initialize swap state for CRANS to NEAR
+        setSwapState({
+          currentStep: 'buy near',  // Step for CRANS to NEAR flow
+          amount: amountInYocto,
+          displayAmount: cransBalanceFloat.toString(),
+          expectedReturn,
+          minAmountOut: new Big(expectedReturn).mul(0.99).round(0, Big.roundDown).toString(),
+          isProcessing: false,
+          hasStorageBalance: true,  // We don't need to check storage for CRANS to NEAR
+          isSwapInitiated: true,
+          isSwapConfirmed: false,
+          swapDirection: 'crans_to_near',
+          quickSwapQuotes: []
+        });
+
+        return `You will sell ALL your CRANS (${cransBalanceFloat} CRANS) and receive approximately ${formattedReturn} NEAR. Would you like to proceed with the sale? Type 'yes' to confirm.`;
+      } catch (error) {
+        console.error('Error preparing sell all CRANS:', error);
+        return "I encountered an error preparing your sale. Please try again in a moment.";
       }
     } else if (sellMatch) {
       if (!accountId) {
