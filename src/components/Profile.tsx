@@ -76,7 +76,7 @@ function truncateWalletName(accountId: string): string {
 
 export function Profile() {
   const wallet = useNearWallet();
-  const { accountId, selector } = wallet;
+  const { accountId, selector, connect } = wallet;
   const [balances, setBalances] = useState({ near: "0", crans: "0" });
   const [socialStorage, setSocialStorage] = useState<string | null>(null);
   const [isClaimingPoints, setIsClaimingPoints] = useState(false);
@@ -217,34 +217,46 @@ export function Profile() {
       <div className={styles.cardGrid}>
         <div className={styles.card}>
           <div className={styles.cardHeader}>
-            <h2>{accountId ? truncateWalletName(accountId) : ''}</h2>
+            <h2>{accountId ? truncateWalletName(accountId) : 'Profile'}</h2>
             <div className={styles.headerActions}>
-              <button 
-                onClick={() => {
-                  if (accountId && selector) {
-                    setIsClaimingPoints(true);
-                    fetchBalances().finally(() => setIsClaimingPoints(false));
-                  }
-                }}
-                disabled={isClaimingPoints}
-                className={styles.refreshButton}
-                title="Refresh balances"
-              >
-                <svg 
-                  className={`${styles.refreshIcon} ${isClaimingPoints ? styles.spinning : ''}`}
-                  width="20" 
-                  height="20" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
+              {accountId && (
+                <button 
+                  onClick={() => {
+                    if (accountId && selector) {
+                      setIsClaimingPoints(true);
+                      fetchBalances().finally(() => setIsClaimingPoints(false));
+                    }
+                  }}
+                  disabled={isClaimingPoints}
+                  className={styles.refreshButton}
+                  title="Refresh balances"
                 >
-                  <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
-                </svg>
-              </button>
-              {accountId && <WalletButton showDisconnect={true} />}
+                  <svg 
+                    className={`${styles.refreshIcon} ${isClaimingPoints ? styles.spinning : ''}`}
+                    width="20" 
+                    height="20" 
+                    viewBox="0 0 24 24" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                  >
+                    <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.3"/>
+                  </svg>
+                </button>
+              )}
+              {accountId && (
+                <button 
+                  onClick={() => {
+                    wallet.disconnect();
+                  }}
+                  className={styles.logoutButton}
+                  title="Log out"
+                >
+                  <i className="bi bi-box-arrow-right"></i>
+                </button>
+              )}
             </div>
           </div>
           <div className={styles.accountInfo}>
@@ -297,7 +309,13 @@ export function Profile() {
               </>
             ) : (
               <div className={styles.notConnected}>
-                <WalletButton />
+                <div className={styles.loginMessageContainer}>
+                  <p className={styles.loginMessage}>Connect your NEAR wallet to view your profile and balances</p>
+                  <button onClick={connect} className={styles.connectButton}>
+                    <i className="bi bi-wallet2" style={{ marginRight: '8px' }} />
+                    Connect Wallet
+                  </button>
+                </div>
               </div>
             )}
           </div>
