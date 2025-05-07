@@ -233,6 +233,25 @@
   cursor: not-allowed;
 }
 
+.logoutButton {
+  background: rgba(0, 32, 0, 0.4);
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  border-radius: 6px;
+  color: rgb(var(--gold-accent));
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.logoutButton:hover {
+  background: rgba(0, 32, 0, 0.6);
+  border-color: rgba(var(--gold-accent), 0.5);
+}
+
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -383,8 +402,56 @@
 }
 
 .notConnected {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px;
+  width: 100%;
+}
+
+.loginMessageContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
   text-align: center;
-  padding: 2rem;
+  padding: 1rem;
+}
+
+.loginMessage {
+  color: rgba(var(--cream-text), 0.9);
+  font-size: 1rem;
+  margin: 0;
+}
+
+.connectButton {
+  background: rgba(var(--gold-accent), 0.15);
+  border: 1px solid rgba(var(--gold-accent), 0.3);
+  border-radius: 6px;
+  color: rgb(var(--gold-accent));
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.6rem 1.2rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.connectButton:hover {
+  background: rgba(var(--gold-accent), 0.25);
+  border-color: rgba(var(--gold-accent), 0.5);
+}
+
+@media screen and (max-width: 480px) {
+  .loginMessage {
+    font-size: 0.9rem;
+  }
+  
+  .connectButton {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+  }
 }
 
 /* TV and ultra-wide screens */
