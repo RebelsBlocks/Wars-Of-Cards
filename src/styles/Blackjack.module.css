@@ -165,18 +165,35 @@
 }
 
 .messageDisplay {
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
+  color: rgba(255, 215, 0, 0.9);
   padding: 0.8rem 1.5rem;
-  border-radius: 8px;
-  font-size: 1.2rem;
+  font-size: 1.3rem;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
   margin: 1rem 0;
   min-height: 60px;
   display: flex;
   align-items: center;
   justify-content: center;
+  text-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.4),
+    0 0 10px rgba(255, 215, 0, 0.2);
+  font-weight: 500;
+  letter-spacing: 1.2px;
+  font-family: 'Playfair Display', serif;
+  text-transform: uppercase;
+  position: relative;
+  animation: messageFloat 0.5s ease-out;
+}
+
+@keyframes messageFloat {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .scoreDisplay {
