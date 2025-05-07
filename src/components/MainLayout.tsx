@@ -14,7 +14,7 @@ export interface MainLayoutProps {
 export function MainLayout({ 
   children, 
   onMenuItemClick,
-  activeMenuItem = 'money'
+  activeMenuItem = 'play'
 }: MainLayoutProps) {
   const wallet = useNearWallet();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -71,6 +71,13 @@ export function MainLayout({
         <nav className={styles.menu}>
           <ul>
             <li 
+              className={`${styles.menuItem} ${activeMenuItem === 'play' ? styles.active : ''}`}
+              onClick={() => handleMenuItemClick('play')}
+              data-menu="play"
+            >
+              Play
+            </li>
+            <li 
               className={`${styles.menuItem} ${activeMenuItem === 'money' ? styles.active : ''}`}
               onClick={() => handleMenuItemClick('money')}
               data-menu="brief"
@@ -84,24 +91,13 @@ export function MainLayout({
             >
               Messages
             </li>
-            {wallet?.accountId && (
-              <>
-                <li 
-                  className={`${styles.menuItem} ${activeMenuItem === 'profile' ? styles.active : ''}`}
-                  onClick={() => handleMenuItemClick('profile')}
-                  data-menu="profile"
-                >
-                  Profile
-                </li>
-                <li 
-                  className={`${styles.menuItem} ${activeMenuItem === 'play' ? styles.active : ''}`}
-                  onClick={() => handleMenuItemClick('play')}
-                  data-menu="play"
-                >
-                  Play
-                </li>
-              </>
-            )}
+            <li 
+              className={`${styles.menuItem} ${activeMenuItem === 'profile' ? styles.active : ''}`}
+              onClick={() => handleMenuItemClick('profile')}
+              data-menu="profile"
+            >
+              Profile
+            </li>
           </ul>
         </nav>
 
