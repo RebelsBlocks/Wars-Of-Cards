@@ -12,6 +12,13 @@ import { NETWORK_CONFIG } from '@/contexts/NearWalletContext';
 import { Network } from '@near-wallet-selector/core';
 import BN from 'bn.js';
 import { GestureAreaBuffer } from './GestureAreaBuffer';
+import { providers } from 'near-api-js';
+
+// Token contract addresses
+const TOKENS = {
+  NEAR: 'wrap.near',
+  CRANS: (NETWORK_CONFIG as ExtendedNetwork).cransContractId
+};
 
 // Extend the Network type to include cransContractId
 interface ExtendedNetwork extends Network {
@@ -881,6 +888,8 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showLogoScreen, setShowLogoScreen] = useState<boolean>(true);
+  const [swapLoading, setSwapLoading] = useState(false);
+  const [nearAmount, setNearAmount] = useState<string>("0");
 
   // Show logo for 1 second
   useEffect(() => {
@@ -901,25 +910,264 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
         args: { account_id: accountId }
       });
 
-      return formatTokenAmount(result);
+      return result;
     } catch (error) {
       return "0";
     }
   }
 
+  // Add function to fetch NEAR balance
+  async function fetchNearBalance(accountId: string, wallet: any): Promise<string> {
+    try {
+      if (!wallet.selector) return "0";
+      
+      const provider = new providers.JsonRpcProvider({ url: NETWORK_CONFIG.nodeUrl }) as any;
+      const account = await provider.query({
+        request_type: 'view_account',
+        account_id: accountId,
+        finality: 'final'
+      });
+
+      if (account.amount) {
+        return account.amount;
+      }
+      return "0";
+    } catch (error) {
+      return "0";
+    }
+  }
+
+  // Add storage balance checking functions
+  async function checkWrapNearStorageBalance(accountId: string, wallet: any): Promise<boolean> {
+    try {
+      if (!wallet.selector) return false;
+      
+      const result = await wallet.viewFunction({
+        contractId: TOKENS.NEAR,
+        methodName: "storage_balance_of",
+        args: { account_id: accountId }
+      });
+
+      return result && result.total === "1250000000000000000000";
+    } catch (error) {
+      console.error("Error checking wrap.near storage balance:", error);
+      return false;
+    }
+  }
+
+  async function checkCransStorageBalance(accountId: string, wallet: any): Promise<boolean> {
+    try {
+      if (!wallet.selector) return false;
+      
+      const result = await wallet.viewFunction({
+        contractId: TOKENS.CRANS,
+        methodName: "storage_balance_of",
+        args: { account_id: accountId }
+      });
+
+      return result && result.total === "1250000000000000000000";
+    } catch (error) {
+      console.error("Error checking CRANS storage balance:", error);
+      return false;
+    }
+  }
+
+  // Add function to get swap return amount
+  async function getSwapReturn(amountIn: string, isNearToCrans: boolean): Promise<string> {
+    try {
+      const poolId = 5423; // CRANS/NEAR pool - correct pool ID
+      const tokenIn = isNearToCrans ? TOKENS.NEAR : TOKENS.CRANS;
+      const tokenOut = isNearToCrans ? TOKENS.CRANS : TOKENS.NEAR;
+      
+      const provider = new providers.JsonRpcProvider({ url: 'https://free.rpc.fastnear.com' }) as any;
+      const args = {
+        pool_id: poolId,
+        token_in: tokenIn,
+        token_out: tokenOut,
+        amount_in: amountIn
+      };
+      
+      const args_base64 = Buffer.from(JSON.stringify(args)).toString('base64');
+      
+      const response: any = await provider.query({
+        request_type: 'call_function',
+        account_id: 'v2.ref-finance.near',
+        method_name: 'get_return',
+        args_base64,
+        finality: 'final'
+      });
+      
+      if (response && response.result) {
+        const resultBytes = Buffer.from(response.result);
+        const resultText = new TextDecoder().decode(resultBytes);
+        return JSON.parse(resultText).amount || "0";
+      }
+      
+      return "0";
+    } catch (error) {
+      console.error("Error getting swap return:", error);
+      return "0";
+    }
+  }
+
+  // Add function to prepare swap message
+  function prepareSwapMsg(amountIn: string, isNearToCrans: boolean, minimumAmountOut: string): string {
+    const formattedReturn = new BN(minimumAmountOut).mul(new BN(95)).div(new BN(100)).toString();
+    
+    return JSON.stringify({
+      force: 0,
+      actions: [{
+        pool_id: 5423, // CRANS/NEAR pool - correct pool ID
+        token_in: isNearToCrans ? TOKENS.NEAR : TOKENS.CRANS,
+        token_out: isNearToCrans ? TOKENS.CRANS : TOKENS.NEAR,
+        amount_in: amountIn,
+        min_amount_out: formattedReturn
+      }]
+    });
+  }
+
+  // Add function to handle buying CRANS
+  const handleBuyCrans = async () => {
+    if (!wallet.accountId || swapLoading) return;
+    
+    setSwapLoading(true);
+    setError(null);
+    
+    try {
+      // Check storage needs
+      const hasWrapStorage = await checkWrapNearStorageBalance(wallet.accountId, wallet);
+      const hasCransStorage = await checkCransStorageBalance(wallet.accountId, wallet);
+      
+      // Prepare transactions based on storage needs
+      const transactions = [];
+      
+      // Add storage deposit transactions if needed
+      if (!hasWrapStorage) {
+        transactions.push({
+          contractId: TOKENS.NEAR,
+          methodName: 'storage_deposit',
+          args: {},
+          gas: '30000000000000',
+          deposit: '1250000000000000000000'
+        });
+      }
+      
+      if (!hasCransStorage) {
+        transactions.push({
+          contractId: TOKENS.CRANS,
+          methodName: 'storage_deposit',
+          args: {},
+          gas: '30000000000000',
+          deposit: '1250000000000000000000'
+        });
+      }
+      
+      // Calculate how much NEAR to wrap
+      const nearAmountInYocto = new BN("1000000000000000000000000"); // 1 NEAR in yocto
+      const exchangeResult = await getSwapReturn(nearAmountInYocto.toString(), true);
+      
+      // Definiujemy wartość cransNeeded
+      const cransNeeded = new BN(ENTRY_FEE_YOCTO);
+      
+      // Wartość domyślna, używana gdy nie można obliczyć prawidłowej wartości
+      let nearNeededWithSlippage;
+      
+      if (exchangeResult && exchangeResult !== "0") {
+        // Calculate how many NEAR needed for 420 CRANS (with 10% slippage)
+        const cransPerNear = new BN(exchangeResult);
+        
+        // NEAR needed = (420 CRANS * 1.10) / (CRANS per 1 NEAR)
+        nearNeededWithSlippage = cransNeeded.mul(new BN(110)).div(new BN(100)).mul(new BN(nearAmountInYocto)).div(cransPerNear);
+      } else {
+        // Jeśli nie udało się obliczyć kursu, używamy domyślnej wartości 0.5 NEAR
+        nearNeededWithSlippage = new BN("500000000000000000000000"); // 0.5 NEAR
+      }
+      
+      // Add wrap near transaction
+      transactions.push({
+        contractId: TOKENS.NEAR,
+        methodName: 'near_deposit',
+        args: {},
+        gas: '50000000000000',
+        deposit: nearNeededWithSlippage.toString()
+      });
+      
+      // Add token swap transaction
+      transactions.push({
+        contractId: TOKENS.NEAR,
+        methodName: 'ft_transfer_call',
+        args: {
+          receiver_id: 'v2.ref-finance.near',
+          amount: nearNeededWithSlippage.toString(),
+          msg: prepareSwapMsg(nearNeededWithSlippage.toString(), true, cransNeeded.toString())
+        },
+        gas: '180000000000000',
+        deposit: '1'
+      });
+      
+      // Execute all transactions
+      const result = await wallet.executeTransactions(transactions, {
+        callbackUrl: window.location.href
+      });
+      
+      // After successful swap, update balances
+      if (result) {
+        await fetchBalances(wallet.accountId);
+        
+        // Dodatkowe odświeżenie salda po 1 sekundzie dla pewności
+        setTimeout(() => {
+          if (wallet.accountId) {
+            fetchBalances(wallet.accountId);
+          }
+        }, 1000);
+      }
+    } catch (error) {
+      console.error("Failed to buy CRANS:", error);
+      setError("Failed to buy CRANS. Please try again.");
+    } finally {
+      setSwapLoading(false);
+    }
+  };
+
+  // Fetch CRANS and NEAR balances
+  async function fetchBalances(accountId: string) {
+    if (!wallet.selector) return;
+    
+    try {
+      const cransBalance = await fetchCRANSBalance(accountId);
+      setNearBalance(formatTokenAmount(cransBalance));
+      
+      // Calculate how much NEAR is needed for 420 CRANS
+      const nearAmountInYocto = new BN("1000000000000000000000000"); // 1 NEAR in yocto
+      const exchangeResult = await getSwapReturn(nearAmountInYocto.toString(), true);
+      
+      // Tylko jeśli exchangeResult jest niepuste
+      if (exchangeResult && exchangeResult !== "0") {
+        // Calculate how many NEAR needed for 420 CRANS (with 10% slippage)
+        const cransPerNear = new BN(exchangeResult);
+        const cransNeeded = new BN(ENTRY_FEE_YOCTO);
+        
+        // NEAR needed = (420 CRANS * 1.10) / (CRANS per 1 NEAR)
+        const nearNeededWithSlippage = cransNeeded.mul(new BN(110)).div(new BN(100)).mul(new BN(nearAmountInYocto)).div(cransPerNear);
+        
+        setNearAmount(formatTokenAmount(nearNeededWithSlippage.toString()));
+      } else {
+        // Ustaw domyślną wartość, jeśli nie udało się pobrać kursu wymiany
+        setNearAmount("0.5");
+      }
+      
+    } catch (error) {
+      console.error("Error fetching balances:", error);
+      // Ustaw domyślną wartość w przypadku błędu
+      setNearAmount("0.5");
+    }
+  }
+
   useEffect(() => {
     if (wallet.accountId) {
-      fetchCRANSBalance(wallet.accountId).then(setNearBalance);
+      fetchBalances(wallet.accountId);
     }
   }, [wallet.accountId]);
-
-  // Update balance after game complete
-  useEffect(() => {
-    if (isGameComplete && wallet.accountId) {
-      // Update balance in background after game end
-      fetchCRANSBalance(wallet.accountId).then(setNearBalance);
-    }
-  }, [isGameComplete, wallet.accountId]);
 
   const handlePlaceBet = async () => {
     if (!wallet.accountId || isLoading) return;
@@ -946,7 +1194,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
           placeBet(ENTRY_FEE);
           
           // Fetch updated balance in background
-          fetchCRANSBalance(wallet.accountId).then(setNearBalance);
+          fetchBalances(wallet.accountId);
         } catch (error) {
           setError('Failed to start game. Please try again.');
           setShowBetUI(true);
@@ -960,6 +1208,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
   };
 
   const hasEnoughBalance = parseFloat(nearBalance) >= ENTRY_FEE;
+  const hasSurplusBalance = parseFloat(nearBalance) > ENTRY_FEE * 2; // Jeśli ma więcej niż podwójną kwotę wejściową
 
   // Efekt dla dostosowania wysokości viewportu na urządzeniach mobilnych
   useEffect(() => {
@@ -1050,7 +1299,7 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                   <span>Balance: {nearBalance}</span>
                   <button 
                     className={styles.refreshButton}
-                    onClick={() => wallet.accountId && fetchCRANSBalance(wallet.accountId).then(setNearBalance)}
+                    onClick={() => wallet.accountId && fetchBalances(wallet.accountId)}
                     title="Refresh balance"
                   >
                     <svg 
@@ -1079,8 +1328,22 @@ export const WarGame: React.FC<WarGameProps> = ({ onBack }) => {
                   {isLoading ? 'Processing...' : 'Enter Game'}
                 </button>
                 {!hasEnoughBalance && (
-                  <div className={styles.errorMessage}>
-                    Chat with Vanessa to get {ENTRY_FEE} CRANS.
+                  <>
+                    <div className={styles.errorMessage}>
+                      Buy {ENTRY_FEE} CRANS to play!
+                    </div>
+                    <button
+                      className={styles.buyCransButton}
+                      onClick={handleBuyCrans}
+                      disabled={swapLoading}
+                    >
+                      {swapLoading ? 'Processing...' : `Buy ${ENTRY_FEE} CRANS (${nearAmount} NEAR)`}
+                    </button>
+                  </>
+                )}
+                {hasEnoughBalance && hasSurplusBalance && (
+                  <div className={styles.infoMessage}>
+                    Chat with Vanessa to sell CRANS.
                   </div>
                 )}
                 {error && (
