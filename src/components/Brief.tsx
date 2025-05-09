@@ -32,7 +32,7 @@ const predefinedResponses: Record<string, string> = {
   
   'help': 'Allow pop-ups in your browser and for the smoothest gameplay, use Chrome browser. Also, make sure to turn off VPN to avoid any issues.\n\nFor First-time Blockchain Users: \nThink of NEAR as your digital wallet and identity in one that\'s significantly faster and cheaper than traditional systems, powering the Wars of Cards gaming experience with high-speed transactions, minimal fees, and full ownership of your digital assets.\n\nEssential Requirements:\n- NEAR account - Connect or create instantly through Meteor Wallet\n- NEAR tokens - Available on Binance, Coinbase, and major exchanges\n- CRANS tokens - Exchange your NEAR tokens with me directly\n\nAcquiring CRANS:\n- Use "Swap" and follow the commands to convert your NEAR tokens instantly\n- Win additional tokens through our games\n- Earn through community participation and events\n\nToken Usage:\n- Blackjack: 210 CRANS entry with 378 CRANS potential win\n- New War Order: 420 CRANS entry with 756 CRANS potential win\n- All wins pay 180% of your original stake\n- Sell your earned tokens with me directly or hold them!',
   
-  'swap': 'Your current holdings:\nNEAR: {near_balance} Ⓝ\nCRANS: {crans_balance} CRANS\n\nSwap commands:\n- "buy 1 crans" \n- "sell 1 crans" \n- "6.9 near to crans" \n\nIMPORTANT: You must allow popups for successful transactions.\nFirst-time transactions may fail if popups are blocked.\nEnable popups when prompted for seamless exchanges.',
+  'Exchange': 'Your current holdings:\nNEAR: {near_balance} Ⓝ\nCRANS: {crans_balance} CRANS\n\n🟧 AVAILABLE COMMANDS 🟧\n\n• buy 1 crans\n• sell 1 crans\n• swap 1 near\n• swap 1 crans\n• 6.9 near to crans\n\nIMPORTANT: You must allow popups for successful transactions.\nFirst-time transactions may fail if popups are blocked.\nEnable popups when prompted for seamless exchanges.',
   
   'balance': '💰 Here are your current balances:\n\nNEAR Balance: {near_balance} Ⓝ\nCRANS Balance: {crans_balance} CRANS',
   
@@ -54,7 +54,7 @@ const predefinedResponses: Record<string, string> = {
 const mainTopics = [
   { id: 'what_to_do', label: 'What to do here?' },
   { id: 'games', label: 'How to play?' },
-  { id: 'swap', label: 'Swap' },
+  { id: 'Exchange', label: 'Exchange' },
   { id: 'help', label: 'Help' }
 ];
 
@@ -722,8 +722,8 @@ export function Brief() {
       }
     }
 
-    // Add topicId to used topics list (except for 'help' and 'swap' which should always be available)
-    if (topicId !== 'help' && topicId !== 'swap') {
+    // Add topicId to used topics list (except for 'help' and 'Exchange' which should always be available)
+    if (topicId !== 'help' && topicId !== 'Exchange') {
       setUsedTopics(prev => [...prev, topicId]);
     }
 
@@ -749,7 +749,7 @@ export function Brief() {
       await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate typing time
       
       // Special handling for swap topic - fetch quick swap quotes
-      if (topicId === 'swap' && wallet.accountId) {
+      if (topicId === 'Exchange' && wallet.accountId) {
         // Set state to show quick swap buttons and start fetching quotes
         await fetchQuickSwapQuotes();
       }
@@ -999,9 +999,9 @@ export function Brief() {
           return "⚠️ I encountered an error fetching your balances.\n\nPlease try again in a moment or check your connection.";
         }
       },
-      'swap': async () => {
+      'Exchange': async () => {
         if (!accountId) {
-          return "🔒 Please connect your wallet first to use the swap feature.\n\nYou can do this by clicking the 'Log In' button above.";
+          return "🔒 Please connect your wallet first to use the exchange feature.\n\nYou can do this by clicking the 'Log In' button above.";
         }
         
         try {
@@ -1017,10 +1017,11 @@ export function Brief() {
 NEAR: ${nearBalance} Ⓝ
 CRANS: ${cransBalance} CRANS
 
-Swap commands:
-- buy 1 crans
-- sell 1 crans
-- 6.9 near to crans 
+🔁 COMMANDS 🔁 
+• swap 1 near
+• swap 1 crans
+• buy 1 crans
+• sell 1 crans
 
 IMPORTANT: You must allow popups for successful transactions. First-time transactions will fail if pop-ups are blocked.`;
         } catch (error) {
@@ -1060,7 +1061,7 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
           'nwo', 'what is nwo', 'whats nwo', 'what\'s nwo'
         ],
         
-        'swap': [
+        'Exchange': [
           // Original swap related phrases
           'swap tokens', 'exchange tokens', 'trade tokens', 'convert tokens',
           'how to swap', 'how to exchange', 'how to convert',
@@ -1151,7 +1152,7 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
                 /about.*blackjack/.test(normalizedInput) ||
                 /about.*war.*order/.test(normalizedInput))) ||
               // Special case for token buying and selling
-              (intention === 'swap' && 
+              (intention === 'Exchange' && 
                (/buy.*token/.test(normalizedInput) || 
                 /sell.*token/.test(normalizedInput) ||
                 /purchase.*token/.test(normalizedInput) ||
@@ -1176,13 +1177,13 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
     if (intention) {
       // For swap and balance intencje, use handlers instead of predefined responses
       // to properly fill in placeholders with actual values
-      if (intention === 'swap' && keywordHandlers['swap']) {
+      if (intention === 'Exchange' && keywordHandlers['Exchange']) {
         // Set showQuickSwapButtons to true when swap is mentioned
         setSwapState(prev => ({
           ...prev,
           showQuickSwapButtons: true
         }));
-        return await keywordHandlers['swap']();
+        return await keywordHandlers['Exchange']();
       } else if (intention === 'balance' && keywordHandlers['balance']) {
         return await keywordHandlers['balance']();
       }
@@ -1204,7 +1205,26 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
     );
     
     if (matchedTopic) {
+      // Special handling for Exchange - use the handler function
+      if (matchedTopic.id === 'Exchange' && keywordHandlers['Exchange']) {
+        // Set showQuickSwapButtons to true
+        setSwapState(prev => ({
+          ...prev,
+          showQuickSwapButtons: true
+        }));
+        return await keywordHandlers['Exchange']();
+      }
       return predefinedResponses[matchedTopic.id] || `💫 Let me tell you about ${matchedTopic.label}...`;
+    }
+    
+    // Special handling for the word "swap" by itself - trigger Exchange handler
+    if (lowercaseInput === 'swap') {
+      // Set showQuickSwapButtons to true
+      setSwapState(prev => ({
+        ...prev,
+        showQuickSwapButtons: true
+      }));
+      return await keywordHandlers['Exchange']();
     }
 
     // Simple command parsing instead of complex regex
@@ -1218,6 +1238,10 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
     // Special command to sell all CRANS
     const sellAllCransMatch = /^sell\s+crans$/i.exec(lowercaseInput);
     
+    // Add new swap commands
+    const swapNearMatch = /^swap\s+(\d*\.?\d+)\s*near$/i.exec(lowercaseInput);
+    const swapCransMatch = /^swap\s+(\d*\.?\d+)\s*crans$/i.exec(lowercaseInput);
+    
     // Legacy handlers for backward compatibility - case insensitive for both command and token names
     const swapMatch = /^(\d*\.?\d+)\s+(near|crans)\s+to\s+(near|crans)$/i.exec(lowercaseInput);
     
@@ -1226,6 +1250,8 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
     console.log("Buy match:", buyMatch);
     console.log("Sell match:", sellMatch);
     console.log("Sell all CRANS match:", sellAllCransMatch);
+    console.log("Swap NEAR match:", swapNearMatch);
+    console.log("Swap CRANS match:", swapCransMatch);
     console.log("Swap match:", swapMatch);
     
     if (buyMatch) {
@@ -1390,6 +1416,94 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
       } catch (error) {
         console.error('Error preparing sell CRANS:', error);
         return "I encountered an error preparing your sale. Please try again in a moment.";
+      }
+    } else if (swapNearMatch) {
+      // Handle swap NEAR command (equivalent to buying CRANS with NEAR)
+      if (!accountId) {
+        return "Please connect your wallet first to use the swap feature.";
+      }
+      
+      try {
+        const amountStr = swapNearMatch[1];
+        const amount = parseFloat(amountStr);
+        
+        // Convert amount to yoctoNEAR (24 decimals)
+        const amountInYocto = new Big(amount).mul(new Big(10).pow(24)).toFixed(0);
+        
+        // Get expected return amount
+        const expectedReturn = await getSwapReturn(amountInYocto, true);
+        const formattedReturn = new Big(expectedReturn).div(new Big(10).pow(24)).toFixed(2);
+
+        // Check user's balance
+        const balance = await fetchNearBalance(accountId, wallet);
+
+        if (new Big(balance).lt(amount)) {
+          return `Insufficient NEAR balance. You have ${balance} NEAR, but tried to swap ${amount} NEAR.`;
+        }
+
+        // Initialize swap state
+        setSwapState({
+          currentStep: 'check storage',
+          amount: amountInYocto,
+          displayAmount: amount.toString(),
+          expectedReturn,
+          minAmountOut: new Big(expectedReturn).mul(0.99).round(0, Big.roundDown).toString(),
+          isProcessing: false,
+          hasStorageBalance: false,
+          isSwapInitiated: true,
+          isSwapConfirmed: false,
+          swapDirection: 'near_to_crans',
+          quickSwapQuotes: []
+        });
+
+        return `You will receive approximately ${formattedReturn} CRANS for ${amount} NEAR. Would you like to proceed with the swap? Type 'yes' to confirm.`;
+      } catch (error) {
+        console.error('Error preparing swap:', error);
+        return "I encountered an error preparing your swap. Please try again in a moment.";
+      }
+    } else if (swapCransMatch) {
+      // Handle swap CRANS command (equivalent to selling CRANS)
+      if (!accountId) {
+        return "Please connect your wallet first to use the swap feature.";
+      }
+      
+      try {
+        const amountStr = swapCransMatch[1];
+        const amount = parseFloat(amountStr);
+        
+        // Convert amount to yoctoCRANS (24 decimals)
+        const amountInYocto = new Big(amount).mul(new Big(10).pow(24)).toFixed(0);
+        
+        // Get expected return amount
+        const expectedReturn = await getSwapReturn(amountInYocto, false);
+        const formattedReturn = new Big(expectedReturn).div(new Big(10).pow(24)).toFixed(2);
+
+        // Check user's balance
+        const cransBalance = await fetchCransBalance(accountId, wallet);
+
+        if (new Big(cransBalance).lt(amount)) {
+          return `Insufficient CRANS balance. You have ${cransBalance} CRANS, but tried to swap ${amount} CRANS.`;
+        }
+
+        // Initialize swap state for CRANS to NEAR
+        setSwapState({
+          currentStep: 'buy near',  // Step for CRANS to NEAR flow
+          amount: amountInYocto,
+          displayAmount: amount.toString(),
+          expectedReturn,
+          minAmountOut: new Big(expectedReturn).mul(0.99).round(0, Big.roundDown).toString(),
+          isProcessing: false,
+          hasStorageBalance: true,  // We don't need to check storage for CRANS to NEAR
+          isSwapInitiated: true,
+          isSwapConfirmed: false,
+          swapDirection: 'crans_to_near',
+          quickSwapQuotes: []
+        });
+
+        return `You will receive approximately ${formattedReturn} NEAR for ${amount} CRANS. Would you like to proceed with the swap? Type 'yes' to confirm.`;
+      } catch (error) {
+        console.error('Error preparing swap:', error);
+        return "I encountered an error preparing your swap. Please try again in a moment.";
       }
     } else if (swapMatch) {
       if (!accountId) {
@@ -1814,7 +1928,7 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
                   <div className={styles.messageContent}>
                     {/* Add quick swap buttons before swap message content for more prominent placement */}
                     {msg.role === 'assistant' && 
-                     msg.content.includes('Swap commands:') &&
+                     (msg.content.includes('AVAILABLE COMMANDS') || msg.content.includes('Swap commands:')) &&
                      swapState.showQuickSwapButtons &&
                      wallet.accountId && 
                      swapState.quickSwapQuotes.length > 0 && (
@@ -1938,4 +2052,4 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
       </div>
     </div>
   );
-} 
+}
