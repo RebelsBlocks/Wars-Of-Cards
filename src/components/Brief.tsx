@@ -32,7 +32,7 @@ const predefinedResponses: Record<string, string> = {
   
   'help': 'Allow pop-ups in your browser and for the smoothest gameplay, use Chrome browser. Also, make sure to turn off VPN to avoid any issues.\n\nFor First-time Blockchain Users: \nThink of NEAR as your digital wallet and identity in one that\'s significantly faster and cheaper than traditional systems, powering the Wars of Cards gaming experience with high-speed transactions, minimal fees, and full ownership of your digital assets.\n\nEssential Requirements:\n- NEAR account - Connect or create instantly through Meteor Wallet\n- NEAR tokens - Available on Binance, Coinbase, and major exchanges\n- CRANS tokens - Exchange your NEAR tokens with me directly\n\nAcquiring CRANS:\n- Use "Swap" and follow the commands to convert your NEAR tokens instantly\n- Win additional tokens through our games\n- Earn through community participation and events\n\nToken Usage:\n- Blackjack: 210 CRANS entry with 378 CRANS potential win\n- New War Order: 420 CRANS entry with 756 CRANS potential win\n- All wins pay 180% of your original stake\n- Sell your earned tokens with me directly or hold them!',
   
-  'Exchange': 'Your current holdings:\nNEAR: {near_balance} Ⓝ\nCRANS: {crans_balance} CRANS\n\n🟧 AVAILABLE COMMANDS 🟧\n\n• buy 1 crans\n• sell 1 crans\n• swap 1 near\n• swap 1 crans\n• 6.9 near to crans\n\nIMPORTANT: You must allow popups for successful transactions.\nFirst-time transactions may fail if popups are blocked.\nEnable popups when prompted for seamless exchanges.',
+  'Exchange': 'Your current holdings:\nNEAR: {near_balance} Ⓝ\nCRANS: {crans_balance} CRANS\n\n🔁 COMMANDS 🔁\n• swap 1 near\n• swap 1 crans\n• buy 1 crans\n• sell 1 crans\n\nIMPORTANT: You must allow popups for successful transactions.\nFirst-time transactions may fail if popups are blocked.\nEnable popups when prompted for seamless exchanges.',
   
   'balance': '💰 Here are your current balances:\n\nNEAR Balance: {near_balance} Ⓝ\nCRANS Balance: {crans_balance} CRANS',
   
@@ -1928,7 +1928,7 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
                   <div className={styles.messageContent}>
                     {/* Add quick swap buttons before swap message content for more prominent placement */}
                     {msg.role === 'assistant' && 
-                     (msg.content.includes('AVAILABLE COMMANDS') || msg.content.includes('Swap commands:')) &&
+                     (msg.content.includes('AVAILABLE COMMANDS') || msg.content.includes('COMMANDS') || msg.content.includes('Swap commands:')) &&
                      swapState.showQuickSwapButtons &&
                      wallet.accountId && 
                      swapState.quickSwapQuotes.length > 0 && (
@@ -2052,4 +2052,4 @@ IMPORTANT: You must allow popups for successful transactions. First-time transac
       </div>
     </div>
   );
-}
+} 
