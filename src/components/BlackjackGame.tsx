@@ -764,7 +764,7 @@ export const BlackjackGame: React.FC<{ onBack: () => void }> = ({ onBack }) => {
         args: {
           receiver_id: "house.warsofcards.near",
           amount: ENTRY_FEE_YOCTO,
-          memo: "Blackjack entry fee"
+          memo: "Snapjack entry fee"
         },
         gas: "300000000000000", // 300 TGas
         deposit: "1", // 1 yoctoNEAR required for ft_transfer
